@@ -1,0 +1,106 @@
+/* General Body and Container Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f6f9;
+  margin: 0;
+  padding: 0;
+}
+
+section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 35vh; /* Full viewport height */
+  background-color: #f4f6f9;
+  flex-direction: column; /* Ensures the content stacks vertically */
+}
+
+.Login-Container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  width: 100%;
+  max-width: 400px; /* Control form width */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Ensures the form is centered inside the container */
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+form div {
+  display: flex;
+  flex-direction: column;
+}
+
+input[type="email"],
+input[type="password"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 100%;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border-color: #007bff; /* Blue focus border */
+  outline: none;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Message Section */
+.Bellow-Message {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.Bellow-Message p {
+  margin: 0;
+}
+
+.Bellow-Message a {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.Bellow-Message a:hover {
+  text-decoration: underline;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 500px) {
+  .Login-Container {
+    padding: 20px;
+  }
+
+  input[type="email"],
+  input[type="password"],
+  button {
+    font-size: 14px;
+  }
+}
