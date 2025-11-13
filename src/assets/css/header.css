@@ -28,9 +28,19 @@ html, body {
 }
 
 /* Left side of the header (can be for logo) */
-.header-icon {
-  display: flex;
-  align-items: center;
+.header-icon a {
+  color: inherit;       /* Makes the icon inherit its parent color */
+  text-decoration: none; /* Removes underline */
+  display: flex;         /* Ensure proper flex alignment */
+}
+
+.header-icon a svg {
+  font-size: 50px;       /* Keep your icon size */
+  color: white;           /* Or whatever color you want */
+}
+
+.header-icon a svg:hover {
+  color: #ffcc00;
 }
 
 /* Right side of the header for icons */

@@ -2,12 +2,14 @@ import "../assets/css/header.css"
 import { FaUserCircle } from "react-icons/fa";
 import { MdPets } from "react-icons/md";
 import { Link } from 'react-router-dom';
+import { FaShieldDog } from "react-icons/fa6";
 
 function header() {
     return (
         <section>
             <div className="header-container">
                 <div className="header-icon">
+                    <Link to="/"><FaShieldDog /></Link>
                 </div>
                 <div className="header-items">
                     <ul>

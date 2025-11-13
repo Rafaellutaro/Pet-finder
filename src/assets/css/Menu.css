@@ -1,0 +1,89 @@
+/* General Styles for the Register Page */
+section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 35vh;
+  background-color: #f4f4f9;
+  margin: 0;
+}
+
+/* Menu container to hold both options */
+.Menu-Container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 80%;
+  gap: 2rem;
+}
+
+/* Normal person option style */
+.normal-person-container,
+.shelter-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 45%;
+  text-decoration: none;
+}
+
+/* Card-like container for both options */
+.normal-person, 
+.shelter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 25px 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  text-align: center;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+/* Hover effect */
+.normal-person:hover,
+.shelter:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 8px 18px rgba(0, 0, 0, 0.15);
+}
+
+/* Icon styles */
+.img {
+  font-size: 60px;
+  color: #4CAF50;
+  margin-bottom: 20px;
+}
+
+/* Title styling */
+.title h1 {
+  font-size: 1.6rem;
+  color: #333;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .Menu-Container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .normal-person-container,
+  .shelter-container {
+    width: 80%;
+  }
+
+  .normal-person,
+  .shelter {
+    padding: 15px;
+  }
+
+  .title h1 {
+    font-size: 1.3rem;
+  }
+}

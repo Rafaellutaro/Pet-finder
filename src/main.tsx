@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import LoginPage from './components/Login.tsx'
-import RegisterPage from './components/Register.tsx'
+import Menu from './components/Selection-Menu.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Header-Layout.tsx'
 
@@ -19,7 +19,15 @@ const router = createBrowserRouter([
       },
       {
         path: "/Register",
-        element: <Layout><RegisterPage /></Layout>
+        element: <Layout><Menu /></Layout>
+      },
+      {
+        path: "/Register-Comum",
+        element: <div>comum</div>
+      },
+      {
+        path: "/Register-Shelter",
+        element: <div>shelter</div>
       },
       {
         path: "/MyPets",
