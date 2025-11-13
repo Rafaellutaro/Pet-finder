@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Header from "./Header"
 import { Link } from "react-router-dom";
 import "../assets/css/Login.css"
 
@@ -17,7 +16,7 @@ function LoginPage() {
     }
 
     return (
-        <><Header />
+        <>
             <section>
 
                 <div className="Login-Container">
