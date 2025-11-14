@@ -6,6 +6,7 @@ import LoginPage from './components/Login.tsx'
 import Menu from './components/Selection-Menu.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Header-Layout.tsx'
+import RegisterCommon from "./components/registers-forms/Register-common.tsx"
 
 const router = createBrowserRouter([
 
@@ -23,7 +24,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/Register-Comum",
-        element: <div>comum</div>
+        element: <Layout><RegisterCommon /></Layout>
       },
       {
         path: "/Register-Shelter",
