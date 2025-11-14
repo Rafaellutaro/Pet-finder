@@ -1,0 +1,110 @@
+/* ===========================
+   RegisterCommon.css
+=========================== */
+
+.registerCommon-section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Change to center if you want it vertically centered */
+  height: 30vh;
+  background-color: #f0f2f5;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+/* Container for the entire form */
+.common-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: 'Arial', sans-serif;
+}
+
+/* Form titles */
+.personal-data-title {
+  margin-bottom: 15px;
+}
+
+.personal-data-title h1 {
+  font-size: 24px;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 8px;
+}
+
+/* Rows for inputs */
+.form-row {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+/* Each input group (label + input) */
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Prevent wrapping */
+}
+
+/* Labels */
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #555;
+}
+
+/* Inputs */
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  transition: border 0.2s;
+}
+
+.form-group input:focus {
+  border-color: #007BFF;
+  outline: none;
+}
+
+/* Location container */
+.location-data-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* Space between rows */
+  margin-top: 20px;
+}
+
+/* Submit button */
+button[type="submit"] {
+  margin-top: 25px;
+  padding: 12px 25px;
+  background-color: #007BFF;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+}

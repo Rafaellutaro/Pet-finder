@@ -1,5 +1,5 @@
 import { useReducer } from 'react';
-import '../../assets/css/RegisterFormCommon.css'
+import '../../assets/css/RegisterCommon.css'
 
 function reducer(state: any, action: any) {
     switch (action.type) {
@@ -96,7 +96,7 @@ function RegisterCommon() {
     }
 
     return (
-        <section>
+        <section className='registerCommon-section'>
             <div className="common-container">
 
                 <form onSubmit={commonRegister}>
@@ -106,55 +106,110 @@ function RegisterCommon() {
                     </div>
 
                     <div className="personal-data-container">
-                        
-                        <label>Nome: </label>
-                        <input type="text"
-                            value={state.name}
-                            placeholder="Nome"
-                            onChange={(e) => dispatch({ type: 'addName', payload: e.target.value })}
-                            required />
 
-                        <label>Sobrenome: </label>
-                        <input type="text"
-                            value={state.lastName}
-                            placeholder="Sobrenome"
-                            onChange={(e) => dispatch({ type: 'addLastName', payload: e.target.value })}
-                            required />
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Nome:</label>
+                                <input
+                                    type="text"
+                                    value={state.name}
+                                    placeholder="Nome"
+                                    onChange={(e) =>
+                                        dispatch({ type: "addName", payload: e.target.value })
+                                    }
+                                    required
+                                />
+                            </div>
 
-                        <label>Email: </label>
-                        <input type="email"
-                            value={state.email}
-                            placeholder="Email"
-                            onChange={(e) => dispatch({ type: 'addEmail', payload: e.target.value })}
-                            required />
+                            <div className="form-group">
+                                <label>Sobrenome:</label>
+                                <input
+                                    type="text"
+                                    value={state.lastName}
+                                    placeholder="Sobrenome"
+                                    onChange={(e) =>
+                                        dispatch({ type: "addLastName", payload: e.target.value })
+                                    }
+                                    required
+                                />
+                            </div>
+                        </div>
 
-                        <label>Telephone: </label>
-                        <input type="text"
-                            value={state.phone}
-                            placeholder="Telephone"
-                            onChange={(e) => dispatch({ type: 'addPhone', payload: e.target.value })}
-                            required />
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Email:</label>
+                                <input
+                                    type="email"
+                                    value={state.email}
+                                    placeholder="Email"
+                                    onChange={(e) =>
+                                        dispatch({ type: "addEmail", payload: e.target.value })
+                                    }
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Telefone:</label>
+                                <input
+                                    type="text"
+                                    value={state.phone}
+                                    placeholder="Telefone"
+                                    onChange={(e) =>
+                                        dispatch({ type: "addPhone", payload: e.target.value })
+                                    }
+                                    required
+                                />
+                            </div>
+                        </div>
 
                     </div>
 
-                     <div className="personal-data-title">
+
+                    <div className="personal-data-title">
                         <h1>Endereço</h1>
                     </div>
 
                     <div className="location-data-container">
 
-                        <label>Cep:</label>
-                        <input type="text"
-                            value={state.cep}
-                            placeholder="Cep"
-                            onChange={handleCepChange}
-                            required
-                            maxLength={8} />
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>CEP:</label>
+                                <input
+                                    type="text"
+                                    value={state.cep}
+                                    placeholder="CEP"
+                                    onChange={handleCepChange}
+                                    maxLength={8}
+                                    required
+                                />
+                            </div>
 
-                        <input type="text" placeholder="Rua" value={state.street} readOnly />
-                        <input type="text" placeholder="Bairro" value={state.neighborhood} readOnly />
-                        <input type="text" placeholder="Cidade" value={state.city} readOnly />
-                        <input type="text" placeholder="Estado" value={state.state} readOnly />
+                            <div className="form-group">
+                                <label>Rua:</label>
+                                <input type="text" value={state.street} readOnly />
+                            </div>
+                        </div>
+
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Bairro:</label>
+                                <input type="text" value={state.neighborhood} readOnly />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Cidade:</label>
+                                <input type="text" value={state.city} readOnly />
+                            </div>
+                        </div>
+
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Estado:</label>
+                                <input type="text" value={state.state} readOnly />
+                            </div>
+                        </div>
+
                     </div>
 
                     <button type='submit'>Enviar</button>
@@ -165,5 +220,7 @@ function RegisterCommon() {
         </section>
     )
 }
+
+
 
 export default RegisterCommon;
