@@ -48,7 +48,7 @@ function reducer(state: any, action: any) {
         case 'addState':
             return {
                 ...state,
-                state: action.payload
+                region: action.payload
             }
         default:
             return state
@@ -67,7 +67,7 @@ const initialState = {
     street: '',
     neighborhood: '',
     city: '',
-    state: '',
+    region: '',
 };
 
 function RegisterCommon() {
@@ -90,9 +90,35 @@ function RegisterCommon() {
         }
     };
 
-    const commonRegister = (e: any) => {
+    const commonRegister = async (e: any) => {
         e.preventDefault();
         console.log(state);
+
+        const { name, lastName, email, phone, cep, street, neighborhood, city, region, } = state;
+
+        const userData = { name, lastName, email, phone };
+        const addressData = { cep, street, neighborhood, city, region };
+
+        const allUserData = {
+            userData,
+            addressData
+        }
+
+        console.log(allUserData)
+
+        try {
+            const sendData = await fetch('http://localhost:3000/users', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                },
+                body: JSON.stringify(allUserData)
+            })
+            const data = await sendData.json();
+            console.log('Data', data)
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     return (
@@ -206,7 +232,7 @@ function RegisterCommon() {
                         <div className="form-row">
                             <div className="form-group">
                                 <label>Estado:</label>
-                                <input type="text" value={state.state} readOnly />
+                                <input type="text" value={state.region} readOnly />
                             </div>
                         </div>
 
