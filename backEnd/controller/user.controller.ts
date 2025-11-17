@@ -7,14 +7,38 @@ const userClient = new PrismaClient();
 export const getAllUsers = async (req: any, res: any) => {
 
     try {
-        const allAuthors = await userClient.user.findMany({
+        const allUsers = await userClient.user.findMany({
 
             include: {
                 addresses: true,
             },
         });
 
-        res.status(200).json({ data: allAuthors });
+        res.status(200).json({ data: allUsers });
+
+    } catch (e) {
+        console.log(e);
+    }
+
+}
+
+//get user by id
+
+export const getUserById = async (req: any, res: any) => {
+
+    const userId = req.body;
+
+    try {
+        const UserById = await userClient.user.findUnique({
+            where: {
+                id: userId
+            },
+            include: {
+                addresses: true
+            }
+        });
+
+        res.status(200).json({ data: UserById });
 
     } catch (e) {
         console.log(e);
@@ -54,4 +78,47 @@ export const insertUser = async (req: any, res: any) => {
     } catch (e) {
         console.log(e)
     }
+}
+
+//update
+
+export const updateUserById = async (req: any, res: any) => {
+
+    const { allUserData } = req.body;
+
+    try {
+        const UserUpdate = await userClient.user.update({
+            where: {
+                id: allUserData.id
+            },
+            data: allUserData
+        });
+
+        res.status(200).json({ data: UserUpdate });
+
+    } catch (e) {
+        console.log(e);
+    }
+
+}
+
+//delete
+
+export const deleteUserById = async (req: any, res: any) => {
+
+    const userId = req.body;
+
+    try {
+        const UserDelete = await userClient.user.delete({
+            where: {
+                id: userId
+            }
+        });
+
+        res.status(200).json({ data: UserDelete });
+
+    } catch (e) {
+        console.log(e);
+    }
+
 }
