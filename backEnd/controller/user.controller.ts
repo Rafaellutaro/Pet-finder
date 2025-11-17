@@ -115,7 +115,16 @@ export const deleteUserById = async (req: any, res: any) => {
             }
         });
 
-        res.status(200).json({ data: UserDelete });
+        const UserDeleteAllAdress = await userClient.address.deleteMany({
+            where: {
+                userId: userId
+            }
+        });
+
+        res.status(200).json({ data: {
+            UserDelete,
+            UserDeleteAllAdress
+        } });
 
     } catch (e) {
         console.log(e);
