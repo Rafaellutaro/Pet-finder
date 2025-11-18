@@ -24,6 +24,11 @@ function reducer(state: any, action: any) {
                 ...state,
                 phone: action.payload
             }
+        case 'addPassword':
+            return {
+                ...state,
+                password: action.payload
+            }
         // Localization
         case 'addCep':
             return {
@@ -62,6 +67,7 @@ const initialState = {
     lastName: '',
     email: '',
     phone: '',
+    password: '',
     // location
     cep: '',
     street: '',
@@ -94,9 +100,9 @@ function RegisterCommon() {
         e.preventDefault();
         console.log(state);
 
-        const { name, lastName, email, phone, cep, street, neighborhood, city, region, } = state;
+        const { name, lastName, email, phone, password, cep, street, neighborhood, city, region, } = state;
 
-        const userData = { name, lastName, email, phone };
+        const userData = { name, lastName, email, phone, password };
         const addressData = { cep, street, neighborhood, city, region };
 
         const allUserData = {
@@ -107,7 +113,7 @@ function RegisterCommon() {
         console.log(allUserData)
 
         try {
-            const sendData = await fetch('http://localhost:3000/users', {
+            const sendData = await fetch('http://localhost:3000/users/insert', {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
@@ -183,6 +189,21 @@ function RegisterCommon() {
                                     placeholder="Telefone"
                                     onChange={(e) =>
                                         dispatch({ type: "addPhone", payload: e.target.value })
+                                    }
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label>Senha:</label>
+                                <input
+                                    type="password"
+                                    value={state.password}
+                                    placeholder="Senha"
+                                    onChange={(e) =>
+                                        dispatch({ type: "addPassword", payload: e.target.value })
                                     }
                                     required
                                 />

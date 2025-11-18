@@ -46,6 +46,32 @@ export const getUserById = async (req: any, res: any) => {
 
 }
 
+//get user by email
+
+export const getUserByEmail = async (req: any, res: any) => {
+
+    const userLogin = req.body;
+
+    try {
+        const UserById = await userClient.user.findUnique({
+            where: {
+                email: userLogin.email,
+                password: userLogin.password
+                
+            },
+            include: {
+                addresses: true
+            }
+        });
+
+        res.status(200).json({ data: UserById });
+
+    } catch (e) {
+        console.log(e);
+    }
+
+}
+
 //insert
 export const insertUser = async (req: any, res: any) => {
     try {
@@ -56,7 +82,8 @@ export const insertUser = async (req: any, res: any) => {
                 name: userData.name,
                 lastName: userData.lastName,
                 email: userData.email,
-                phone: userData.phone
+                phone: userData.phone,
+                password: userData.password
             }
         })
 

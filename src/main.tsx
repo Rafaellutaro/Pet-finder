@@ -7,6 +7,7 @@ import Menu from './components/Selection-Menu.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Header-Layout.tsx'
 import RegisterCommon from "./components/registers-forms/Register-common.tsx"
+import Profile from './components/profile.tsx'
 
 const router = createBrowserRouter([
 
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "/Register-Shelter",
         element: <div>shelter</div>
+      },
+      {
+        path: "/Profile",
+        element: <Layout><Profile /></Layout>
       },
       {
         path: "/MyPets",

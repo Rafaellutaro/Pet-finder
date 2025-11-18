@@ -1,18 +1,41 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../assets/css/Login.css"
 
 function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const login = (e: any) => {
+    const navigate = useNavigate();
+
+    const login = async (e: any) => {
         e.preventDefault();
 
         console.log(email);
         console.log(password);
 
         // create api call to express here
+
+        const loginDetails = {
+            email,
+            password
+        }
+
+        try {
+            const sendRes = await fetch('http://localhost:3000/users/getEmail', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                },
+                body: JSON.stringify(loginDetails)
+            })
+            const data = await sendRes.json();
+            console.log("dados do usuario", data);
+
+            navigate("/Profile")
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     return (
