@@ -32,7 +32,7 @@ function LoginPage() {
             const data = await sendRes.json();
             console.log("dados do usuario", data);
 
-            navigate("/Profile")
+            navigate("/Profile", {state: data})
         } catch (e) {
             console.log(e)
         }

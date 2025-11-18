@@ -6,13 +6,13 @@
 }
 
 html, body {
-  height: 100%; /* Make sure the body takes full height */
-  margin: 0; /* Remove default margin */
+  height: 100%;
+  margin: 0;
 }
 
-/* The container for the header */
+/* Top navigation header (fixed) */
 .header-container {
-  position: fixed; /* Fix the header at the top */
+  position: fixed; 
   top: 0;
   left: 0;
   width: 100%;
@@ -24,26 +24,26 @@ html, body {
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  height: 80px; /* Fix the height of the header */
+  height: 80px;
 }
 
-/* Left side of the header (can be for logo) */
+/* Left side of the header (logo) */
 .header-icon a {
-  color: inherit;       /* Makes the icon inherit its parent color */
-  text-decoration: none; /* Removes underline */
-  display: flex;         /* Ensure proper flex alignment */
+  color: inherit;
+  text-decoration: none;
+  display: flex;
 }
 
 .header-icon a svg {
-  font-size: 50px;       /* Keep your icon size */
-  color: white;           /* Or whatever color you want */
+  font-size: 50px;
+  color: white;
 }
 
 .header-icon a svg:hover {
   color: #ffcc00;
 }
 
-/* Right side of the header for icons */
+/* Right side icons */
 .header-items ul {
   display: flex;
   list-style: none;
@@ -65,20 +65,17 @@ html, body {
   color: #ffcc00;
 }
 
-/* Body content */
+/* Body background */
 body {
-  margin-top: 60px; /* Add top margin to avoid overlap with the header */
-  background-color: #f4f4f4; /* Light background for body */
+  background-color: #f4f4f4;
   font-family: Arial, sans-serif;
-  padding: 20px;
 }
 
-/* Responsive styles for mobile devices */
+/* Responsive */
 @media (max-width: 768px) {
   .header-items ul {
     gap: 15px;
   }
-
   .header-items a {
     font-size: 20px;
   }

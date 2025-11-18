@@ -6,7 +6,6 @@ import { FaShieldDog } from "react-icons/fa6";
 
 function header() {
     return (
-        <section>
             <div className="header-container">
                 <div className="header-icon">
                     <Link to="/"><FaShieldDog /></Link>
@@ -18,7 +17,6 @@ function header() {
                     </ul>
                 </div>
             </div>
-        </section>
     )
 }
 
