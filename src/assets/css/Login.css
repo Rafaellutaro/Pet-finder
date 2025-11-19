@@ -6,11 +6,11 @@ body {
   padding: 0;
 }
 
-section {
+.section-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 35vh; /* Full viewport height */
+  height: 80vh; /* Full viewport height */
   background-color: #f4f6f9;
   flex-direction: column; /* Ensures the content stacks vertically */
 }

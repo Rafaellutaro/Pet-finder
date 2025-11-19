@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 function Register() {
         return (
-            <section>
+            <section className="section-menu-container">
                 <div className="Menu-Container">
 
                     <Link to="/Register-Comum" className="normal-person-container">

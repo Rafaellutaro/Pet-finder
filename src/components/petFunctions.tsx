@@ -1,7 +1,10 @@
 import { FaPlus } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
-const addPet = () => {
+const addPetForm = () => {
     //add pet function here
+
+
 }
 
 export default function petContainer() {
@@ -20,8 +23,10 @@ export default function petContainer() {
 }
 
 export function PetAddContainer () {
+    const nav = useNavigate()
+
     return (
-        <div className="pet-container add-pet" onClick={addPet}>
+        <div className="pet-container add-pet" onClick={() => nav("/addPet")}>
             <FaPlus />
         </div>
     )

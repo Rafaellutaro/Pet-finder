@@ -1,9 +1,9 @@
 /* General Styles for the Register Page */
-section {
+.section-menu-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 35vh;
+  height: 80vh;
   background-color: #f4f4f9;
   margin: 0;
 }

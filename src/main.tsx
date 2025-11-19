@@ -8,6 +8,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Header-Layout.tsx'
 import RegisterCommon from "./components/registers-forms/Register-common.tsx"
 import Profile from './components/profile.tsx'
+import { UserProvider } from './Interfaces/GlobalUser.tsx'
+import RegisterPet from './components/registers-forms/Register-Pet.tsx'
 
 const router = createBrowserRouter([
 
@@ -39,11 +41,18 @@ const router = createBrowserRouter([
         path: "/MyPets",
         element: <div>Pets page here</div>
       },
+      {
+        path: "/addPet",
+        element: <Layout><RegisterPet /></Layout>
+      },
 
 ])
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    {/* @ts-ignore */}
+    <UserProvider>
+      <RouterProvider router={router} />
+    </UserProvider>
   </StrictMode>,
 )

@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../assets/css/Login.css"
+import { useUser } from '../Interfaces/GlobalUser';
 
 function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const navigate = useNavigate();
+    const { setUser } = useUser();
 
     const login = async (e: any) => {
         e.preventDefault();
@@ -32,7 +34,11 @@ function LoginPage() {
             const data = await sendRes.json();
             console.log("dados do usuario", data);
 
-            navigate("/Profile", {state: data})
+            // creating a global variable for the user data
+
+             setUser(data.data);
+
+            navigate("/Profile")
         } catch (e) {
             console.log(e)
         }
@@ -40,7 +46,7 @@ function LoginPage() {
 
     return (
         <>
-            <section>
+            <section className="section-container">
 
                 <div className="Login-Container">
 
@@ -67,7 +73,7 @@ function LoginPage() {
                     </form>
 
                 </div>
-                
+
                 <div className="Bellow-Message">
 
                     <p><Link to={"/changePassword"}>Esqueci a Senha</Link></p>
