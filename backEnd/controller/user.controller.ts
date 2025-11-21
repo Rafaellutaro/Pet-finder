@@ -1,4 +1,5 @@
 import { PrismaClient } from "../../src/generated/prisma/client.ts";
+import jwt from 'jsonwebtoken'
 
 const userClient = new PrismaClient();
 
@@ -44,6 +45,61 @@ export const getUserById = async (req: any, res: any) => {
         console.log(e);
     }
 
+}
+
+//refresh the token
+export const refreshToken = async (req: any, res: any) => {
+     const refreshToken = req.cookies.refreshToken;
+
+     console.log(refreshToken)
+
+    if (!refreshToken) {
+        return res.status(401).json({ error: 'No refresh token provided' });
+    }
+
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as string, (err: any, decoded: any) => {
+        if (err) {
+            return res.status(401).json({ error: 'Invalid or expired refresh token' });
+        }
+
+        // If the refresh token is valid, create a new access token
+        const accessToken = jwt.sign(
+            { userId: decoded.userId },  // Use the same userId from the decoded refresh token
+            process.env.ACCESS_TOKEN_SECRET as string,  // Access token secret
+            { expiresIn: '15m' }  // Set expiration time for access token
+        );
+
+    res.json({ accessToken });
+})}
+
+// create a token
+export const createToken = async (req: any, res: any) => {
+    const data = req.body;
+
+    console.log('userid',data.id)
+
+    const accessToken = jwt.sign(
+        { userId: data.id }, 
+        process.env.ACCESS_TOKEN_SECRET as string,  
+        { expiresIn: '15m' }  
+    );
+
+    const refreshToken = jwt.sign(
+        { userId: data.id },  
+        process.env.REFRESH_TOKEN_SECRET as string,  
+        { expiresIn: '7d' }  
+    );
+
+    console.log(refreshToken)
+
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',  
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    res.json({ accessToken });
 }
 
 //get user by email

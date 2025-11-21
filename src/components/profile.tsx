@@ -2,7 +2,6 @@
 import "../assets/css/Profile.css"
 import PetContainer, { PetAddContainer } from "./petFunctions"
 import { useUser } from "../Interfaces/GlobalUser"
-import { useEffect } from "react";
 
 function ProfilePage() {
     // const location = useLocation();

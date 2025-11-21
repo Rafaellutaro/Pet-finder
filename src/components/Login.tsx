@@ -9,6 +9,7 @@ function LoginPage() {
 
     const navigate = useNavigate();
     const { setUser } = useUser();
+    const { setToken } = useUser();
 
     const login = async (e: any) => {
         e.preventDefault();
@@ -36,7 +37,19 @@ function LoginPage() {
 
             // creating a global variable for the user data
 
+            const createToken = await fetch('http://localhost:3000/users/createToken', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'content-type': 'application/json',
+                },
+                body: JSON.stringify(data.data)
+            })
+
+            const tokenRes = await createToken.json()
+
              setUser(data.data);
+             setToken(tokenRes.accessToken)
 
             navigate("/Profile")
         } catch (e) {
