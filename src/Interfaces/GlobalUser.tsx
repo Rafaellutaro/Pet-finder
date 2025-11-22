@@ -15,6 +15,8 @@ const UserContext = createContext<{
     setUser: (data: UserData) => void;
     token: string | null;
     setToken: (token: string | null) => void;
+    loggedIn: boolean | null;
+    setLoggedIn: (loggedIn: boolean | null) => void;
 } | undefined>(undefined);
 
 export const useUser = () => {
@@ -28,6 +30,7 @@ export const useUser = () => {
 export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>) => {
     const [user, setUser] = useState<UserData | null>(null);
     const [token, setToken] = useState<string | null>(null);
+    const [loggedIn, setLoggedIn] = useState<boolean | null>(false);
 
     
 
@@ -54,11 +57,11 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
                 const userData = await resumeUserData.json();
 
                 setUser(userData.data);
-
-                console.log("resumedUser", userData.data)
+                setLoggedIn(true);
 
             } catch (error) {
                 console.error('Failed to fetch token data', error);
+                setLoggedIn(false);
             }
         };
 
@@ -67,7 +70,7 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
         }, [])
 
     return (
-        <UserContext.Provider value={{ user, setUser, token, setToken }}>
+        <UserContext.Provider value={{ user, setUser, token, setToken, loggedIn, setLoggedIn }}>
             {children}
         </UserContext.Provider>
     );

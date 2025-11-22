@@ -10,6 +10,7 @@ function LoginPage() {
     const navigate = useNavigate();
     const { setUser } = useUser();
     const { setToken } = useUser();
+    const { setLoggedIn } = useUser();
 
     const login = async (e: any) => {
         e.preventDefault();
@@ -46,10 +47,11 @@ function LoginPage() {
                 body: JSON.stringify(data.data)
             })
 
-            const tokenRes = await createToken.json()
+            const tokenRes = await createToken.json();
 
              setUser(data.data);
-             setToken(tokenRes.accessToken)
+             setToken(tokenRes.accessToken);
+             setLoggedIn(true);
 
             navigate("/Profile")
         } catch (e) {
