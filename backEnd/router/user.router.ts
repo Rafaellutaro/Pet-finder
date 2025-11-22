@@ -5,7 +5,7 @@ const userRoute = Router();
 
 userRoute.get("/", getAllUsers);
 userRoute.post("/insert", insertUser);
-userRoute.get("/getId", getUserById);
+userRoute.post("/getId", getUserById);
 userRoute.put("/updateId", updateUserById);
 userRoute.delete("/deleteId", deleteUserById);
 userRoute.post("/getEmail", getUserByEmail);

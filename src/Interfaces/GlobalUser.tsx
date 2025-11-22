@@ -42,6 +42,21 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
                 if (data) {
                     setToken(data); 
                 }
+
+                const resumeUserData = await fetch('http://localhost:3000/users/getId', {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify({id: data.id})
+                })
+
+                const userData = await resumeUserData.json();
+
+                setUser(userData.data);
+
+                console.log("resumedUser", userData.data)
+
             } catch (error) {
                 console.error('Failed to fetch token data', error);
             }

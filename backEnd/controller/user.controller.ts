@@ -27,7 +27,7 @@ export const getAllUsers = async (req: any, res: any) => {
 
 export const getUserById = async (req: any, res: any) => {
 
-    const userId = req.body;
+    const userId = req.body.id;
 
     try {
         const UserById = await userClient.user.findUnique({
@@ -62,14 +62,17 @@ export const refreshToken = async (req: any, res: any) => {
             return res.status(401).json({ error: 'Invalid or expired refresh token' });
         }
 
-        // If the refresh token is valid, create a new access token
+        console.log(decoded)
+
+        const id = decoded.userId;
+
         const accessToken = jwt.sign(
-            { userId: decoded.userId },  // Use the same userId from the decoded refresh token
-            process.env.ACCESS_TOKEN_SECRET as string,  // Access token secret
-            { expiresIn: '15m' }  // Set expiration time for access token
+            { userId: id },  
+            process.env.ACCESS_TOKEN_SECRET as string,  
+            { expiresIn: '15m' }  
         );
 
-    res.json({ accessToken });
+    res.json({ accessToken, id});
 })}
 
 // create a token

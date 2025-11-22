@@ -10,6 +10,10 @@ function ProfilePage() {
 
     const { user } = useUser();
 
+    if (!user){
+        return <div>Loading Data</div>
+    }
+
     console.log("hook data", user)
 
     const complete_name = `${user!.name} ${user!.lastName}`
