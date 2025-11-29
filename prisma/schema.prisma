@@ -15,37 +15,44 @@ datasource db {
 }
 
 model User {
-  id    Int @id @default(autoincrement())
-  name  String
+  id       Int    @id @default(autoincrement())
+  name     String
   lastName String
-  email String @unique
-  phone String @unique
+  email    String @unique
+  phone    String @unique
   password String
 
   addresses Address[]
   // pets Pet[]
+  pets      Pet[]
 }
 
 model Address {
-  id       Int @id @default(autoincrement())
-  User   User @relation(fields: [userId], references: [id])
-  userId Int
-  cep String
-  street String
+  id           Int    @id @default(autoincrement())
+  User         User   @relation(fields: [userId], references: [id])
+  userId       Int
+  cep          String
+  street       String
   neighborhood String
-  city String
-  state String
+  city         String
+  state        String
 }
 
-// model Pet {
-//   id       Int @id @default(autoincrement())
-//   User   User @relation(fields: [userId], references: [id])
-//   userId Int
-//   name String
-//   type String
-//   breed String
-//   age String
-//   details String
-//   imgs Bytes[]
-// }
+model Pet {
+  id      Int      @id @default(autoincrement())
+  User    User     @relation(fields: [userId], references: [id])
+  userId  Int
+  name    String
+  type    String
+  breed   String
+  age     String
+  details String
+  imgs    petImg[]
+}
 
+model petImg {
+  id    Int    @id @default(autoincrement())
+  Pet   Pet    @relation(fields: [petId], references: [id])
+  petId Int
+  url   String
+}

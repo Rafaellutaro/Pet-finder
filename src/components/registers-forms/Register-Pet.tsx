@@ -1,5 +1,7 @@
 import { useReducer } from 'react';
 import '../../assets/css/RegisterCommon.css'
+import supabase from '../../../backEnd/client/SupabaseClient';
+import { useUser } from "../../Interfaces/GlobalUser"
 
 function reducer(state: any, action: any) {
     switch (action.type) {
@@ -29,6 +31,11 @@ function reducer(state: any, action: any) {
                 ...state,
                 details: action.payload
             }
+        case 'addImage':
+            return {
+                ...state,
+                image: action.payload
+            }
         default:
             return state
 
@@ -42,27 +49,71 @@ const initialState = {
     type: '',
     age: '',
     details: '',
+    image: '',
 };
 
 function RegisterPet() {
     const [state, dispatch] = useReducer(reducer, initialState);
 
+    const { user } = useUser();
+
     const RegisterPet = async (e: any) => {
         e.preventDefault();
         console.log(state);
 
-        const { name, type, breed, age, details } = state;
+        const { name, type, breed, age, details, image } = state;
 
-        const petData = { name, breed, type, age, details };
-
-        const allPetData = {
-            petData
-        }
-
-        console.log(allPetData)
+        const petData = { name, breed, type, age, details, image };
 
         try {
-            // insert pet api here
+            const img = image[0]
+            const fileName = image[0].name
+
+            console.log('img', img)
+            console.log("fileName", fileName)
+            const { data: uploadData, error: uploadError } = await supabase
+                .storage
+                .from('pets')
+                .upload(fileName, img, {
+                    cacheControl: '3600',
+                    upsert: false
+                })
+
+            if (uploadError) {
+                console.error(uploadError);
+                throw uploadError;
+            }
+
+            const { data: urlData } = supabase.storage
+                .from("pets")
+                .getPublicUrl(fileName);
+
+            const imageUrl = urlData.publicUrl;
+            const userId = user?.id
+
+            const allPetData = {
+                petData,
+                userId,
+                imageUrl
+            }
+
+            console.log('all pet data', allPetData)
+
+            const sendRes = await fetch('http://localhost:3000/pets/insert', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json',
+                },
+                body: JSON.stringify(allPetData)
+            })
+            const data = await sendRes.json();
+
+            console.log("all pet Data", data);
+
+
+
+
+
         } catch (e) {
             console.log(e)
         }
@@ -147,7 +198,7 @@ function RegisterPet() {
                                     }
                                     required
                                     rows={8}
-                                    cols={50} 
+                                    cols={50}
                                 />
                             </div>
                         </div>
@@ -158,6 +209,10 @@ function RegisterPet() {
                                 <input
                                     type="file"
                                     placeholder="arquivo"
+                                    accept="image/*"
+                                    onChange={(e) =>
+                                        dispatch({ type: "addImage", payload: e.target.files })
+                                    }
                                     required
                                 />
                             </div>

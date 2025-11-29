@@ -1,7 +1,7 @@
-import { PrismaClient } from "../../src/generated/prisma/client.ts";
+import prisma from '../../backEnd/client/PrismaClient.ts'
 import jwt from 'jsonwebtoken'
 
-const userClient = new PrismaClient();
+const userClient = prisma
 
 //get
 

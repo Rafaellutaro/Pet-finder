@@ -2,7 +2,7 @@ import express from "express";
 import userRoute from "./router/user.router.ts"
 import cookieParser from 'cookie-parser'
 import cors from 'cors';
-// import bookRoute from "../src/routes/book.router";
+import petRoute from "../backEnd/router/pet.router.ts";
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -26,6 +26,7 @@ app.get("/bob", (req, res) => {
 })
 
 app.use("/users", userRoute)
+app.use("/pets", petRoute)
 // app.use("/books", bookRoute)
 
 app.listen(port, () => {
