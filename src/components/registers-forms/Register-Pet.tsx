@@ -2,6 +2,7 @@ import { useReducer } from 'react';
 import '../../assets/css/RegisterCommon.css'
 import supabase from '../../../backEnd/client/SupabaseClient';
 import { useUser } from "../../Interfaces/GlobalUser"
+import { useNavigate } from 'react-router-dom';
 
 function reducer(state: any, action: any) {
     switch (action.type) {
@@ -57,6 +58,8 @@ function RegisterPet() {
 
     const { user } = useUser();
 
+    const nav = useNavigate();
+
     const RegisterPet = async (e: any) => {
         e.preventDefault();
         console.log(state);
@@ -67,7 +70,7 @@ function RegisterPet() {
 
         try {
             const img = image[0]
-            const fileName = image[0].name
+            const fileName = `${Date.now()}_${image[0].name}`;
 
             console.log('img', img)
             console.log("fileName", fileName)
@@ -110,9 +113,8 @@ function RegisterPet() {
 
             console.log("all pet Data", data);
 
-
-
-
+            
+            nav("/Profile")
 
         } catch (e) {
             console.log(e)
