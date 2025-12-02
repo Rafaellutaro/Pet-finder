@@ -41,7 +41,7 @@ export default function petContainer() {
     if (loading) return <div></div>
 
    return (
-        <div className="pets-list">
+        <>
             {pets.map((item: any) => (
                 <div key={item.id} className="pet-container">
                     {/* Display first image in imgs array */}
@@ -55,7 +55,7 @@ export default function petContainer() {
                     </div>
                 </div>
             ))}
-        </div>
+        </>
     );
 }
 
