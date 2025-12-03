@@ -1,104 +1,27 @@
-import { useReducer } from 'react';
 import '../../assets/css/RegisterCommon.css'
-
-function reducer(state: any, action: any) {
-    switch (action.type) {
-        //personal Data
-        case 'addName':
-            return {
-                ...state,
-                name: action.payload
-            }
-        case 'addLastName':
-            return {
-                ...state,
-                lastName: action.payload
-            }
-        case 'addEmail':
-            return {
-                ...state,
-                email: action.payload
-            }
-        case 'addPhone':
-            return {
-                ...state,
-                phone: action.payload
-            }
-        case 'addPassword':
-            return {
-                ...state,
-                password: action.payload
-            }
-        // Localization
-        case 'addCep':
-            return {
-                ...state,
-                cep: action.payload
-            }
-        case 'addStreet':
-            return {
-                ...state,
-                street: action.payload
-            }
-        case 'addNeighborhood':
-            return {
-                ...state,
-                neighborhood: action.payload
-            }
-        case 'addCity':
-            return {
-                ...state,
-                city: action.payload
-            }
-        case 'addState':
-            return {
-                ...state,
-                region: action.payload
-            }
-        default:
-            return state
-
-    }
-}
-
-const initialState = {
-    //personal data
-    name: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    password: '',
-    // location
-    cep: '',
-    street: '',
-    neighborhood: '',
-    city: '',
-    region: '',
-};
+import { cepLookUp } from '../functions/userFunctions';
 
 function RegisterCommon() {
-    const [state, dispatch] = useReducer(reducer, initialState);
+    const initial = {
+        //personal data
+        name: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        password: '',
+        // location
+        cep: '',
+        street: '',
+        neighborhood: '',
+        city: '',
+        region: '',
+    }
 
-    const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const rawCep = e.target.value.replace(/\D/g, "");
-        dispatch({ type: 'addCep', payload: rawCep })
-
-        if (rawCep.length === 8) {
-            const res = await fetch(`https://viacep.com.br/ws/${rawCep}/json/`);
-            const data = await res.json();
-
-            if (!data.erro) {
-                dispatch({ type: 'addStreet', payload: data.logradouro })
-                dispatch({ type: 'addNeighborhood', payload: data.bairro })
-                dispatch({ type: 'addCity', payload: data.localidade })
-                dispatch({ type: 'addState', payload: data.uf })
-            }
-        }
-    };
+    const {handleCepChange, state, dispatch} = cepLookUp(initial);
 
     const commonRegister = async (e: any) => {
         e.preventDefault();
-        console.log(state);
+        console.log("state register",state);
 
         const { name, lastName, email, phone, password, cep, street, neighborhood, city, region, } = state;
 

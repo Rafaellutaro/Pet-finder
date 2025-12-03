@@ -1,6 +1,6 @@
 // import { useLocation } from 'react-router-dom';
 import "../assets/css/Profile.css"
-import PetContainer, { PetAddContainer } from "./petFunctions"
+import PetContainer, { PetAddContainer } from "./functions/petFunctions"
 import { useUser } from "../Interfaces/GlobalUser"
 
 function ProfilePage() {
