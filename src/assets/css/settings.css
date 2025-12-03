@@ -1,4 +1,6 @@
-/* GENERAL PAGE */
+/* ---------------------------------------------------
+   GENERAL PAGE
+--------------------------------------------------- */
 .settings-page {
   width: 100%;
   padding: 20px;
@@ -6,8 +8,10 @@
   margin-top: 40px;
 }
 
-/* PROFILE HEADER */
-.profile-header-settings{
+/* ---------------------------------------------------
+   PROFILE HEADER
+--------------------------------------------------- */
+.profile-header-settings {
   position: relative;
   width: 100%;
   display: flex;
@@ -74,7 +78,9 @@
   cursor: pointer;
 }
 
-/* TABS */
+/* ---------------------------------------------------
+   TABS
+--------------------------------------------------- */
 .tabs {
   margin-top: 25px;
   display: flex;
@@ -97,7 +103,9 @@
   border-bottom: 2px solid #2f6cf6;
 }
 
-/* DETAILS SECTION */
+/* ---------------------------------------------------
+   DETAILS CONTAINER
+--------------------------------------------------- */
 .details-container {
   margin-top: 30px;
   background: #f5f7fc;
@@ -105,27 +113,43 @@
   border-radius: 12px;
 }
 
+/* Grid with two columns */
 .details-grid {
   display: flex;
   gap: 40px;
 }
 
+/* Column styling */
 .details-column {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 25px; /* SPACE BETWEEN BLOCKS */
 }
 
-/* FIELDS */
+/* SECTION TITLES (H3) */
+.details-column h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 5px 0; /* small spacing above fields */
+  padding-bottom: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* ---------------------------------------------------
+   FORM FIELDS
+--------------------------------------------------- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .field label {
   font-weight: 600;
   font-size: 14px;
-}
-
-.field p {
-  margin: 3px 0 0 0;
-  color: #555;
+  color: #444;
 }
 
 .field input {
@@ -133,19 +157,87 @@
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
-  margin-top: 3px;
+  background: white;
 }
 
 .required {
   color: red;
 }
 
-/* SAVE BUTTON */
+.field p {
+  margin: 0;
+  color: #555;
+}
+
+/* ---------------------------------------------------
+   SELECT (Modern Dropdown)
+--------------------------------------------------- */
+.field select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+  background: #fff;
+  font-size: 14px;
+  appearance: none;
+  cursor: pointer;
+  transition: 0.2s;
+  background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 20 20' fill='gray' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7L10 12L15 7' stroke='gray' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.field select:hover {
+  border-color: #2f6cf6;
+}
+
+.field select:focus {
+  border-color: #2f6cf6;
+  box-shadow: 0 0 4px rgba(47,108,246,0.3);
+  outline: none;
+}
+
+.field option {
+  padding: 12px;
+}
+
+/* ---------------------------------------------------
+   ADDRESS GRID
+--------------------------------------------------- */
+.address-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
+  margin-top: 5px;
+}
+
+.address-grid input {
+  width: 100%;
+}
+
+.address-grid .full {
+  grid-column: span 2;
+}
+
+/* ---------------------------------------------------
+   TIP TEXT
+--------------------------------------------------- */
+.details-container p {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+}
+
+/* ---------------------------------------------------
+   SAVE BUTTON
+--------------------------------------------------- */
 .save-btn {
-  margin-top: 30px;
+  margin-top: 25px;
   background: #2f6cf6;
   color: white;
-  padding: 10px 25px;
+  padding: 12px 28px;
   border: none;
   border-radius: 6px;
   cursor: pointer;

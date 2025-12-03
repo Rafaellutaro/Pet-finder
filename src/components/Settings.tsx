@@ -10,7 +10,7 @@ function ProfileDetails() {
     console.log(allAddress)
 
     useEffect(() => {
-        if (!address){
+        if (!address) {
             const initialAddress = allAddress![0]
             setAddress(JSON.stringify(initialAddress))
         }
@@ -31,6 +31,7 @@ function ProfileDetails() {
 
                 {/* LEFT COLUMN */}
                 <div className="details-column">
+                    <h3>Informações Pessoais</h3>
                     <div className="field">
                         <label>Nome Completo: {complete_name}</label>
                         <input type="text" placeholder="Inalteravel" readOnly />
@@ -40,7 +41,8 @@ function ProfileDetails() {
                         <label>Email: {user!.email}</label>
                         <input type="text" placeholder="novoemail@gmail.com" />
                     </div>
-
+                    
+                    <h3>Segurança</h3>
                     <div className="field">
                         <label>Alterar Senha: </label>
                         <input type="text" placeholder="senha atual" />
@@ -50,29 +52,46 @@ function ProfileDetails() {
 
                 {/* RIGHT COLUMN */}
                 <div className="details-column">
+                    <h3>Endereço</h3>
                     <div className="field">
-                        <label>Telephone: {user!.email}</label>
+                        <label>Telephone: {user!.phone}</label>
                         <input type="tel" placeholder="(00) 0000-0000" />
                     </div>
 
                     <div className="field">
                         <label>Selecione o endereço: </label>
                         <select name="selectedAddr" id="selectedAddr" onChange={(e) => setAddress(e.target.value)} defaultValue={address}>
-                            
+
                             <>
                                 {allAddress!.map((addr: any, i: number) => (
                                     <option key={i} value={JSON.stringify(addr)}>{`${addr.street} | ${addr.neighborhood} | ${addr.city} | ${addr.state}`}
-                                        
+
                                     </option>
                                 ))}
                             </>
                         </select>
                     </div>
+
+                    <div className="field">
+                        <label>Novo Endereço:</label>
+
+                        <div className="address-grid">
+                            <input type="text" placeholder="CEP" maxLength={8} />
+                            <input type="text" placeholder="Rua" readOnly />
+
+                            <input type="text" placeholder="Bairro" readOnly />
+                            <input type="text" placeholder="Cidade" readOnly />
+
+                            <input type="text" placeholder="Estado" readOnly className="full" />
+                        </div>
+                    </div>
                 </div>
 
             </div>
 
-            <button className="save-btn">Save</button>
+            <p>Dica: Apenas os campos preenchidos alteram.</p>
+
+            <button className="save-btn">Salvar</button>
         </div>
     )
 }
