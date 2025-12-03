@@ -4,32 +4,41 @@ import PetContainer, { PetAddContainer } from "./petFunctions"
 import { useUser } from "../Interfaces/GlobalUser"
 
 function ProfilePage() {
-    // const location = useLocation();
-    // const { data } = location.state;
-    // console.log(data);
-
     const { user } = useUser();
 
     if (!user){
         return <div>Loading Data</div>
     }
 
-    console.log("hook data", user)
+    const bannerUrl = 'https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg'
 
     const complete_name = `${user!.name} ${user!.lastName}`
 
     return (
         <div className="ProfilePage-mainContainer">
+            
+            {/* --- Fancy Profile Header --- */}
             <div className="profile-header">
-                <img src="" alt="" />
+                <div className="profile-banner" style={{backgroundImage: `url(${bannerUrl})`}}></div>
+                
+                <div className="profile-content">
+                    <div className="avatar-wrapper">
+                        <img
+                            className="profile-avatar"
+                            src="https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg"
+                            alt="profile avatar"
+                        />
+                    </div>
 
-                <div className="name-header">
-                    <p>{complete_name}</p>
-                    <p>{user!.email}</p>
-                    <p>{user!.phone}</p>
+                    <div className="name-header">
+                        <p className="profile-name">{complete_name}</p>
+                        <p className="profile-info">{user!.email}</p>
+                        <p className="profile-info">{user!.phone}</p>
+                    </div>
                 </div>
             </div>
 
+            {/* PETS */}
             <div className="details">
                 <div className="pet-grid">
                     <PetAddContainer />

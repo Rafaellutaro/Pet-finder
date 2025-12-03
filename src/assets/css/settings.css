@@ -1,0 +1,154 @@
+/* GENERAL PAGE */
+.settings-page {
+  width: 100%;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  margin-top: 40px;
+}
+
+/* PROFILE HEADER */
+.profile-header-settings{
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  border-radius: 12px;
+  padding: 25px;
+  background-color: #f0f0f0;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  justify-content: space-between;
+}
+
+.profile-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.profile-img {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-tags {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.tag {
+  padding: 3px 8px;
+  font-size: 13px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.tag.blue {
+  background: #e6f0ff;
+  color: #2f6cf6;
+}
+
+.tag.green {
+  background: #e7f9ef;
+  color: #2e9f5c;
+}
+
+.profile-name {
+  margin: 0;
+  font-size: 22px;
+}
+
+.profile-email {
+  margin: 0;
+  color: gray;
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  color: #2f6cf6;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* TABS */
+.tabs {
+  margin-top: 25px;
+  display: flex;
+  gap: 25px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+}
+
+.tab {
+  background: none;
+  border: none;
+  font-size: 16px;
+  padding-bottom: 8px;
+  cursor: pointer;
+  color: #444;
+}
+
+.tab.active {
+  color: #2f6cf6;
+  border-bottom: 2px solid #2f6cf6;
+}
+
+/* DETAILS SECTION */
+.details-container {
+  margin-top: 30px;
+  background: #f5f7fc;
+  padding: 25px;
+  border-radius: 12px;
+}
+
+.details-grid {
+  display: flex;
+  gap: 40px;
+}
+
+.details-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* FIELDS */
+.field label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.field p {
+  margin: 3px 0 0 0;
+  color: #555;
+}
+
+.field input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-top: 3px;
+}
+
+.required {
+  color: red;
+}
+
+/* SAVE BUTTON */
+.save-btn {
+  margin-top: 30px;
+  background: #2f6cf6;
+  color: white;
+  padding: 10px 25px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  float: right;
+}

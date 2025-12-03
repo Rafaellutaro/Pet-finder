@@ -10,6 +10,7 @@ import RegisterCommon from "./components/registers-forms/Register-common.tsx"
 import Profile from './components/profile.tsx'
 import { UserProvider } from './Interfaces/GlobalUser.tsx'
 import RegisterPet from './components/registers-forms/Register-Pet.tsx'
+import Settings from './components/Settings.tsx'
 
 const router = createBrowserRouter([
 
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "/addPet",
         element: <Layout><RegisterPet /></Layout>
+      },
+      {
+        path: "/Settings",
+        element: <Layout><Settings /></Layout>
       },
 
 ])
