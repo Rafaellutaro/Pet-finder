@@ -1,11 +1,24 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useUser } from "../Interfaces/GlobalUser"
 import '../assets/css/settings.css';
 
 function ProfileDetails() {
     const { user } = useUser();
+    const allAddress = user?.addresses
+    const [address, setAddress] = useState('');
 
-    if (!user){
+    console.log(allAddress)
+
+    useEffect(() => {
+        if (!address){
+            const initialAddress = allAddress![0]
+            setAddress(JSON.stringify(initialAddress))
+        }
+
+        console.log("endereço", address)
+    }, [address])
+
+    if (!user) {
         return <div>Loading Data</div>
     }
 
@@ -44,10 +57,15 @@ function ProfileDetails() {
 
                     <div className="field">
                         <label>Selecione o endereço: </label>
-                        <select name="selectedAddr" id="selectedAddr">
-                            <option value="1">endereço 1</option>
-                            <option value="2">endereço 2</option>
-                            <option value="3">endereço 3</option>
+                        <select name="selectedAddr" id="selectedAddr" onChange={(e) => setAddress(e.target.value)} defaultValue={address}>
+                            
+                            <>
+                                {allAddress!.map((addr: any, i: number) => (
+                                    <option key={i} value={JSON.stringify(addr)}>{`${addr.street} | ${addr.neighborhood} | ${addr.city} | ${addr.state}`}
+                                        
+                                    </option>
+                                ))}
+                            </>
                         </select>
                     </div>
                 </div>
@@ -63,7 +81,7 @@ function Settings() {
     const { user } = useUser();
     const [activeTab, setActiveTab] = useState("settings");
 
-    if (!user){
+    if (!user) {
         return <div>Loading Data</div>
     }
 
