@@ -6,7 +6,7 @@ const userRoute = Router();
 userRoute.get("/", getAllUsers);
 userRoute.post("/insert", insertUser);
 userRoute.post("/getId", getUserById);
-userRoute.put("/updateId", updateUserById);
+userRoute.put("/updateById", updateUserById);
 userRoute.delete("/deleteId", deleteUserById);
 userRoute.post("/getEmail", getUserByEmail);
 userRoute.post("/createToken", createToken);

@@ -49,9 +49,9 @@ export const getUserById = async (req: any, res: any) => {
 
 //refresh the token
 export const refreshToken = async (req: any, res: any) => {
-     const refreshToken = req.cookies.refreshToken;
+    const refreshToken = req.cookies.refreshToken;
 
-     console.log(refreshToken)
+    console.log(refreshToken)
 
     if (!refreshToken) {
         return res.status(401).json({ error: 'No refresh token provided' });
@@ -67,30 +67,31 @@ export const refreshToken = async (req: any, res: any) => {
         const id = decoded.userId;
 
         const accessToken = jwt.sign(
-            { userId: id },  
-            process.env.ACCESS_TOKEN_SECRET as string,  
-            { expiresIn: '15m' }  
+            { userId: id },
+            process.env.ACCESS_TOKEN_SECRET as string,
+            { expiresIn: '15m' }
         );
 
-    res.json({ accessToken, id});
-})}
+        res.json({ accessToken, id });
+    })
+}
 
 // create a token
 export const createToken = async (req: any, res: any) => {
     const data = req.body;
 
-    console.log('userid',data.id)
+    console.log('userid', data.id)
 
     const accessToken = jwt.sign(
-        { userId: data.id }, 
-        process.env.ACCESS_TOKEN_SECRET as string,  
-        { expiresIn: '15m' }  
+        { userId: data.id },
+        process.env.ACCESS_TOKEN_SECRET as string,
+        { expiresIn: '15m' }
     );
 
     const refreshToken = jwt.sign(
-        { userId: data.id },  
-        process.env.REFRESH_TOKEN_SECRET as string,  
-        { expiresIn: '7d' }  
+        { userId: data.id },
+        process.env.REFRESH_TOKEN_SECRET as string,
+        { expiresIn: '7d' }
     );
 
     console.log(refreshToken)
@@ -98,7 +99,7 @@ export const createToken = async (req: any, res: any) => {
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: 'lax',  
+        sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
@@ -116,7 +117,7 @@ export const getUserByEmail = async (req: any, res: any) => {
             where: {
                 email: userLogin.email,
                 password: userLogin.password
-                
+
             },
             include: {
                 addresses: true
@@ -157,10 +158,12 @@ export const insertUser = async (req: any, res: any) => {
             }
         })
 
-        res.status(201).json({data: {
-            createUser,
-            createUserAddres
-        }})
+        res.status(201).json({
+            data: {
+                createUser,
+                createUserAddres
+            }
+        })
     } catch (e) {
         console.log(e)
     }
@@ -170,22 +173,57 @@ export const insertUser = async (req: any, res: any) => {
 
 export const updateUserById = async (req: any, res: any) => {
 
-    const { allUserData } = req.body;
+    const { address, filteredPersonalData, filteredNewAddressData, userId } = req.body;
+    console.log("endereço antigo", address)
+    console.log("dados novos", filteredNewAddressData, filteredPersonalData)
+    console.log("userId", userId)
+
+    const updatePersonalData = { ...filteredPersonalData };
+    const updateNewAddressData = { ...filteredNewAddressData };
+
+    if (updatePersonalData.newPassword) {
+        updatePersonalData.password = updatePersonalData.newPassword;
+        delete updatePersonalData.newPassword;
+    }
+
+    if (updateNewAddressData.region) {
+        updateNewAddressData.state = updateNewAddressData.region;
+        delete updateNewAddressData.region;
+    }
+
+    console.log("data updated", updatePersonalData, updateNewAddressData)
+
+    if (
+        Object.keys(updatePersonalData).length === 0 &&
+        Object.keys(updateNewAddressData).length === 0
+    ) {
+        console.log("entrei aqui");
+        res.status(400).json({ error: "No data to update" });
+    }
 
     try {
-        const UserUpdate = await userClient.user.update({
-            where: {
-                id: allUserData.id
-            },
-            data: allUserData
-        });
+        const response: any = {};
 
-        res.status(200).json({ data: UserUpdate });
+         if (Object.keys(updatePersonalData).length > 0) {
+            response.personal = await userClient.user.update({
+                where: { id: userId },
+                data: updatePersonalData
+            });
+        }
+
+         if (Object.keys(updateNewAddressData).length > 0) {
+            response.address = await userClient.address.update({
+                where: { id: address.id },
+                data: updateNewAddressData
+            });
+        }
+        
+        res.status(200).json({ updated: response });
 
     } catch (e) {
         console.log(e);
+        res.status(500).json({ error: "Internal error updating user" });
     }
-
 }
 
 //delete
@@ -207,10 +245,12 @@ export const deleteUserById = async (req: any, res: any) => {
             }
         });
 
-        res.status(200).json({ data: {
-            UserDelete,
-            UserDeleteAllAdress
-        } });
+        res.status(200).json({
+            data: {
+                UserDelete,
+                UserDeleteAllAdress
+            }
+        });
 
     } catch (e) {
         console.log(e);

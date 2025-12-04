@@ -43,14 +43,67 @@ function ProfileDetails() {
 
     const complete_name = `${user!.name} ${user!.lastName}`
 
-    const submitForm = (e: any) => {
-        // i will probably need to insert the form stuff here, dont forget it!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    const submitForm = async (e: any) => {
+        // i will NEED to insert the form stuff here, dont forget it!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // i will give you a dorito afterwards
         // im talking to myself, im going insane at this point
         e.preventDefault();
 
         console.log("alldata", state)
         console.log('oldAddress', address)
+
+        const userId = user?.id;
+
+        const { cep, city, neighborhood, region, street } = state
+        const { email, password, newPassword, phone } = state
+
+        const newAddress = {
+            cep, city, neighborhood, region, street
+        }
+
+        const personalData = {
+            email, password, newPassword, phone
+        }
+
+        const filteredNewAddressData = Object.fromEntries(
+            Object.entries(newAddress).filter(([_, value]) => value !== "" && value !== null));
+
+        const filteredPersonalData = Object.fromEntries(
+            Object.entries(personalData).filter(([_, value]) => value !== "" && value !== null));
+
+        delete filteredPersonalData.password
+
+        console.log("new address", newAddress)
+        console.log("new personal Data", personalData)
+
+        let data = {}
+
+        if (!filteredNewAddressData.cep) {
+            data = {
+                filteredPersonalData,
+                userId
+            }
+        } else {
+            data = {
+                filteredPersonalData,
+                filteredNewAddressData,
+                address,
+                userId
+            }
+        }
+
+        console.log("dados finais", data)
+
+        const response = await fetch('http://localhost:3000/users/updateById', {
+            method: 'PUT',
+            headers: {
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+
+        const res = await response.json();
+        console.log("res", res)
 
     }
 
@@ -89,7 +142,7 @@ function ProfileDetails() {
                         </div>
 
                         <div className="field">
-                            <label>Selecione o endereço: </label>
+                            <label>Selecione o endereço que você deseje alterar: </label>
                             <select name="selectedAddr" id="selectedAddr" onChange={(e) => setAddress(JSON.parse(e.target.value))} defaultValue={address}>
 
                                 <>
