@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import "./assets/css/App.css";
 import heroImg from "./assets/imgs/hero.png";
 
@@ -6,7 +7,44 @@ const dog2 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/
 const dog3 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
 const dog4 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
 
+const statesOfBrazil = [
+  { name: "Acre", uf: "AC" },
+  { name: "Alagoas", uf: "AL" },
+  { name: "Amapá", uf: "AP" },
+  { name: "Amazonas", uf: "AM" },
+  { name: "Bahia", uf: "BA" },
+  { name: "Ceará", uf: "CE" },
+  { name: "Distrito Federal", uf: "DF" },
+  { name: "Espírito Santo", uf: "ES" },
+  { name: "Goiás", uf: "GO" },
+  { name: "Maranhão", uf: "MA" },
+  { name: "Mato Grosso", uf: "MT" },
+  { name: "Mato Grosso do Sul", uf: "MS" },
+  { name: "Minas Gerais", uf: "MG" },
+  { name: "Pará", uf: "PA" },
+  { name: "Paraíba", uf: "PB" },
+  { name: "Paraná", uf: "PR" },
+  { name: "Pernambuco", uf: "PE" },
+  { name: "Piauí", uf: "PI" },
+  { name: "Rio de Janeiro", uf: "RJ" },
+  { name: "Rio Grande do Norte", uf: "RN" },
+  { name: "Rio Grande do Sul", uf: "RS" },
+  { name: "Rondônia", uf: "RO" },
+  { name: "Roraima", uf: "RR" },
+  { name: "Santa Catarina", uf: "SC" },
+  { name: "São Paulo", uf: "SP" },
+  { name: "Sergipe", uf: "SE" },
+  { name: "Tocantins", uf: "TO" }
+];
+
+
 function App() {
+  const [selectedOrigin, setSelectedOrigin] = useState('');
+
+  useEffect(() => {
+    console.log(selectedOrigin)
+  }, [selectedOrigin])
+
   return (
     <>
       {/* HERO SECTION */}
@@ -21,8 +59,12 @@ function App() {
           </p>
 
           <div className="hero-search">
-            <select>
-              <option>Selecione Local</option>
+            <select  onChange={(e) =>  setSelectedOrigin(JSON.parse(e.target.value))} defaultValue={statesOfBrazil[0].name}>
+              {statesOfBrazil.map((origin: any, i: number) => (
+                                        <option key={i} value={JSON.stringify(origin)}>
+                                          {`${statesOfBrazil[i].name}`}
+                                        </option>
+                                    ))}
             </select>
             <button>Procurar</button>
           </div>
