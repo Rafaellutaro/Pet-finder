@@ -57,6 +57,10 @@ function ProfileDetails() {
         const { cep, city, neighborhood, region, street } = state
         const { email, password, newPassword, phone } = state
 
+        if (userId != password){
+            return <p>senha incorreta</p>
+        }
+
         const newAddress = {
             cep, city, neighborhood, region, street
         }

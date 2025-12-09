@@ -1,0 +1,326 @@
+/* ----------------------------------------------------- */
+/* GLOBAL THEME                                           */
+/* ----------------------------------------------------- */
+:root {
+  --primary: #ff7b54;
+  --primary-light: #ffb08a;
+  --secondary: #4a4a4a;
+  --bg: #fff7f2;
+  --bg-alt: #ffefe7;
+  --white: #ffffff;
+  --radius: 18px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--secondary);
+  overflow-x: hidden;
+}
+
+section {
+  position: relative;
+  padding: 80px 10%;
+}
+
+/* smooth fade for all sections */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ----------------------------------------------------- */
+/* HERO WITH ORGANIC SHAPE                               */
+/* ----------------------------------------------------- */
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100vh;
+  padding: 0 10%;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--bg-alt), var(--bg));
+  border-radius: 0 0 60px 60px;
+  animation: fadeIn 0.9s ease forwards;
+}
+
+/* main big blur background */
+.hero::before {
+  content: "";
+  position: absolute;
+  right: -8%;
+  top: -10%;
+  width: 60%;
+  height: 120%;
+  background: rgba(255, 123, 84, 0.35); /* primary color glow */
+  border-radius: 50% 40% 60% 30%;
+  filter: blur(40px);
+  z-index: 0;
+}
+
+/* dashed circle decoration */
+.hero::after {
+  content: "";
+  position: absolute;
+  right: 5%;
+  top: 20%;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  z-index: 0;
+}
+
+/* HERO LEFT TEXT */
+.hero-left {
+  max-width: 50%;
+  margin-top: 75px;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-left h1 {
+  font-size: 3.4rem;
+  line-height: 1.1;
+  padding-bottom: 10px;
+  color: var(--secondary);
+}
+
+.hero-left span {
+  color: var(--primary);
+}
+
+.hero-left p {
+  font-size: 1.3rem;
+  margin: 20px 0 40px;
+  color: var(--secondary);
+}
+
+.hero-left p:last-of-type {
+  margin-top: 35px;
+  margin-bottom: 18px;
+}
+
+/* hero search */
+.hero-search {
+  display: flex;
+  gap: 15px;
+}
+
+.hero-search select,
+.hero-search button {
+  padding: 14px 22px;
+  font-size: 1rem;
+  border-radius: var(--radius);
+  border: none;
+}
+
+.hero-search select {
+  background: var(--white);
+  border: 2px solid #eee;
+  color: var(--secondary);
+}
+
+.hero-search button {
+  background: var(--primary);
+  color: var(--white);
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.hero-search button:hover {
+  background: var(--primary-light);
+}
+
+.hero-right img {
+  height: 90%;
+  width: 60%;
+  object-fit: cover;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+/* ----------------------------------------------------- */
+/* POPULAR CITIES SECTION                                */
+/* ----------------------------------------------------- */
+
+.cities-grid {
+  display: flex;
+  flex-wrap:wrap;
+  gap: 14px;
+  max-width: 600px;
+}
+
+.city-pill {
+  padding: 14px 34px;
+  border-radius: 40px;
+  background: var(--white);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  transition: 0.2s;
+  border: 2px solid transparent;
+  color: var(--secondary);
+}
+
+.city-pill:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* ----------------------------------------------------- */
+/* DOGS GRID                                              */
+/* ----------------------------------------------------- */
+.dogs-grid {
+  padding-top: 140px;
+}
+
+.dogs-grid .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 30px;
+}
+
+.dogs-grid img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  transition: 0.3s ease;
+  box-shadow: 0 5px 18px rgba(0,0,0,0.1);
+}
+
+.dogs-grid img:hover {
+  transform: scale(1.04);
+}
+
+/* ----------------------------------------------------- */
+/* ACCESSORIES                                            */
+/* ----------------------------------------------------- */
+.accessories {
+  background: var(--bg-alt);
+  border-radius: 60px;
+}
+
+.accessories-grid {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.access-card {
+  width: 270px;
+  height: 230px;
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  transition: 0.3s;
+}
+
+.access-card:hover {
+  transform: translateY(-10px);
+}
+
+.access-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ----------------------------------------------------- */
+/* BREEDS                                                 */
+/* ----------------------------------------------------- */
+.breeds-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 35px;
+}
+
+.breeds-grid img {
+  width: 100%;
+  height: 240px;
+  border-radius: var(--radius);
+  object-fit: cover;
+  transition: 0.3s;
+}
+
+.breeds-grid img:hover {
+  transform: scale(1.05);
+}
+
+/* ----------------------------------------------------- */
+/* BLOG SECTION                                           */
+/* ----------------------------------------------------- */
+.blog {
+  background: var(--bg-alt);
+  border-radius: 60px;
+}
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 35px;
+}
+
+.blog-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+  transition: 0.3s;
+}
+
+.blog-card:hover {
+  transform: translateY(-10px);
+}
+
+.blog-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.blog-card p {
+  padding: 20px;
+  color: var(--secondary);
+}
+
+/* ----------------------------------------------------- */
+/* RESPONSIVITY                                           */
+/* ----------------------------------------------------- */
+@media (max-width: 950px) {
+  .hero {
+    flex-direction: column-reverse;
+    text-align: center;
+    height: auto;
+    padding: 60px 10% 130px;
+  }
+
+  .hero::before {
+    width: 130%;
+    height: 70%;
+    left: -15%;
+    top: 50px;
+  }
+
+  .hero-right img {
+    position: static;
+    width: 260px;
+    height: auto;
+  }
+
+  .hero-left {
+    max-width: 100%;
+  }
+}
