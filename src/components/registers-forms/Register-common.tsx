@@ -182,7 +182,7 @@ function RegisterCommon() {
 
                     </div>
 
-                    <button type='submit'>Enviar</button>
+                    <button className='registerBtn' type='submit'>Enviar</button>
                 </form>
 
 

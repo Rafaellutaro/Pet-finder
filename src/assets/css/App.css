@@ -9,6 +9,20 @@
   --bg-alt: #ffefe7;
   --white: #ffffff;
   --radius: 18px;
+  --shadow-light: rgba(0,0,0,0.15);
+  --tab-border: #ddd;
+  --details-bg: #f5f7fc;
+  --details-heading: #333;
+  --field-label: #444;
+  --field-border: #ccc;
+  --field-hover-border: #ccc; 
+  --field-focus-shadow: rgba(47,108,246,0.3);
+  --tag-blue-bg: #e6f0ff;
+  --tag-blue-color: #2f6cf6;
+  --tag-green-bg: #e7f9ef;
+  --tag-green-color: #2e9f5c;
+  --tip-text: #666;
+  --select-arrow: gray;
 }
 
 * {
@@ -19,7 +33,7 @@
 }
 
 body {
-  background: var(--bg);
+  background: var(--white);
   color: var(--secondary);
   overflow-x: hidden;
 }

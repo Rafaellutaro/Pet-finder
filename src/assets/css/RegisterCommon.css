@@ -83,7 +83,7 @@
 }
 
 /* Submit button */
-button[type="submit"] {
+.registerBtn {
   margin-top: 25px;
   padding: 12px 25px;
   background-color: #007BFF;
@@ -96,7 +96,7 @@ button[type="submit"] {
   transition: background-color 0.3s;
 }
 
-button[type="submit"]:hover {
+.registerBtn:hover {
   background-color: #0056b3;
 }
 

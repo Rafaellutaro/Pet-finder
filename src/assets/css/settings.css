@@ -6,6 +6,7 @@
   padding: 20px;
   font-family: Arial, sans-serif;
   margin-top: 40px;
+  background: var(--white);
 }
 
 /* Allow form contents to not break layout */
@@ -24,8 +25,8 @@
   gap: 25px;
   border-radius: 12px;
   padding: 25px;
-  background-color: #f0f0f0;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  background-color: var(--white);
+  box-shadow: 0 3px 10px var(--shadow-light);
   justify-content: space-between;
 }
 
@@ -56,13 +57,13 @@
 }
 
 .tag.blue {
-  background: #e6f0ff;
-  color: #2f6cf6;
+  background: var(--tag-blue-bg);
+  color: var(--tag-blue-color);
 }
 
 .tag.green {
-  background: #e7f9ef;
-  color: #2e9f5c;
+  background: var(--tag-green-bg);
+  color: var(--tag-green-color);
 }
 
 .profile-name {
@@ -73,7 +74,7 @@
 .edit-btn {
   background: none;
   border: none;
-  color: #2f6cf6;
+  color: var(--primary);
   font-size: 16px;
   cursor: pointer;
 }
@@ -85,7 +86,7 @@
   margin-top: 25px;
   display: flex;
   gap: 25px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--tab-border);
   padding-bottom: 8px;
 }
 
@@ -95,12 +96,17 @@
   font-size: 16px;
   padding-bottom: 8px;
   cursor: pointer;
-  color: #444;
+  color: var(--secondary);
+}
+
+.tab:hover,
+.edit-btn:hover {
+  background-color: var(--primary-light);
 }
 
 .tab.active {
-  color: #2f6cf6;
-  border-bottom: 2px solid #2f6cf6;
+  color: var(--primary);
+  border-bottom: 2px solid var(--primary);
 }
 
 /* ---------------------------------------------------
@@ -108,7 +114,7 @@
 --------------------------------------------------- */
 .details-container {
   margin-top: 30px;
-  background: #f5f7fc;
+  background: var(--details-bg);
   padding: 25px;
   border-radius: 12px;
 }
@@ -131,10 +137,10 @@
 .details-column h3 {
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: var(--details-heading);
   margin: 0 0 5px 0;
   padding-bottom: 5px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--tab-border);
 }
 
 /* ---------------------------------------------------
@@ -149,39 +155,41 @@
 .field label {
   font-weight: 600;
   font-size: 14px;
-  color: #444;
+  color: var(--field-label);
 }
 
 .field input {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--field-border);
   border-radius: 6px;
-  background: white;
+  background: var(--white);
 }
 
 .field select {
   width: 100%;
   padding: 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--field-border);
   margin-top: 5px;
-  background: #fff;
+  background: var(--white);
   font-size: 14px;
   appearance: none;
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 20 20' fill='gray' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7L10 12L15 7' stroke='gray' stroke-width='2'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 20 20' fill='%23gray' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7L10 12L15 7' stroke='%23gray' stroke-width='2'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
 }
 
+.field input:hover,
 .field select:hover {
-  border-color: #2f6cf6;
+  border-color: var(--primary-light);
 }
 
+.field input:focus,
 .field select:focus {
-  border-color: #2f6cf6;
-  box-shadow: 0 0 4px rgba(47,108,246,0.3);
+  border-color: var(--primary);
+  box-shadow: 0 0 4px var(--field-focus-shadow);
   outline: none;
 }
 
@@ -209,7 +217,7 @@
 .details-container p {
   margin-top: 20px;
   font-size: 14px;
-  color: #666;
+  color: var(--tip-text);
   font-style: italic;
 }
 
@@ -217,8 +225,8 @@
    SAVE BUTTON (Under both columns)
 --------------------------------------------------- */
 .save-btn {
-  background: #2f6cf6;
-  color: white;
+  background: var(--primary);
+  color: var(--white);
   padding: 12px 28px;
   border: none;
   border-radius: 6px;

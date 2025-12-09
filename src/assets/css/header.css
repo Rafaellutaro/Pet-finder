@@ -16,14 +16,14 @@ html, body {
   top: 0;
   left: 0;
   width: 100%;
-  background-color: #333;
-  color: white;
+  background-color: var(--details-heading); /* was #333 */
+  color: var(--white);
   z-index: 1000;
   padding: 10px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px var(--shadow-light); /* was rgba(0,0,0,0.2) */
   height: 80px;
 }
 
@@ -36,11 +36,12 @@ html, body {
 
 .header-icon a svg {
   font-size: 50px;
-  color: white;
+  color: var(--white); /* was white */
 }
 
-.header-icon a svg:hover {
-  color: #ffcc00;
+.header-icon a svg:hover,
+.header-items a:hover {
+  color: var(--primary-light);
 }
 
 /* Right side icons */
@@ -55,19 +56,15 @@ html, body {
 }
 
 .header-items a {
-  color: white;
+  color: var(--white); /* was white */
   font-size: 24px;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
-.header-items a:hover {
-  color: #ffcc00;
-}
-
 /* Body background */
 body {
-  background-color: #f4f4f4;
+  background-color: var(--white); /* was #f4f4f4 */
   font-family: Arial, sans-serif;
 }
 
