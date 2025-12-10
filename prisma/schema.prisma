@@ -38,6 +38,17 @@ model Address {
   state        String
 }
 
+model petAddress {
+  id           Int    @id @default(autoincrement())
+  Pet   Pet    @relation(fields: [petId], references: [id])
+  petId        Int @unique
+  cep          String
+  street       String
+  neighborhood String
+  city         String
+  state        String
+}
+
 model Pet {
   id      Int      @id @default(autoincrement())
   User    User     @relation(fields: [userId], references: [id])
@@ -47,7 +58,9 @@ model Pet {
   breed   String
   age     String
   details String
+
   imgs    petImg[]
+  address petAddress?
 }
 
 model petImg {

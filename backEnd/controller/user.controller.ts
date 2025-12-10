@@ -173,13 +173,15 @@ export const insertUser = async (req: any, res: any) => {
 
 export const updateUserById = async (req: any, res: any) => {
 
-    const { address, filteredPersonalData, filteredNewAddressData, userId } = req.body;
-    console.log("endereço antigo", address)
-    console.log("dados novos", filteredNewAddressData, filteredPersonalData)
-    console.log("userId", userId)
+    const payload  = req.body;
+    console.log("payload", payload)
+    
+    const personalData = payload.personal
+    const newAddress = payload.newAddress
+    const userId = payload.userId
 
-    const updatePersonalData = { ...filteredPersonalData };
-    const updateNewAddressData = { ...filteredNewAddressData };
+    const updatePersonalData = { ...personalData};
+    const updateNewAddressData = { ...newAddress};
 
     if (updatePersonalData.newPassword) {
         updatePersonalData.password = updatePersonalData.newPassword;
@@ -213,7 +215,7 @@ export const updateUserById = async (req: any, res: any) => {
 
          if (Object.keys(updateNewAddressData).length > 0) {
             response.address = await userClient.address.update({
-                where: { id: address.id },
+                where: { id: payload.address.id },
                 data: updateNewAddressData
             });
         }

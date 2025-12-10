@@ -23,6 +23,7 @@
   --tag-green-color: #2e9f5c;
   --tip-text: #666;
   --select-arrow: gray;
+  --dog-blop: rgba(255, 123, 84, 0.35);
 }
 
 * {
@@ -74,7 +75,7 @@ section {
   top: -10%;
   width: 60%;
   height: 120%;
-  background: rgba(255, 123, 84, 0.35); /* primary color glow */
+  background: var(--dog-blop); /* primary color glow */
   border-radius: 50% 40% 60% 30%;
   filter: blur(40px);
   z-index: 0;

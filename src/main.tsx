@@ -6,10 +6,10 @@ import LoginPage from './components/Login.tsx'
 import Menu from './components/Selection-Menu.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Header-Layout.tsx'
-import RegisterCommon from "./components/registers-forms/Register-common.tsx"
+import RegisterCommon from "./components/forms/Register-common.tsx"
 import Profile from './components/profile.tsx'
 import { UserProvider } from './Interfaces/GlobalUser.tsx'
-import RegisterPet from './components/registers-forms/Register-Pet.tsx'
+import RegisterPet from './components/forms/Register-Pet.tsx'
 import Settings from './components/Settings.tsx'
 
 const router = createBrowserRouter([

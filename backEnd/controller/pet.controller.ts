@@ -26,9 +26,12 @@ export const getAllPetsById = async (req: any, res: any) => {
 //insert
 export const insertPet = async (req: any, res: any) => {
     try {
-        const { petData, userId, imageUrl } = req.body;
+        const payload = req.body;
 
-        console.log('all pet data', petData, userId, imageUrl)
+        console.log('all pet data', payload)
+
+        const petData = payload.petData
+        const petAddress = payload.address
 
         const createPet = await prisma.pet.create({
             data: {
@@ -37,20 +40,32 @@ export const insertPet = async (req: any, res: any) => {
                 breed: petData.breed,
                 age: petData.age,
                 details: petData.details,
-                userId: userId
+                userId: payload.userId
             }
         })
 
         const createImg = await prisma.petImg.create({
             data: {
                 petId: createPet.id,
-                url: imageUrl
+                url: payload.imageUrl
+            }
+        })
+
+        const createpetAddress = await prisma.petAddress.create({
+            data: {
+                petId: createPet.id,
+                cep: petAddress.cep,
+                street:petAddress.street,
+                neighborhood: petAddress.neighborhood,
+                city: petAddress.city,
+                state: petAddress.state
             }
         })
 
         res.status(201).json({data: {
             createPet,
-            createImg
+            createImg,
+            createpetAddress
         }})
     } catch (e) {
         console.log(e)
