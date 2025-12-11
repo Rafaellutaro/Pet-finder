@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import apiFetch from './TokenAuthorization';
 
 interface UserData {
     id: number;
@@ -46,13 +47,9 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
                     setToken(data); 
                 }
 
-                const resumeUserData = await fetch('http://localhost:3000/users/getId', {
-                    method: 'POST',
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                    body: JSON.stringify({id: data.id})
-                })
+                const resumeUserData = await apiFetch('http://localhost:3000/users/getId', {
+                    method: 'GET'
+                }, data.accessToken)
 
                 const userData = await resumeUserData.json();
 

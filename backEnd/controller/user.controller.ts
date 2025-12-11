@@ -26,13 +26,13 @@ export const getAllUsers = async (req: any, res: any) => {
 //get user by id
 
 export const getUserById = async (req: any, res: any) => {
-
-    const userId = req.body.id;
+    const user = req.user;
+    console.log("user", user)
 
     try {
         const UserById = await userClient.user.findUnique({
             where: {
-                id: userId
+                id: user.userId
             },
             include: {
                 addresses: true

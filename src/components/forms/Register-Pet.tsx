@@ -9,6 +9,9 @@ export default function RegisterPet() {
     //meu deus se eu soubesse o quanto mais de boa é usar o react-hook-form em vez de usar o reducer e criar o proprio form antes velho, que porcaria.
     // tive que alterar todos os forms, mas pelo menos agora eu consigo emplementar a validação de dados com o zod que parece muito melhor do que eu fazer sozinho.
     // por que eu não pesquisei antes meu deus, aff.
+    //=================================================================================
+    //VIDEO THAT I USED TO UNDERSTAND THIS: https://www.youtube.com/watch?v=cc_xmawJ8Kg
+    //=================================================================================
 
     const { user } = useUser();
     const nav = useNavigate();
