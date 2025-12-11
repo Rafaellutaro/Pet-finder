@@ -26,6 +26,8 @@ function LoginPage() {
         }
 
         try {
+            // maybe try to fit those two endPoints in only 1, would be cleaner.
+
             const sendRes = await fetch('http://localhost:3000/users/getEmail', {
                 method: 'POST',
                 headers: {

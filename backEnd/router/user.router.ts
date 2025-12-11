@@ -4,13 +4,13 @@ import {verifyJWT} from '../middleware/auth.middleware.ts'
 
 const userRoute = Router();
 
-userRoute.get("/", getAllUsers);
-userRoute.post("/insert", insertUser);
-userRoute.get("/getId", verifyJWT,getUserById);
-userRoute.put("/updateById", updateUserById);
-userRoute.delete("/deleteId", deleteUserById);
-userRoute.post("/getEmail", getUserByEmail);
-userRoute.post("/createToken", createToken);
-userRoute.post("/refreshToken", refreshToken);
+userRoute.get("/", getAllUsers); // public
+userRoute.post("/insert", insertUser); // public
+userRoute.get("/getId", verifyJWT,getUserById); // private
+userRoute.put("/updateById", verifyJWT, updateUserById); // private
+userRoute.delete("/deleteId", deleteUserById); // private, not used for now
+userRoute.post("/getEmail", getUserByEmail); // public
+userRoute.post("/createToken", createToken); // public
+userRoute.post("/refreshToken", refreshToken); // not necessary to include verifyJWT
 
 export default userRoute;

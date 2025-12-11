@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, use, useContext, useEffect, useState } from 'react';
 import apiFetch from './TokenAuthorization';
 
 interface UserData {
@@ -7,8 +7,8 @@ interface UserData {
     lastName: string;
     email: string;
     phone: string;
-    password: string;  
-    addresses: any[];  
+    password: string;
+    addresses: any[];
 }
 
 const UserContext = createContext<{
@@ -33,38 +33,50 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
     const [token, setToken] = useState<string | null>(null);
     const [loggedIn, setLoggedIn] = useState<boolean | null>(false);
 
-    
+    // =================================================================================
+    // video used to understand this: https://www.youtube.com/watch?v=AcYF18oGn6Y&t=742s
+    // =================================================================================
 
-        const verifyToken = async () => {
-            try {
-                const response = await fetch('http://localhost:3000/users/refreshToken', {
-                    method: 'POST',
-                    credentials: 'include'
-                }); 
+    // i will save some tutorials in case i forget or get lost.
+
+    const verifyToken = async () => {
+        try {
+            const response = await fetch('http://localhost:3000/users/refreshToken', {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
                 const data = await response.json();
 
                 if (data) {
-                    setToken(data); 
+                    setToken(data.accessToken);
                 }
 
                 const resumeUserData = await apiFetch('http://localhost:3000/users/getId', {
                     method: 'GET'
                 }, data.accessToken)
 
-                const userData = await resumeUserData.json();
+                if (resumeUserData.ok) {
+                    const userData = await resumeUserData.json();
 
-                setUser(userData.data);
-                setLoggedIn(true);
-
-            } catch (error) {
-                console.error('Failed to fetch token data', error);
-                setLoggedIn(false);
+                    if (userData) {
+                        setUser(userData.data);
+                        setLoggedIn(true);
+                    }
+                }
             }
-        };
 
-        useEffect(() => {
-            verifyToken();
-        }, [])
+
+        } catch (error) {
+            console.error('Failed to fetch token data', error);
+            setLoggedIn(false);
+        }
+    };
+
+    useEffect(() => {
+        verifyToken();
+    }, [])
 
     return (
         <UserContext.Provider value={{ user, setUser, token, setToken, loggedIn, setLoggedIn }}>

@@ -20,7 +20,6 @@ const getAllPetsById = () => {
 
             const data = await response.json();
 
-            console.log('all pet data', data)
             setPets(data.data);
             setLoading(false);
         };
@@ -50,7 +49,6 @@ const getAllPets = () => {
 
             const data = await response.json();
 
-            console.log('all pet data', data)
             setPets(data.data);
             setLoading(false);
         };
@@ -65,8 +63,6 @@ const getAllPets = () => {
 
 export function petContainerCloseToYou() {
     const {pets, loading} = getAllPets();
-
-    console.log('all pets data', pets)
     
     if (loading) return <div></div>
 
@@ -91,8 +87,6 @@ export function petContainerCloseToYou() {
 
 export default function petContainer() {
     const {pets, loading} = getAllPetsById();
-
-    console.log('all pets data', pets)
     
     if (loading) return <div></div>
 

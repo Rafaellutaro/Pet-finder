@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useUser } from "../../Interfaces/GlobalUser";
 import { cepSearch } from "../functions/userFunctions";
+import apiFetch from "../../Interfaces/TokenAuthorization";
 
 export default function SettingsForm() {
-    const { user } = useUser();
+    const { user, token } = useUser();
     const allAddress = user?.addresses || [];
     const [selectedAddress, setSelectedAddress] = useState<any>(allAddress[0]);
 
@@ -44,10 +45,9 @@ export default function SettingsForm() {
 
     useEffect(() => {
         setSelectedAddress(allAddress[0])
-        console.log(selectedAddress)
     }, [user])
 
-    if (!user) return <div>Loading Data...</div>;
+    if (!user || !token) return <div>Loading Data...</div>;
 
     const complete_name = `${user.name} ${user.lastName}`;
 
@@ -55,8 +55,6 @@ export default function SettingsForm() {
     // ON SUBMIT
     // -------------------------
     const onSubmit = async (formData: any) => {
-        const userId = user.id;
-
         const newAddress = {
             cep: formData.cep,
             street: formData.street,
@@ -81,17 +79,13 @@ export default function SettingsForm() {
 
         const payload =
             cleanedAddress.cep
-                ? { userId, address: selectedAddress, newAddress: cleanedAddress, personal: cleanedPersonal }
-                : { userId, personal: cleanedPersonal };
+                ? {  address: selectedAddress, newAddress: cleanedAddress, personal: cleanedPersonal }
+                : {  personal: cleanedPersonal };
 
-        console.log("Final payload:", payload);
-        console.log(selectedAddress)
-
-        const response = await fetch("http://localhost:3000/users/updateById", {
-            method: "PUT",
-            headers: { "content-type": "application/json" },
+        const response = await apiFetch('http://localhost:3000/users/updateById', {
+            method: 'PUT',
             body: JSON.stringify(payload)
-        });
+        }, token)
 
         const res = await response.json();
         console.log("API Response:", res);

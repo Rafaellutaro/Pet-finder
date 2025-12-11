@@ -178,7 +178,7 @@ export const updateUserById = async (req: any, res: any) => {
     
     const personalData = payload.personal
     const newAddress = payload.newAddress
-    const userId = payload.userId
+    const userId = req.user.userId
 
     const updatePersonalData = { ...personalData};
     const updateNewAddressData = { ...newAddress};
@@ -199,7 +199,6 @@ export const updateUserById = async (req: any, res: any) => {
         Object.keys(updatePersonalData).length === 0 &&
         Object.keys(updateNewAddressData).length === 0
     ) {
-        console.log("entrei aqui");
         res.status(400).json({ error: "No data to update" });
     }
 

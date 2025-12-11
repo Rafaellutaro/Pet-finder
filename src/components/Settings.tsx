@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useState } from 'react';
 import { useUser } from "../Interfaces/GlobalUser"
 import '../assets/css/settings.css';
-import SettingsForm from './forms/settingsForm';
+import SettingsForm from './forms/SettingsForm';
 
 function Settings() {
     const { user } = useUser();

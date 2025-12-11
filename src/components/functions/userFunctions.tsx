@@ -16,6 +16,4 @@ export function cepSearch(setValue: any, cep: string) {
             }
         });
     }
-
-    console.log(cep)
 }
