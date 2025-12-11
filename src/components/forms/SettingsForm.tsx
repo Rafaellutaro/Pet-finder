@@ -38,7 +38,7 @@ export default function SettingsForm() {
     const cep = watch("cep");
 
     useEffect(() => {
-        if (cep && cep.length === 8) {
+        if (cep) {
             cepSearch(setValue, cep)
         }
     }, [cep]);
