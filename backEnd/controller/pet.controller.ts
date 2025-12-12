@@ -1,5 +1,26 @@
 import prisma from '../../backEnd/client/PrismaClient.ts'
 
+// get all pets
+
+export const getAllPets = async (req: any, res: any) => {
+
+    try {
+        const allPets = await prisma.pet.findMany({
+
+            include: {
+                address: true,
+                imgs: true
+            },
+        });
+
+        res.status(200).json({ data: allPets });
+
+    } catch (e) {
+        console.log(e);
+    }
+
+}
+
 //getAllPetsById
 
 export const getAllPetsById = async (req: any, res: any) => {

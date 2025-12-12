@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./assets/css/App.css";
 import heroImg from "./assets/imgs/hero.png";
 import { getUserLanguage } from "./components/functions/userFunctions";
+import { getAllPetsPublic, petContainerCloseToYou } from "./components/functions/petFunctions"
 
 const dog1 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
 const dog2 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
@@ -41,6 +42,7 @@ const statesOfBrazil = [
 
 function App() {
   const [selectedOrigin, setSelectedOrigin] = useState<{} | null>(null);
+  const [petData, setPetData] = useState<any[]>([]);
   const [region, setRegion] = useState('');
 
   useEffect(() => {
@@ -48,18 +50,21 @@ function App() {
       const regionReturn = await getUserLanguage()
       const regionName = statesOfBrazil.find(i => i.name == regionReturn)
 
-      if(regionName){
+      if (regionName) {
         setRegion(regionName.uf)
       }
     }
     fetchRegion()
+    getAllPetsPublic(region, setPetData)
 
-
-    if (!selectedOrigin){
+    if (!selectedOrigin) {
       setSelectedOrigin(statesOfBrazil[0])
     }
-
   }, [region])
+
+  useEffect(() => {
+    console.log(petData)
+  }, [petData])
 
   return (
     <>
@@ -75,12 +80,12 @@ function App() {
           </p>
 
           <div className="hero-search">
-            <select  onChange={(e) =>  setSelectedOrigin(JSON.parse(e.target.value))} defaultValue={statesOfBrazil[0].name}>
+            <select onChange={(e) => setSelectedOrigin(JSON.parse(e.target.value))} defaultValue={statesOfBrazil[0].name}>
               {statesOfBrazil.map((origin: any, i: number) => (
-                                        <option key={i} value={JSON.stringify(origin)}>
-                                          {`${statesOfBrazil[i].name}`}
-                                        </option>
-                                    ))}
+                <option key={i} value={JSON.stringify(origin)}>
+                  {`${statesOfBrazil[i].name}`}
+                </option>
+              ))}
             </select>
             <button>Procurar</button>
           </div>
@@ -102,12 +107,11 @@ function App() {
       <section className="dogs-grid">
         <h2>Pets Disponiveis Para Adoção Perto de Você</h2>
         <div className="grid">
-          <img src={dog1} />
-          <img src={dog2} />
-          <img src={dog3} />
-          <img src={dog4} />
+          {petContainerCloseToYou(petData)}
         </div>
+
       </section>
+
 
       {/* POPULAR ACCESSORIES */}
       <section className="accessories">

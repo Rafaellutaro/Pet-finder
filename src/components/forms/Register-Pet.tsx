@@ -102,7 +102,7 @@ export default function RegisterPet() {
                     street: data.street,
                     neighborhood: data.neighborhood,
                     city: data.city,
-                    region: data.region,
+                    state: data.region,
                 };
             } else {
                 addressToUse = selectedAddress;
@@ -127,7 +127,8 @@ export default function RegisterPet() {
             //Send to API
             const res = await fetch("http://localhost:3000/pets/insert", {
                 method: "POST",
-                headers: { "content-type": "application/json" },
+                headers: { 
+                    "content-type": "application/json" },
                 body: JSON.stringify(payload)
             });
 
