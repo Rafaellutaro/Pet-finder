@@ -3,6 +3,11 @@ import "./assets/css/App.css";
 import heroImg from "./assets/imgs/hero.png";
 import { getUserLanguage } from "./components/functions/userFunctions";
 import { getAllPetsPublic, petContainerCloseToYou } from "./components/functions/petFunctions"
+import { Swiper } from "swiper/react";
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+
 
 const dog1 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
 const dog2 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
@@ -106,9 +111,16 @@ function App() {
       {/* AVAILABLE DOGS */}
       <section className="dogs-grid">
         <h2>Pets Disponiveis Para Adoção Perto de Você</h2>
-        <div className="grid">
+        <Swiper
+          modules={[Navigation, Pagination, Scrollbar, A11y]}
+          spaceBetween={50}
+          slidesPerView={4}
+          navigation
+          pagination={{ clickable: true }}
+          scrollbar={{ draggable: true }}
+        >
           {petContainerCloseToYou(petData)}
-        </div>
+        </Swiper>
 
       </section>
 

@@ -2,6 +2,7 @@ import { FaPlus } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../Interfaces/GlobalUser"
 import { useEffect, useState } from "react";
+import { SwiperSlide } from 'swiper/react';
 
 const getAllPetsById = () => {
     const { user } = useUser();
@@ -87,9 +88,9 @@ export function petContainerCloseToYou(pets: any[]) {
     return (
         <>
             {pets.map((item: any) => (
-                <div key={item.id}>
+                <SwiperSlide key={item.id}>
                     <img src={item.imgs[0]?.url} alt={item.name} />
-                </div>
+                </SwiperSlide>
             ))}
         </>
     );
