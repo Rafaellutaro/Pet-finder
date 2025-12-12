@@ -17,3 +17,16 @@ export function cepSearch(setValue: any, cep: string) {
         });
     }
 }
+
+export async function getUserLanguage() {
+    try {
+      const response = await fetch('https://ipinfo.io/json');
+      const data = await response.json();
+      const region = data.region;
+      
+      return region
+
+    } catch (error) {
+      console.error("Error fetching IP info:", error);
+    }
+  }

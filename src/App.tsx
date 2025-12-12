@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./assets/css/App.css";
 import heroImg from "./assets/imgs/hero.png";
+import { getUserLanguage } from "./components/functions/userFunctions";
 
 const dog1 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
 const dog2 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
@@ -39,11 +40,26 @@ const statesOfBrazil = [
 
 
 function App() {
-  const [selectedOrigin, setSelectedOrigin] = useState('');
+  const [selectedOrigin, setSelectedOrigin] = useState<{} | null>(null);
+  const [region, setRegion] = useState('');
 
   useEffect(() => {
-    console.log(selectedOrigin)
-  }, [selectedOrigin])
+    const fetchRegion = async () => {
+      const regionReturn = await getUserLanguage()
+      const regionName = statesOfBrazil.find(i => i.name == regionReturn)
+
+      if(regionName){
+        setRegion(regionName.uf)
+      }
+    }
+    fetchRegion()
+
+
+    if (!selectedOrigin){
+      setSelectedOrigin(statesOfBrazil[0])
+    }
+
+  }, [region])
 
   return (
     <>
@@ -69,11 +85,11 @@ function App() {
             <button>Procurar</button>
           </div>
 
-          <p>Cidades Mais Procuradas</p>
+          <p>Estados Mais Procuradas</p>
           <div className="cities-grid">
             <div className="city-pill">São Paulo</div>
             <div className="city-pill">Rio de Janeiro</div>
-            <div className="city-pill">Curitiba</div>
+            <div className="city-pill">Roraima</div>
           </div>
         </div>
 
