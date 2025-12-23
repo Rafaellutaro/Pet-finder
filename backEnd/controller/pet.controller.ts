@@ -1,19 +1,66 @@
+import type { Response } from "express";
 import prisma from '../../backEnd/client/PrismaClient.ts'
+import type { AuthRequest } from "../middleware/auth.middleware.ts";
 
 // get all pets
 
-export const getAllPets = async (req: any, res: any) => {
+export const getAllPets = async (req: AuthRequest, res: Response) => {
+    const { uf, city, breed, age, page = 1, limit = 10, orderBy = 'name', orderDirection = 'asc' } = req.query;
+
+    const filters: any = {};
+
+    const filterMap: { [key: string]: string | number | undefined } = {
+        state: typeof uf == 'string' ? uf : undefined,
+        city: typeof city == 'string' ? city : undefined,
+        breed: typeof breed == 'string' ? breed : undefined,
+        age: typeof age == 'string' ? age : undefined,
+    };
+
+    Object.keys(filterMap).forEach((key) => {
+        if (filterMap[key]) {
+            if (key === 'state' || key === 'city') {
+                filters.address = { ...filters.address, [key]: filterMap[key] };
+            } else {
+                filters[key] = filterMap[key];
+            }
+        }
+    });
+
+    const skip = (Number(page) - 1) * Number(limit);
+    const take = Number(limit);
+
+    const orderByKey = typeof orderBy == 'string' ? orderBy : 'name';
+    const order = {
+        [orderByKey]: orderDirection === 'desc' ? 'desc' : 'asc',  
+    };
 
     try {
         const allPets = await prisma.pet.findMany({
-
+            where: filters,
+            skip,
+            take,
+            orderBy: order,
             include: {
                 address: true,
                 imgs: true
             },
         });
 
-        res.status(200).json({ data: allPets });
+        const totalPets = await prisma.pet.count({
+            where: filters,
+        });
+    
+        const totalPages = Math.ceil(totalPets / Number(limit));
+
+         res.status(200).json({
+            data: allPets,
+            pagination: {
+                page: Number(page),
+                totalPages,
+                totalItems: totalPets,
+                itemsPerPage: limit,
+            },
+        });
 
     } catch (e) {
         console.log(e);
@@ -23,7 +70,7 @@ export const getAllPets = async (req: any, res: any) => {
 
 //getAllPetsById
 
-export const getAllPetsById = async (req: any, res: any) => {
+export const getAllPetsById = async (req: AuthRequest, res: Response) => {
     try {
         const user = req.user;
 
@@ -43,7 +90,7 @@ export const getAllPetsById = async (req: any, res: any) => {
 } 
 
 //insert
-export const insertPet = async (req: any, res: any) => {
+export const insertPet = async (req: AuthRequest, res: Response) => {
     try {
         const payload = req.body;
 

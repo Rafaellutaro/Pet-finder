@@ -32,7 +32,7 @@ const getAllPetsById = () => {
 
 export function getAllPetsPublic(region: string, setPetData: React.Dispatch<React.SetStateAction<any[]>>) {
     const FetchPetData = async () => {
-        const petApi = await fetch("http://localhost:3000/pets/getAllPets", {
+        const petApi = await fetch(`http://localhost:3000/pets/getAllPets?uf=${region}`, {
             method: "GET",
             headers: {
                 "content-type": "application/json",
@@ -41,9 +41,11 @@ export function getAllPetsPublic(region: string, setPetData: React.Dispatch<Reac
 
         const data = await petApi.json()
 
+        console.log("main", data)
+
         if (data) {
-            const actualPetData = data.data.filter((i: { address: { state: {} }; }) => i.address?.state == region)
-            setPetData(actualPetData)
+            // const actualPetData = data.data.filter((i: { address: { state: {} }; }) => i.address?.state == region)
+            setPetData(data.data)
         }
     }
 
