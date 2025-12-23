@@ -3,21 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../../Interfaces/GlobalUser"
 import { useEffect, useState } from "react";
 import { SwiperSlide } from 'swiper/react';
+import apiFetch from "../../Interfaces/TokenAuthorization";
 
 const getAllPetsById = () => {
-    const { user } = useUser();
+    const {token} = useUser();
     const [pets, setPets] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!user) return;
+        if (!token) return;
 
         const fetchPets = async () => {
-            const response = await fetch('http://localhost:3000/pets/getAllPetsById', {
-                method: 'POST',
-                headers: { 'content-type': 'application/json' },
-                body: JSON.stringify({ id: user.id })
-            });
+            const response = await apiFetch('http://localhost:3000/pets/getAllPetsById', {
+                method: "GET"
+            }, token);
 
             const data = await response.json();
 
@@ -26,40 +25,9 @@ const getAllPetsById = () => {
         };
 
         fetchPets();
-    }, [user]);
+    }, []);
 
     return { pets, loading }
-
-
-}
-
-const getAllPets = () => {
-    const { user } = useUser();
-    const [pets, setPets] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        if (!user) return;
-
-        const fetchPets = async () => {
-            const response = await fetch('http://localhost:3000/pets/getAllPetsById', {
-                method: 'POST',
-                headers: { 'content-type': 'application/json' },
-                body: JSON.stringify({ id: user.id })
-            });
-
-            const data = await response.json();
-
-            setPets(data.data);
-            setLoading(false);
-        };
-
-        fetchPets();
-    }, [user]);
-
-    return { pets, loading }
-
-
 }
 
 export function getAllPetsPublic(region: string, setPetData: React.Dispatch<React.SetStateAction<any[]>>) {

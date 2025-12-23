@@ -25,13 +25,11 @@ export const getAllPets = async (req: any, res: any) => {
 
 export const getAllPetsById = async (req: any, res: any) => {
     try {
-        const id = req.body.id
-
-        console.log(id)
+        const user = req.user;
 
         const getAllPetsById = await prisma.pet.findMany({
             where: {
-                userId: id
+                userId: user.userId
             },
             include:{
                 imgs: true
