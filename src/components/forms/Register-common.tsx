@@ -2,35 +2,15 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import '../../assets/css/RegisterCommon.css';
 import { cepSearch } from "../functions/userFunctions";
+import { RegisterSchema as schema } from "../../Interfaces/zodSchema";
+import type z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-interface RegisterFormData {
-    name: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    password: string;
-
-    cep: string;
-    street: string;
-    neighborhood: string;
-    city: string;
-    region: string;
-}
+type FormFields = z.infer<typeof schema>
 
 export default function RegisterCommon() {
-    const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<RegisterFormData>({
-        defaultValues: {
-            name: "",
-            lastName: "",
-            email: "",
-            phone: "",
-            password: "",
-            cep: "",
-            street: "",
-            neighborhood: "",
-            city: "",
-            region: ""
-        }
+    const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormFields>({
+        resolver: zodResolver(schema)
     });
 
     // Watch CEP for auto-fill
@@ -41,7 +21,7 @@ export default function RegisterCommon() {
         }
     }, [cep]);
 
-    const onSubmit = async (data: RegisterFormData) => {
+    const onSubmit = async (data: FormFields) => {
         const userData = {
             name: data.name,
             lastName: data.lastName,

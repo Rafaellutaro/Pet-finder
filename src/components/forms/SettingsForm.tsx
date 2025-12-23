@@ -3,6 +3,9 @@ import { useForm } from "react-hook-form";
 import { useUser } from "../../Interfaces/GlobalUser";
 import { cepSearch } from "../functions/userFunctions";
 import apiFetch from "../../Interfaces/TokenAuthorization";
+import { z } from "zod"
+import {zodResolver} from '@hookform/resolvers/zod'
+import {SettingsSchema as schema} from "../../Interfaces/zodSchema"
 
 export default function SettingsForm() {
     const { user, token } = useUser();
@@ -12,24 +15,17 @@ export default function SettingsForm() {
     // -------------------------
     // RHF INITIALIZATION
     // -------------------------
+
+    type FormFields = z.infer<typeof schema>
+
     const {
         register,
         handleSubmit,
         watch,
         setValue,
         formState: { errors, isSubmitting }
-    } = useForm({
-        defaultValues: {
-            email: "",
-            password: "",
-            newPassword: "",
-            phone: "",
-            cep: "",
-            street: "",
-            neighborhood: "",
-            city: "",
-            region: ""
-        }
+    } = useForm<FormFields>({
+        resolver: zodResolver(schema)
     });
 
     // -------------------------
@@ -79,8 +75,8 @@ export default function SettingsForm() {
 
         const payload =
             cleanedAddress.cep
-                ? {  address: selectedAddress, newAddress: cleanedAddress, personal: cleanedPersonal }
-                : {  personal: cleanedPersonal };
+                ? { address: selectedAddress, newAddress: cleanedAddress, personal: cleanedPersonal }
+                : { personal: cleanedPersonal };
 
         const response = await apiFetch('http://localhost:3000/users/updateById', {
             method: 'PUT',
@@ -111,12 +107,7 @@ export default function SettingsForm() {
                             <input
                                 type="email"
                                 placeholder="novoemail@gmail.com"
-                                {...register("email", {
-                                    pattern: {
-                                        value: /\S+@\S+\.\S+/,
-                                        message: "Formato de email inválido"
-                                    }
-                                })}
+                                {...register("email")}
                             />
                             {errors.email && <p className="error">{errors.email.message}</p>}
                         </div>
@@ -134,12 +125,7 @@ export default function SettingsForm() {
                             <input
                                 type="password"
                                 placeholder="Nova senha"
-                                {...register("newPassword", {
-                                    minLength: {
-                                        value: 6,
-                                        message: "A nova senha deve ter pelo menos 6 caracteres"
-                                    }
-                                })}
+                                {...register("newPassword")}
                             />
                             {errors.newPassword && <p className="error">{errors.newPassword.message}</p>}
                         </div>
@@ -156,6 +142,7 @@ export default function SettingsForm() {
                                 placeholder="(00) 0000-0000"
                                 {...register("phone")}
                             />
+                            {errors.phone && <p className="error">{errors.phone.message}</p>}
                         </div>
 
                         <div className="field">
@@ -189,6 +176,8 @@ export default function SettingsForm() {
                                 <input placeholder="Cidade" readOnly {...register("city")} />
 
                                 <input placeholder="Estado" readOnly className="full" {...register("region")} />
+
+                                {errors.cep && <p className="error">{errors.cep.message}</p>}
                             </div>
                         </div>
                     </div>

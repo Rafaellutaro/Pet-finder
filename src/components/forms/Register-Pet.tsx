@@ -4,6 +4,9 @@ import supabase from "../../../backEnd/client/SupabaseClient";
 import { useUser } from "../../Interfaces/GlobalUser";
 import { useNavigate } from "react-router-dom";
 import { cepSearch } from "../functions/userFunctions";
+import type z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PetSchema as schema } from "../../Interfaces/zodSchema";
 
 export default function RegisterPet() {
     //meu deus se eu soubesse o quanto mais de boa é usar o react-hook-form em vez de usar o reducer e criar o proprio form antes velho, que porcaria.
@@ -22,27 +25,16 @@ export default function RegisterPet() {
     const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState<any>(allAddress[0]);
 
+    type FormFields = z.infer<typeof schema>
+
     const {
         register,
         handleSubmit,
         watch,
         setValue,
         formState: { errors, isSubmitting }
-    } = useForm({
-        defaultValues: {
-            name: "",
-            breed: "",
-            type: "",
-            age: "",
-            details: "",
-            image: null,
-
-            cep: "",
-            street: "",
-            neighborhood: "",
-            city: "",
-            region: "",
-        }
+    } = useForm<FormFields>({
+        resolver: zodResolver(schema),
     });
 
     // Watch CEP for auto-fill
@@ -60,8 +52,6 @@ export default function RegisterPet() {
         } else {
             setIsAddingNewAddress(false);
         }
-
-        console.log(selectedAddress)
     }, [selectedAddress]);
 
     useEffect(() => {
@@ -122,8 +112,6 @@ export default function RegisterPet() {
                 address: addressToUse
             };
 
-            console.log("Final payload:", payload);
-
             //Send to API
             const res = await fetch("http://localhost:3000/pets/insert", {
                 method: "POST",
@@ -153,12 +141,13 @@ export default function RegisterPet() {
                         <div className="form-group">
                             <label>Nome:</label>
                             <input {...register("name", { required: true })} placeholder="Nome" />
-                            {errors.name && <p className="error">Campo obrigatório</p>}
+                            {errors.name && <p className="error">{errors.name.message}</p>}
                         </div>
 
                         <div className="form-group">
                             <label>Tipo:</label>
                             <input {...register("type", { required: true })} placeholder="Cachorro, Gato..." />
+                            {errors.type && <p className="error">{errors.type.message}</p>}
                         </div>
                     </div>
 
@@ -166,11 +155,13 @@ export default function RegisterPet() {
                         <div className="form-group">
                             <label>Raça:</label>
                             <input {...register("breed", { required: true })} placeholder="Raça" />
+                            {errors.breed && <p className="error">{errors.breed.message}</p>}
                         </div>
 
                         <div className="form-group">
                             <label>Idade:</label>
                             <input {...register("age", { required: true })} placeholder="Idade" />
+                            {errors.age && <p className="error">{errors.age.message}</p>}
                         </div>
                     </div>
                     {/* 
@@ -180,6 +171,7 @@ export default function RegisterPet() {
                         <div className="form-group full">
                             <label>Detalhes:</label>  
                             <textarea {...register("details", {required: true})} rows={6} placeholder="comportamento, se é amigavel com crianças, audulteros etc...." />
+                            {errors.details && <p className="error">{errors.details.message}</p>}
                         </div>
                     </div>
 
@@ -187,6 +179,7 @@ export default function RegisterPet() {
                         <div className="form-group">
                             <label>Imagem:</label>
                             <input type="file" accept="image/*" {...register("image", { required: true })} />
+                            {errors.image && <p className="error">{errors.image.message}</p>}
                         </div>
                     </div>
 
@@ -233,6 +226,8 @@ export default function RegisterPet() {
                             <input placeholder="Bairro" readOnly {...register("neighborhood")} />
                             <input placeholder="Cidade" readOnly {...register("city")} />
                             <input placeholder="Estado" readOnly {...register("region")} />
+
+                            {errors.cep && <p className="error">{errors.cep.message}</p>}
                         </div>
                     )}
 
