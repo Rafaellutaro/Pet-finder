@@ -27,7 +27,7 @@ function header() {
                 <div className="header-items">
                     <ul>
                         <nav> <Link to={link}><FaUserCircle /></Link></nav>
-                        <nav> <Link to="/MyPets"><MdPets /></Link></nav>
+                        <nav> <Link to="/Pets"><MdPets /></Link></nav>
                         <nav> <Link to={linkSettings}><IoSettingsOutline /></Link></nav>
                     </ul>
                 </div>
