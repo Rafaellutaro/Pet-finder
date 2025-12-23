@@ -1,105 +1,172 @@
-/* General container setup */
+/* General Container Setup */
 .box-container {
     display: flex;
-    justify-content: space-between;
     gap: 20px;
-    padding: 20px;
-    flex-wrap: wrap; /* Allowing responsiveness */
+    padding: 30px;
+    padding-top: 100px;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 /* Left Container (Categories) */
 .left-container {
     flex: 0.5;
-    background-color: #f8f8f8;
+    background-color: #f9f9f9;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-/* Heading for Left Container */
 .left-container h1 {
-    font-size: 22px;
+    font-size: 24px;
+    font-weight: bold;
     color: #333;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
-/* Category dropdowns */
+/* Category Dropdowns */
 .state-category select,
 .city-category select {
     width: 100%;
-    padding: 12px;
+    padding: 12px 15px;
     font-size: 16px;
     border-radius: 8px;
     border: 1px solid #ddd;
     background-color: #fff;
-    transition: border-color 0.3s ease;
+    transition: all 0.3s ease;
+    color: #333;
 }
 
 .state-category select:focus,
 .city-category select:focus {
     outline: none;
-    border-color: #5c6bc0;
+    border-color: #6a73e2;
 }
 
 /* Right Container (Pet Listings & Controls) */
 .right-container {
     flex: 2;
     background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 30px;
 }
 
-/* Header section for the right container (sorting, pagination) */
+/* Right Container Header */
 .right-container-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
+    justify-content: space-evenly;
+    align-items: center; 
+    gap: 30px; 
 }
 
-.right-container-header h2 {
-    font-size: 18px;
+/* Individual Header Sections (Ordernar, Exibir, Total Amount) */
+.right-container-header > div {
+    display: flex;
+    flex-direction: row; 
+    gap: 10px; 
+}
+
+/* Label (H2) for each section */
+.order h2,
+.show h2 {
+    font-size: 20px;
     color: #333;
+    font-weight: bold;
+    margin: 0;
+    text-align: left;
+    margin-top: 12px; 
 }
 
-/* Select elements in the header */
+.total-amount{
+    font-size: 20px;
+    color: #333;
+    font-weight: bold;
+    margin: 0;
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+/* Dropdown (select) styling */
 .right-container-header select {
-    padding: 10px;
+    width: 100%;
+    padding: 12px 15px;
     font-size: 14px;
-    border-radius: 6px;
+    border-radius: 8px;
     border: 1px solid #ddd;
-    background-color: #fafafa;
-    width: 150px;
+    background-color: #f9f9f9;
+    color: #333;
     transition: border-color 0.3s ease;
 }
 
+/* Focused state for dropdown */
 .right-container-header select:focus {
-    outline: none;
-    border-color: #5c6bc0;
+    border-color: #6a73e2;
 }
 
-/* Total value info */
-.right-container-header p {
-    font-size: 14px;
-    color: #666;
+/* Total amount section */
+.total-amount h2 {
+    font-size: 16px;
+    color: #333;
+    font-weight: bold;
+    margin-top: 20px;
 }
 
-/* Pet listings container (grid) */
+/* Icon Styling */
+.icons {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.icons svg {
+    width: 30px;
+    height: 30px;
+    color: #6a73e2;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.icons svg:hover {
+    transform: scale(1.1);
+}
+
+/* Pets List (Grid) */
 .pets-container-allpets {
     display: grid;
     grid-template-columns: repeat(3, minmax(280px, 1fr));
     gap: 20px;
-    justify-content: space-evenly;
 }
 
-/* Responsive layout (for smaller screens) */
+/* Single Pet Card */
+.single-pet {
+    background-color: #fafafa;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.single-pet:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+}
+
+.single-pet img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
     .box-container {
         flex-direction: column;
@@ -109,19 +176,28 @@
     .left-container,
     .right-container {
         width: 100%;
+        margin-bottom: 30px;
     }
 
     .right-container-header {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+        gap: 20px;
     }
 
-    .pets-container-allpets {
-        grid-template-columns: 1fr;
+    .right-container-header > div {
+        min-width: 100%;
     }
 
     .right-container-header select {
         width: 100%;
+    }
+
+    .icons {
+        justify-content: flex-start;
+        margin-top: 10px;
+    }
+
+    .pets-container-allpets {
+        grid-template-columns: 1fr;
     }
 }
