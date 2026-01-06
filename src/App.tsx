@@ -7,69 +7,15 @@ import { Swiper } from "swiper/react";
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
-
+import StateSelect from "./components/reusable/StateSelection";
 
 const dog1 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
 const dog2 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
 const dog3 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
 const dog4 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
 
-const statesOfBrazil = [
-  { name: "Acre", uf: "AC" },
-  { name: "Alagoas", uf: "AL" },
-  { name: "Amapá", uf: "AP" },
-  { name: "Amazonas", uf: "AM" },
-  { name: "Bahia", uf: "BA" },
-  { name: "Ceará", uf: "CE" },
-  { name: "Distrito Federal", uf: "DF" },
-  { name: "Espírito Santo", uf: "ES" },
-  { name: "Goiás", uf: "GO" },
-  { name: "Maranhão", uf: "MA" },
-  { name: "Mato Grosso", uf: "MT" },
-  { name: "Mato Grosso do Sul", uf: "MS" },
-  { name: "Minas Gerais", uf: "MG" },
-  { name: "Pará", uf: "PA" },
-  { name: "Paraíba", uf: "PB" },
-  { name: "Paraná", uf: "PR" },
-  { name: "Pernambuco", uf: "PE" },
-  { name: "Piauí", uf: "PI" },
-  { name: "Rio de Janeiro", uf: "RJ" },
-  { name: "Rio Grande do Norte", uf: "RN" },
-  { name: "Rio Grande do Sul", uf: "RS" },
-  { name: "Rondônia", uf: "RO" },
-  { name: "Roraima", uf: "RR" },
-  { name: "Santa Catarina", uf: "SC" },
-  { name: "São Paulo", uf: "SP" },
-  { name: "Sergipe", uf: "SE" },
-  { name: "Tocantins", uf: "TO" }
-];
-
-
 function App() {
-  const [selectedOrigin, setSelectedOrigin] = useState<{} | null>(null);
   const [petData, setPetData] = useState<any[]>([]);
-  const [region, setRegion] = useState('');
-
-  useEffect(() => {
-    const fetchRegion = async () => {
-      const regionReturn = await getUserLanguage()
-      const regionName = statesOfBrazil.find(i => i.name == regionReturn)
-
-      if (regionName) {
-        setRegion(regionName.uf)
-      }
-    }
-    fetchRegion()
-    getAllPetsPublic(region, setPetData)
-
-    if (!selectedOrigin) {
-      setSelectedOrigin(statesOfBrazil[0])
-    }
-  }, [region])
-
-  useEffect(() => {
-    console.log(petData)
-  }, [petData])
 
   return (
     <>
@@ -85,14 +31,7 @@ function App() {
           </p>
 
           <div className="hero-search">
-            <select onChange={(e) => setSelectedOrigin(JSON.parse(e.target.value))} defaultValue={statesOfBrazil[0].name}>
-              {statesOfBrazil.map((origin: any, i: number) => (
-                <option key={i} value={JSON.stringify(origin)}>
-                  {`${statesOfBrazil[i].name}`}
-                </option>
-              ))}
-            </select>
-            <button>Procurar</button>
+            <StateSelect setPetData={setPetData} />
           </div>
 
           <p>Estados Mais Procuradas</p>

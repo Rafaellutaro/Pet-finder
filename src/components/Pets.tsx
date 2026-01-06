@@ -2,6 +2,7 @@ import PetContainer from "./functions/petFunctions"
 import "../assets/css/Pets.css"
 import { TiThListOutline } from "react-icons/ti"
 import { TiThLargeOutline } from "react-icons/ti"
+import {StateSelectNoApi} from "./reusable/StateSelection"
 
 function Pets() {
     return (
@@ -10,14 +11,18 @@ function Pets() {
                 <h1>Categorias</h1>
 
                 <div className="state-category">
-                    <select name="state" id="state">
-                        <option value="">colocar estados aqui</option>
+                    <StateSelectNoApi />
+                </div>
+
+                <div className="breed-category">
+                    <select name="city" id="city">
+                        <option value="">Raça</option>
                     </select>
                 </div>
 
-                <div className="city-category">
+                <div className="age-category">
                     <select name="city" id="city">
-                        <option value="">Colocar todas as cidades aqui</option>
+                        <option value="">Idade</option>
                     </select>
                 </div>
             </div>
