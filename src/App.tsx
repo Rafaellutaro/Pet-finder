@@ -65,7 +65,7 @@ function App() {
             ))}
           </Swiper>
         ) : (
-          <div>Loading Pets...</div> // using the same idea in flutter, now i can understand it better, since i used mostly backend there and didnt grasp 100%.
+          <div>Loading Pets...</div> // using the same idea i used in flutter, now i can understand it better, since i used mostly backend there and didnt grasp 100%.
         )}                           {/* its easier than i thought it was '-' */}
       </section>
 

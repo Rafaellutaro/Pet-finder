@@ -6,9 +6,10 @@ import { StateSelectNoApi } from "./reusable/StateSelection"
 import { useEffect, useState } from "react"
 import { useUser } from "../Interfaces/GlobalUser"
 import { getAllPetsPublic } from "./functions/petFunctions"
+import { useSearchParams } from 'react-router-dom';
 
 function Pets() {
-    const [selectedOrigin, setSelectedOrigin] = useState()
+    const [selectedOrigin, setSelectedOrigin] = useState("")
     const [PetData, setPetData] = useState<any>({})
     const [selectedBreed, setSelectedBreed] = useState()
     const [selectedType, setSelectedType] = useState()
@@ -18,13 +19,22 @@ function Pets() {
 
     const user = useUser()
 
+    const [searchParams] = useSearchParams();
+    const uf = searchParams.get('uf');
+
     useEffect(() => {
         if (!selectedOrder && !selectedPageLimit) {
             setSelectedOrder("asc")
             setSelectedPageLimit("10")
         }
 
-        getAllPetsPublic(selectedOrigin!, selectedType!, selectedBreed!, selectedAge!, selectedPageLimit, selectedOrder, setPetData);
+        if (uf && !selectedOrigin) {
+            getAllPetsPublic(uf, selectedType!, selectedBreed!, selectedAge!, selectedPageLimit, selectedOrder, setPetData);
+        } else {
+            getAllPetsPublic(selectedOrigin!, selectedType!, selectedBreed!, selectedAge!, selectedPageLimit, selectedOrder, setPetData);
+        }
+
+
 
     }, [user, selectedOrigin, selectedType, selectedBreed, selectedAge, selectedPageLimit, selectedOrder]);
 

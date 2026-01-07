@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { getUserLanguage } from "../functions/userFunctions";
 import { getAllPetsPublic } from "../functions/petFunctions";
-import {statesOfBrazil, petType, ageRanges} from "../../Interfaces/usefulPetInterface"
+import { statesOfBrazil, petType, ageRanges } from "../../Interfaces/usefulPetInterface"
+import { useNavigate } from 'react-router-dom';
 
 type StateSelectProp = {
     setPetData: React.Dispatch<React.SetStateAction<any[]>>;
@@ -10,8 +11,8 @@ type StateSelectProp = {
 export default function StateSelect({ setPetData }: StateSelectProp) {
     const [selectedOrigin, setSelectedOrigin] = useState<any | null>(null);
     // const [petData, setPetData] = useState<any[]>([]);
-    const [region, setRegion] = useState('');
     const [apiRegion, setApiRegion] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchRegion = async () => {
@@ -28,27 +29,31 @@ export default function StateSelect({ setPetData }: StateSelectProp) {
 
     useEffect(() => {
         if (apiRegion) {
-            getAllPetsPublic(apiRegion, undefined!,undefined!, undefined!, "10", undefined!, setPetData);
+            getAllPetsPublic(apiRegion, undefined!, undefined!, undefined!, "10", undefined!, setPetData);
         }
     }, [apiRegion]);
 
     useEffect(() => {
-        console.log(region)
         console.log(selectedOrigin)
-    }, [region]);
+    }, [selectedOrigin]);
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selected = JSON.parse(e.target.value);
-        setSelectedOrigin(selected);
-        setRegion(selected.uf);
+        setSelectedOrigin(selected.uf);
     };
+
+    const SeachBasedOnUf = () => {
+        if (selectedOrigin){
+            navigate(`/Pets?uf=${selectedOrigin}`);
+        }
+    }
 
     return (
         <>
             <SelectComponent
                 handleSelectChange={handleSelectChange}
             />
-            <button>Procurar</button>
+            <button onClick={() => SeachBasedOnUf()}>Procurar</button>
         </>
     );
 }
@@ -67,7 +72,7 @@ export function StateSelectNoApi({ setSelectedOrigin, setSelectedType, setSelect
 
         console.log(selected)
 
-        switch(type){
+        switch (type) {
             case "origin":
                 setSelectedOrigin(selected.uf);
                 break;
@@ -75,12 +80,12 @@ export function StateSelectNoApi({ setSelectedOrigin, setSelectedType, setSelect
                 setSelectedType(selected.type);
                 break
             case "age":
-                setSelectedAge(selected);
+                setSelectedAge(selected.age);
                 break
             default:
                 break;
         }
-        
+
     };
 
     return (
@@ -92,7 +97,7 @@ export function StateSelectNoApi({ setSelectedOrigin, setSelectedType, setSelect
             </div>
 
             <div className="breed-category">
-                <TypeComponent 
+                <TypeComponent
                     handleSelectChange={handleSelectChange("type")}
                 />
             </div>
@@ -149,7 +154,7 @@ function AgeComponent({ handleSelectChange }: { handleSelectChange: (e: React.Ch
                 <option value={JSON.stringify('undefined')}>Selecione a Idade</option>
                 {ageRanges.map((age, i) => (
                     <option key={i} value={JSON.stringify(age)}>
-                        {age.dogState} | {age.age}
+                        {age.age}
                     </option>
                 ))}
             </select>

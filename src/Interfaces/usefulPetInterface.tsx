@@ -12,8 +12,7 @@ interface Type {
 }
 
 interface AgeRange {
-  dogState: string;
-  age: string;
+  age: number;
 }
 
 export const statesOfBrazil: State[] = [
@@ -95,10 +94,27 @@ export const catBreed: Breed[] = [
 ];
 
 export const ageRanges: AgeRange[] = [
-  { dogState: "Filhote", age: "1-3 anos" }, // Puppy
-  { dogState: "Joven Adulto", age: "4-7 anos" }, // Young Adult
-  { dogState: "Adulto", age: "8-12 anos" }, // Adult
-  { dogState: "Idoso", age: "13+ anos" } // Senior
+  { age: 0 },
+  { age: 1 },
+  { age: 2 },
+  { age: 3 },
+  { age: 4 },
+  { age: 5 },
+  { age: 6 },
+  { age: 7 },
+  { age: 8 },
+  { age: 9 },
+  { age: 10 },
+  { age: 11 },
+  { age: 12 },
+  { age: 13 },
+  { age: 14 },
+  { age: 15 },
+  { age: 16 },
+  { age: 17 },
+  { age: 18 },
+  { age: 19 },
+  { age: 20 }, 
 ];
 
 export const petType: Type[] = [

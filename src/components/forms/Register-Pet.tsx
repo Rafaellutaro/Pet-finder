@@ -47,15 +47,13 @@ export default function RegisterPet() {
 
         console.log(type)
 
-        const parsedType = JSON.parse(type)
-
-        switch (parsedType) {
+        switch (type) {
             case "Cachorro":
                 return (
-                    <select id="petType" {...register("breed", { required: true })}>
+                    <select id="petBreed" {...register("breed", { required: true })}>
                         <option value={JSON.stringify('undefined')}>escolha a raça do pet</option>
                         {dogBreeds.map((pet, i) => (
-                            <option key={i} value={JSON.stringify(pet)}>
+                            <option key={i} value={pet.name}>
                                 {pet.name}
                             </option>
                         ))}
@@ -63,10 +61,10 @@ export default function RegisterPet() {
                 )
             case "Gato":
                 return (
-                    <select id="petType" {...register("breed", { required: true })}>
+                    <select id="petBreed" {...register("breed", { required: true })}>
                         <option value={JSON.stringify('undefined')}>escolha a raça do pet</option>
                         {catBreed.map((pet, i) => (
-                            <option key={i} value={JSON.stringify(pet)}>
+                            <option key={i} value={pet.name}>
                                 {pet.name}
                             </option>
                         ))}
@@ -187,10 +185,10 @@ export default function RegisterPet() {
 
                         <div className="form-group">
                             <label>Tipo:</label>
-                            <select id="" {...register("type")}>
+                            <select id="" {...register("type", {required: true})}>
                                 <option value={JSON.stringify('undefined')}>escolhar o tipo do pet</option>
                                 {petType.map((type, i) => (
-                                    <option key={i} value={JSON.stringify(type.type)}>
+                                    <option key={i} value={type.type}>
                                         {type.type}
                                     </option>
                                 ))}
@@ -207,13 +205,15 @@ export default function RegisterPet() {
                         </div>
 
                         <div className="form-group">
-                            <label>Idade:</label>
-                            <select  id="petAge">
+                            <label>Idade Aproximada:</label>
+                            <select  id="petAge" {...register("age", {required: true})}>
+                                <option value={JSON.stringify('undefined')}>escolhar a idade aproximada</option>
                                 {ageRanges.map((age, i) => (
-                                    <option key={i} value={JSON.stringify(age)}>
-                                        {age.dogState} | {age.age}
+                                    <option key={i} value={JSON.stringify(age.age)}>
+                                        {age.age}
                                     </option>
                                 ))}
+                                <option value={JSON.stringify("20+")}>acima dos 20</option>
                             </select>
                             
                         </div>
