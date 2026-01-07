@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./assets/css/App.css";
 import heroImg from "./assets/imgs/hero.png";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -65,8 +65,8 @@ function App() {
             ))}
           </Swiper>
         ) : (
-          <div>Loading Pets...</div> // You can show a loading message or a spinner while petData is null/undefined
-        )}
+          <div>Loading Pets...</div> // using the same idea in flutter, now i can understand it better, since i used mostly backend there and didnt grasp 100%.
+        )}                           {/* its easier than i thought it was '-' */}
       </section>
 
 

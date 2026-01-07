@@ -2,7 +2,7 @@ import { PetContainerPublicApi } from "./functions/petFunctions"
 import "../assets/css/Pets.css"
 import { TiThListOutline } from "react-icons/ti"
 import { TiThLargeOutline } from "react-icons/ti"
-import {StateSelectNoApi} from "./reusable/StateSelection"
+import { StateSelectNoApi } from "./reusable/StateSelection"
 import { useEffect, useState } from "react"
 import { useUser } from "../Interfaces/GlobalUser"
 import { getAllPetsPublic } from "./functions/petFunctions"
@@ -11,6 +11,7 @@ function Pets() {
     const [selectedOrigin, setSelectedOrigin] = useState()
     const [PetData, setPetData] = useState<any>({})
     const [selectedBreed, setSelectedBreed] = useState()
+    const [selectedType, setSelectedType] = useState()
     const [selectedAge, setSelectedAge] = useState()
     const [selectedPageLimit, setSelectedPageLimit] = useState("")
     const [selectedOrder, setSelectedOrder] = useState("")
@@ -18,20 +19,26 @@ function Pets() {
     const user = useUser()
 
     useEffect(() => {
-        setSelectedOrder("asc")
-        setSelectedPageLimit("10")
+        if (!selectedOrder && !selectedPageLimit) {
+            setSelectedOrder("asc")
+            setSelectedPageLimit("10")
+        }
 
-      getAllPetsPublic(selectedOrigin!, selectedBreed!, selectedAge!, selectedPageLimit, selectedOrder, setPetData);
-    
-  }, [user, selectedOrigin, selectedBreed, selectedAge, selectedPageLimit, selectedOrder]);
+        getAllPetsPublic(selectedOrigin!, selectedType!, selectedBreed!, selectedAge!, selectedPageLimit, selectedOrder, setPetData);
+
+    }, [user, selectedOrigin, selectedType, selectedBreed, selectedAge, selectedPageLimit, selectedOrder]);
+
+    if (!PetData.data) return <div>loading data</div>
+
+    const totalItems = PetData.pagination.totalItems
 
     return (
         <div className="box-container">
             <div className="left-container">
                 <h1>Categorias</h1>
 
-                    <StateSelectNoApi setSelectedOrigin={setSelectedOrigin} setSelectedBreed={setSelectedBreed} setSelectedAge={setSelectedAge}/>
-                
+                <StateSelectNoApi setSelectedOrigin={setSelectedOrigin} setSelectedType={setSelectedType} setSelectedAge={setSelectedAge} />
+
             </div>
 
             <div className="right-container">
@@ -55,7 +62,7 @@ function Pets() {
                     </div>
 
                     <div className="total-amount">
-                        <h2>valor total de produtos achados/ usar uma variavel</h2>
+                        <h2>Total de Pets encontrados: {totalItems}</h2>
                     </div>
 
                     {/* icons */}
@@ -69,7 +76,7 @@ function Pets() {
                     {/* fetch get api to all pets based on params */}
 
 
-                    <PetContainerPublicApi petData={PetData} /> {/* using Pet container as a example, i need to create the correct api */}
+                    <PetContainerPublicApi petData={PetData} /> {/* this is the correct container, bug free for now :) */}
 
                 </div>
             </div>

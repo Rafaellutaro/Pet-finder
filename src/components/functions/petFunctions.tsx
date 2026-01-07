@@ -2,7 +2,6 @@ import { FaPlus } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../Interfaces/GlobalUser"
 import { useEffect, useState } from "react";
-import { SwiperSlide } from 'swiper/react';
 import apiFetch from "../../Interfaces/TokenAuthorization";
 
 const getAllPetsById = () => {
@@ -30,11 +29,11 @@ const getAllPetsById = () => {
     return { pets, loading }
 }
 
-export function getAllPetsPublic(region: string , breed: string, age: string, pageLimit: string, order: string, setPetData: React.Dispatch<React.SetStateAction<any[]>>) {
-    console.log(region, breed, age, pageLimit, order)
+export function getAllPetsPublic(region: string , type: string, breed: string, age: string, pageLimit: string, order: string, setPetData: React.Dispatch<React.SetStateAction<any[]>>) {
+    console.log(region, type, breed, age, pageLimit, order)
 
     const FetchPetData = async () => {
-        const petApi = await fetch(`http://localhost:3000/pets/getAllPets?uf=${region}&breed=${breed}&age=${age}&limit=${pageLimit}&orderDirection=${order}`, {
+        const petApi = await fetch(`http://localhost:3000/pets/getAllPets?uf=${region}&type=${type}&breed=${breed}&age=${age}&limit=${pageLimit}&orderDirection=${order}`, {
             method: "GET",
             headers: {
                 "content-type": "application/json",

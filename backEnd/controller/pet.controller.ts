@@ -5,7 +5,7 @@ import type { AuthRequest } from "../middleware/auth.middleware.ts";
 // get all pets
 
 export const getAllPets = async (req: AuthRequest, res: Response) => {
-    const { uf, city, breed, age, page = 1, limit = 10, orderBy = 'name', orderDirection = 'asc' } = req.query;
+    const { uf, city, breed, age, type, page = 1, limit = 10, orderBy = 'name', orderDirection = 'asc' } = req.query;
 
     const filters: any = {};
 
@@ -14,6 +14,7 @@ export const getAllPets = async (req: AuthRequest, res: Response) => {
         city: typeof city == 'string' && city != 'undefined' ? city : undefined,
         breed: typeof breed == 'string' && breed != 'undefined' ? breed : undefined,
         age: typeof age == 'string' && age != 'undefined' ? age : undefined,
+        type: typeof type == 'string' && type != 'undefined' ? type : undefined,
     };
 
     Object.keys(filterMap).forEach((key) => {

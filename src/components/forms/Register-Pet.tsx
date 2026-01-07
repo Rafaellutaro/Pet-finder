@@ -7,6 +7,7 @@ import { cepSearch } from "../functions/userFunctions";
 import type z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PetSchema as schema } from "../../Interfaces/zodSchema";
+import {catBreed, dogBreeds, ageRanges, petType} from "../../Interfaces/usefulPetInterface"
 
 export default function RegisterPet() {
     //meu deus se eu soubesse o quanto mais de boa é usar o react-hook-form em vez de usar o reducer e criar o proprio form antes velho, que porcaria.
@@ -36,6 +37,45 @@ export default function RegisterPet() {
     } = useForm<FormFields>({
         resolver: zodResolver(schema),
     });
+
+    const type = watch("type")
+
+    const PetBreedComponentChange = (type: string) => {
+        if (!type){
+            return <div>loading</div>
+        }
+
+        console.log(type)
+
+        const parsedType = JSON.parse(type)
+
+        switch (parsedType) {
+            case "Cachorro":
+                return (
+                    <select id="petType" {...register("breed", { required: true })}>
+                        <option value={JSON.stringify('undefined')}>escolha a raça do pet</option>
+                        {dogBreeds.map((pet, i) => (
+                            <option key={i} value={JSON.stringify(pet)}>
+                                {pet.name}
+                            </option>
+                        ))}
+                    </select>
+                )
+            case "Gato":
+                return (
+                    <select id="petType" {...register("breed", { required: true })}>
+                        <option value={JSON.stringify('undefined')}>escolha a raça do pet</option>
+                        {catBreed.map((pet, i) => (
+                            <option key={i} value={JSON.stringify(pet)}>
+                                {pet.name}
+                            </option>
+                        ))}
+                    </select>
+                )
+            default:
+                return <div>Selecione um tipo primeiro</div>
+        }
+    }
 
     // Watch CEP for auto-fill
     const cep = watch("cep");
@@ -115,8 +155,9 @@ export default function RegisterPet() {
             //Send to API
             const res = await fetch("http://localhost:3000/pets/insert", {
                 method: "POST",
-                headers: { 
-                    "content-type": "application/json" },
+                headers: {
+                    "content-type": "application/json"
+                },
                 body: JSON.stringify(payload)
             });
 
@@ -133,7 +174,7 @@ export default function RegisterPet() {
         <section className="registerCommon-section">
             <div className="common-container">
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    
+
                     <h1>Dados do Pet</h1>
 
                     {/* PET FIELDS */}
@@ -146,22 +187,35 @@ export default function RegisterPet() {
 
                         <div className="form-group">
                             <label>Tipo:</label>
-                            <input {...register("type", { required: true })} placeholder="Cachorro, Gato..." />
-                            {errors.type && <p className="error">{errors.type.message}</p>}
+                            <select id="" {...register("type")}>
+                                <option value={JSON.stringify('undefined')}>escolhar o tipo do pet</option>
+                                {petType.map((type, i) => (
+                                    <option key={i} value={JSON.stringify(type.type)}>
+                                        {type.type}
+                                    </option>
+                                ))}
+                            </select>
+
                         </div>
                     </div>
 
                     <div className="form-row">
                         <div className="form-group">
                             <label>Raça:</label>
-                            <input {...register("breed", { required: true })} placeholder="Raça" />
-                            {errors.breed && <p className="error">{errors.breed.message}</p>}
+
+                            {PetBreedComponentChange(type)}
                         </div>
 
                         <div className="form-group">
                             <label>Idade:</label>
-                            <input {...register("age", { required: true })} placeholder="Idade" />
-                            {errors.age && <p className="error">{errors.age.message}</p>}
+                            <select  id="petAge">
+                                {ageRanges.map((age, i) => (
+                                    <option key={i} value={JSON.stringify(age)}>
+                                        {age.dogState} | {age.age}
+                                    </option>
+                                ))}
+                            </select>
+                            
                         </div>
                     </div>
                     {/* 
@@ -169,8 +223,8 @@ export default function RegisterPet() {
                     */}
                     <div className="form-row">
                         <div className="form-group full">
-                            <label>Detalhes:</label>  
-                            <textarea {...register("details", {required: true})} rows={6} placeholder="comportamento, se é amigavel com crianças, audulteros etc...." />
+                            <label>Detalhes:</label>
+                            <textarea {...register("details", { required: true })} rows={6} placeholder="comportamento, se é amigavel com crianças, audulteros etc...." />
                             {errors.details && <p className="error">{errors.details.message}</p>}
                         </div>
                     </div>
@@ -193,9 +247,9 @@ export default function RegisterPet() {
                             <select
                                 defaultValue={JSON.stringify(allAddress[0])}
                                 onChange={(e) => {
-                                    if (e.target.value == "new"){
+                                    if (e.target.value == "new") {
                                         setSelectedAddress(e.target.value)
-                                    }else{
+                                    } else {
                                         setSelectedAddress(JSON.parse(e.target.value))
                                     }
                                 }}
