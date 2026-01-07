@@ -30,9 +30,11 @@ const getAllPetsById = () => {
     return { pets, loading }
 }
 
-export function getAllPetsPublic(region: string, setPetData: React.Dispatch<React.SetStateAction<any[]>>) {
+export function getAllPetsPublic(region: string , breed: string, age: string, pageLimit: string, order: string, setPetData: React.Dispatch<React.SetStateAction<any[]>>) {
+    console.log(region, breed, age, pageLimit, order)
+
     const FetchPetData = async () => {
-        const petApi = await fetch(`http://localhost:3000/pets/getAllPets?uf=${region}`, {
+        const petApi = await fetch(`http://localhost:3000/pets/getAllPets?uf=${region}&breed=${breed}&age=${age}&limit=${pageLimit}&orderDirection=${order}`, {
             method: "GET",
             headers: {
                 "content-type": "application/json",
@@ -45,7 +47,7 @@ export function getAllPetsPublic(region: string, setPetData: React.Dispatch<Reac
 
         if (data) {
             // const actualPetData = data.data.filter((i: { address: { state: {} }; }) => i.address?.state == region)
-            setPetData(data.data)
+            setPetData(data)
         }
     }
 
@@ -53,18 +55,21 @@ export function getAllPetsPublic(region: string, setPetData: React.Dispatch<Reac
 
 
 }
+// This function was causing too many bugs skkskskskkskskskskskksks
 
-export function petContainerCloseToYou(pets: any[]) {
-    return (
-        <>
-            {pets.map((item: any) => (
-                <SwiperSlide key={item.id}>
-                    <img src={item.imgs[0]?.url} alt={item.name} />
-                </SwiperSlide>
-            ))}
-        </>
-    );
-}
+// export function PetContainerCloseToYou({ pets }: { pets: any }) {
+//     if (!pets || !pets.data) return <div>loading data</div>
+
+//     return (
+//         <>
+//             {pets.data.map((item: any) => (
+//                 <SwiperSlide key={item.id}>
+//                     <img src={item.imgs[0]?.url} alt={item.name} />
+//                 </SwiperSlide>
+//             ))}
+//         </>
+//     );
+// }
 
 export default function petContainer() {
     const { pets, loading } = getAllPetsById();
@@ -74,6 +79,28 @@ export default function petContainer() {
     return (
         <>
             {pets.map((item: any) => (
+                <div key={item.id} className="pet-container">
+                    {/* Display first image in imgs array */}
+                    <img src={item.imgs[0]?.url} alt={item.name} />
+
+                    <div className="pet-name">
+                        {item.name}
+                    </div>
+                    <div className="pet-details">
+                        <p>{item.details}</p>
+                    </div>
+                </div>
+            ))}
+        </>
+    );
+}
+
+export  function PetContainerPublicApi({ petData }: { petData: any }) {
+    if (!petData.data) return <div>loading Data</div>
+
+    return (
+        <>
+            {petData.data.map((item: any) => (
                 <div key={item.id} className="pet-container">
                     {/* Display first image in imgs array */}
                     <img src={item.imgs[0]?.url} alt={item.name} />

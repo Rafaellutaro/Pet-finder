@@ -7,7 +7,7 @@ import { useUser } from '../Interfaces/GlobalUser';
 import { IoSettingsOutline } from "react-icons/io5";
 
 function header() {
-    const {loggedIn} = useUser();
+    const {loggedIn, user} = useUser();
     let link = '';
     let linkSettings = '';
 

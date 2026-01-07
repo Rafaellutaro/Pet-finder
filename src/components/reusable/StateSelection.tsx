@@ -32,79 +32,181 @@ const statesOfBrazil = [
     { name: "Tocantins", uf: "TO" }
 ];
 
+const popularBreeds = [
+    "Labrador Retriever",
+    "Pastor Alemão",
+    "Golden Retriever",
+    "Bulldog Inglês",
+    "Beagle",
+    "Poodle",
+    "Rottweiler",
+    "Yorkshire Terrier",
+    "Dachshund (Teckel)",
+    "Boxer",
+    "Pug",
+    "Shih Tzu",
+    "Chihuahua",
+    "Doberman Pinscher",
+    "Husky Siberiano",
+    "Cocker Spaniel",
+    "Dálmata",
+    "Maltês",
+    "São Bernardo",
+    "Grande Dane",
+];
+
+  const ageRanges = [
+    {dogState: "Filhote", age: "1-3 anos"},  // Puppy
+    {dogState: "Joven Adulto", age: "4-7 anos"},  // Young Adult
+    {dogState: "Adulto", age: "8-12 anos"}, // Adult
+    {dogState: "Idoso", age: "13+ anos"}   // Senior
+  ];
+
 type StateSelectProp = {
-  setPetData: React.Dispatch<React.SetStateAction<any[]>>;
+    setPetData: React.Dispatch<React.SetStateAction<any[]>>;
 };
 
-export default function StateSelect({setPetData}: StateSelectProp) {
+export default function StateSelect({ setPetData }: StateSelectProp) {
     const [selectedOrigin, setSelectedOrigin] = useState<any | null>(null);
     // const [petData, setPetData] = useState<any[]>([]);
     const [region, setRegion] = useState('');
+    const [apiRegion, setApiRegion] = useState('');
 
     useEffect(() => {
         const fetchRegion = async () => {
-            const regionReturn = await getUserLanguage(); 
+            const regionReturn = await getUserLanguage();
             const regionName = statesOfBrazil.find(i => i.name === regionReturn);
 
             if (regionName) {
-                setRegion(regionName.uf); 
+                setApiRegion(regionName.uf);
             }
         };
         fetchRegion();
-    }, []); 
+    }, []);
 
-    
+
     useEffect(() => {
-        if (region) {
-            getAllPetsPublic(region, setPetData); 
+        if (apiRegion) {
+            getAllPetsPublic(apiRegion, undefined!, undefined!, "10", undefined!, setPetData);
         }
+    }, [apiRegion]);
+
+    useEffect(() => {
+        console.log(region)
+        console.log(selectedOrigin)
     }, [region]);
-   
+
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selected = JSON.parse(e.target.value);
         setSelectedOrigin(selected);
-        setRegion(selected.uf); 
+        setRegion(selected.uf);
     };
 
     return (
-        <div>
-            <SelectComponent 
-                selectedOrigin={selectedOrigin} 
-                handleSelectChange={handleSelectChange} 
+        <>
+            <SelectComponent
+                handleSelectChange={handleSelectChange}
             />
-        </div>
+            <button>Procurar</button>
+        </>
     );
 }
 
-export  function StateSelectNoApi() {
-    const [selectedOrigin, setSelectedOrigin] = useState<any | null>(null);
-   
-    const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+type StateSelectNoApiProps = {
+    setSelectedOrigin: React.Dispatch<any>;
+    setSelectedBreed: React.Dispatch<any>;
+    setSelectedAge: React.Dispatch<any>;
+};
+
+export function StateSelectNoApi({ setSelectedOrigin, setSelectedBreed, setSelectedAge }: StateSelectNoApiProps) {
+    // const [selectedOrigin, setSelectedOrigin] = useState<any | null>(null);
+
+    const handleSelectChange = (type: string) => (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selected = JSON.parse(e.target.value);
-        setSelectedOrigin(selected);
+
+        switch(type){
+            case "origin":
+                setSelectedOrigin(selected.uf);
+                break;
+            case "breed":
+                setSelectedBreed(selected);
+                break
+            case "age":
+                setSelectedAge(selected);
+                break
+            default:
+                break;
+        }
+        
     };
 
     return (
-        <div>
-            <SelectComponent 
-                selectedOrigin={selectedOrigin} 
-                handleSelectChange={handleSelectChange} 
-            />
-        </div>
+        <>
+            <div className="state-category">
+                <SelectComponent
+                    handleSelectChange={handleSelectChange("origin")}
+                />
+            </div>
+
+            <div className="breed-category">
+                <BreedComponent 
+                    handleSelectChange={handleSelectChange("breed")}
+                />
+            </div>
+
+            <div className="age-category">
+                <AgeComponent
+                    handleSelectChange={handleSelectChange("age")}
+                />
+            </div>
+        </>
     );
 }
 
-function SelectComponent({ selectedOrigin, handleSelectChange }: { selectedOrigin: any, handleSelectChange: (e: React.ChangeEvent<HTMLSelectElement>) => void }) {
+function SelectComponent({ handleSelectChange }: { handleSelectChange: (e: React.ChangeEvent<HTMLSelectElement>) => void }) {
     return (
         <div>
-            <select 
-                onChange={handleSelectChange} 
-                value={selectedOrigin ? selectedOrigin.name : ''}
+            <select
+                onChange={(e) => handleSelectChange(e)}
             >
                 <option value={"initial"}>Selecione um Estado</option>
                 {statesOfBrazil.map((origin, i) => (
                     <option key={i} value={JSON.stringify(origin)}>
                         {origin.name}
+                    </option>
+                ))}
+            </select>
+        </div>
+    );
+}
+
+function BreedComponent({ handleSelectChange }: { handleSelectChange: (e: React.ChangeEvent<HTMLSelectElement>) => void }) {
+    return (
+        <div>
+            <select
+                onChange={(e) => handleSelectChange(e)}
+            >
+                <option value={"initial"}>Selecione a Raça</option>
+                {popularBreeds.map((breed, i) => (
+                    <option key={i} value={JSON.stringify(breed)}>
+                        {breed}
+                    </option>
+                ))}
+            </select>
+        </div>
+    );
+}
+
+function AgeComponent({ handleSelectChange }: { handleSelectChange: (e: React.ChangeEvent<HTMLSelectElement>) => void }) {
+    return (
+        <div>
+            <select
+                onChange={(e) => handleSelectChange(e)}
+            >
+                <option value={"initial"}>Selecione a Idade</option>
+                {ageRanges.map((age, i) => (
+                    <option key={i} value={JSON.stringify(age)}>
+                        {age.dogState} | {age.age}
                     </option>
                 ))}
             </select>

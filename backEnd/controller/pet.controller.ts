@@ -10,10 +10,10 @@ export const getAllPets = async (req: AuthRequest, res: Response) => {
     const filters: any = {};
 
     const filterMap: { [key: string]: string | number | undefined } = {
-        state: typeof uf == 'string' ? uf : undefined,
-        city: typeof city == 'string' ? city : undefined,
-        breed: typeof breed == 'string' ? breed : undefined,
-        age: typeof age == 'string' ? age : undefined,
+        state: typeof uf == 'string' && uf != 'undefined' ? uf : undefined,
+        city: typeof city == 'string' && city != 'undefined' ? city : undefined,
+        breed: typeof breed == 'string' && breed != 'undefined' ? breed : undefined,
+        age: typeof age == 'string' && age != 'undefined' ? age : undefined,
     };
 
     Object.keys(filterMap).forEach((key) => {

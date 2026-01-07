@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import "./assets/css/App.css";
 import heroImg from "./assets/imgs/hero.png";
-import { getUserLanguage } from "./components/functions/userFunctions";
-import { getAllPetsPublic, petContainerCloseToYou } from "./components/functions/petFunctions"
-import { Swiper } from "swiper/react";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -15,7 +13,7 @@ const dog3 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/
 const dog4 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
 
 function App() {
-  const [petData, setPetData] = useState<any[]>([]);
+  const [petData, setPetData] = useState<any>({});
 
   return (
     <>
@@ -50,17 +48,25 @@ function App() {
       {/* AVAILABLE DOGS */}
       <section className="dogs-grid">
         <h2>Pets Disponiveis Para Adoção Perto de Você</h2>
-        <Swiper
-          modules={[Navigation, Pagination, Scrollbar, A11y]}
-          spaceBetween={50}
-          slidesPerView={4}
-          navigation
-          pagination={{ clickable: true }}
-          scrollbar={{ draggable: true }}
-        >
-          {petContainerCloseToYou(petData)}
-        </Swiper>
 
+        {petData && petData.data ? (
+          <Swiper
+            modules={[Navigation, Pagination, Scrollbar, A11y]}
+            spaceBetween={50}
+            slidesPerView={4}
+            navigation
+            pagination={{ clickable: true }}
+            scrollbar={{ draggable: true }}
+          >
+            {petData.data.map((item: any) => (
+              <SwiperSlide key={item.id}>
+                <img src={item.imgs[0]?.url} alt={item.name} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          <div>Loading Pets...</div> // You can show a loading message or a spinner while petData is null/undefined
+        )}
       </section>
 
 
