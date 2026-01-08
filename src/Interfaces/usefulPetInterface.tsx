@@ -8,7 +8,7 @@ interface Breed {
 }
 
 interface Type {
-    type: string
+  type: string
 }
 
 interface AgeRange {

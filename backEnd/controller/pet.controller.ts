@@ -30,6 +30,8 @@ export const getAllPets = async (req: AuthRequest, res: Response) => {
     const skip = (Number(page) - 1) * Number(limit);
     const take = Number(limit);
 
+    console.log("skip,", skip,"page", page)
+
     const orderByKey = typeof orderBy == 'string' ? orderBy : 'name';
     const order = {
         [orderByKey]: orderDirection === 'desc' ? 'desc' : 'asc',  

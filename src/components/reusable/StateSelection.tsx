@@ -30,7 +30,7 @@ export default function StateSelect({ setPetData }: StateSelectProp) {
 
     useEffect(() => {
         if (apiRegion) {
-            getAllPetsPublic(apiRegion, undefined!, undefined!, undefined!, "10", undefined!, setPetData);
+            getAllPetsPublic(apiRegion, undefined!, undefined!, undefined!, "10", undefined!, 1, setPetData);
         }
     }, [apiRegion]);
 

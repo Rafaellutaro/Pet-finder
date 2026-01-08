@@ -29,11 +29,9 @@ const getAllPetsById = () => {
     return { pets, loading }
 }
 
-export function getAllPetsPublic(region: string , type: string, breed: string, age: string, pageLimit: string, order: string, setPetData: React.Dispatch<React.SetStateAction<any[]>>) {
-    console.log(region, type, breed, age, pageLimit, order)
-
+export function getAllPetsPublic(region: string , type: string, breed: string, age: string, pageLimit: string, order: string, page: number, setPetData: React.Dispatch<React.SetStateAction<any[]>>) {
     const FetchPetData = async () => {
-        const petApi = await fetch(`http://localhost:3000/pets/getAllPets?uf=${region}&type=${type}&breed=${breed}&age=${age}&limit=${pageLimit}&orderDirection=${order}`, {
+        const petApi = await fetch(`http://localhost:3000/pets/getAllPets?uf=${region}&type=${type}&breed=${breed}&age=${age}&limit=${pageLimit}&orderDirection=${order}&page=${page}`, {
             method: "GET",
             headers: {
                 "content-type": "application/json",
