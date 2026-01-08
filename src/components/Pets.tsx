@@ -7,36 +7,28 @@ import { useEffect, useState } from "react"
 import { useUser } from "../Interfaces/GlobalUser"
 import { getAllPetsPublic } from "./functions/petFunctions"
 import { useSearchParams } from 'react-router-dom';
+import updateParams from "./reusable/setParams"
 
 function Pets() {
-    const [selectedOrigin, setSelectedOrigin] = useState("")
     const [PetData, setPetData] = useState<any>({})
-    const [selectedBreed, setSelectedBreed] = useState()
-    const [selectedType, setSelectedType] = useState()
-    const [selectedAge, setSelectedAge] = useState()
-    const [selectedPageLimit, setSelectedPageLimit] = useState("")
-    const [selectedOrder, setSelectedOrder] = useState("")
 
     const user = useUser()
 
-    const [searchParams] = useSearchParams();
-    const uf = searchParams.get('uf');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const params = Object.fromEntries(searchParams.entries())
 
     useEffect(() => {
-        if (!selectedOrder && !selectedPageLimit) {
-            setSelectedOrder("asc")
-            setSelectedPageLimit("10")
+        const order = searchParams.get("orderDirection")
+        const pageLimit = searchParams.get("limit")
+
+        if (!order && !pageLimit) {
+            updateParams({orderDirection: "asc", limit: "10"}, setSearchParams)
         }
 
-        if (uf && !selectedOrigin) {
-            getAllPetsPublic(uf, selectedType!, selectedBreed!, selectedAge!, selectedPageLimit, selectedOrder, setPetData);
-        } else {
-            getAllPetsPublic(selectedOrigin!, selectedType!, selectedBreed!, selectedAge!, selectedPageLimit, selectedOrder, setPetData);
-        }
+        getAllPetsPublic(params.uf!, params.type!, undefined!, params.age!, params.limit, params.orderDirection, setPetData);
+        
 
-
-
-    }, [user, selectedOrigin, selectedType, selectedBreed, selectedAge, selectedPageLimit, selectedOrder]);
+    }, [user, searchParams]);
 
     if (!PetData.data) return <div>loading data</div>
 
@@ -47,7 +39,7 @@ function Pets() {
             <div className="left-container">
                 <h1>Categorias</h1>
 
-                <StateSelectNoApi setSelectedOrigin={setSelectedOrigin} setSelectedType={setSelectedType} setSelectedAge={setSelectedAge} />
+                <StateSelectNoApi setSearchParams={setSearchParams} />
 
             </div>
 
@@ -56,7 +48,7 @@ function Pets() {
 
                     <div className="order">
                         <h2>Ordernar</h2>
-                        <select name="order" id="order" onChange={(e) => setSelectedOrder(e.target.value)}>
+                        <select name="order" id="order" onChange={(e) => updateParams({orderDirection: e.target.value}, setSearchParams)}>
                             <option value="asc">A-Z</option>
                             <option value="desc">Z-A</option>
                         </select>
@@ -64,7 +56,7 @@ function Pets() {
 
                     <div className="show">
                         <h2>exibir</h2>
-                        <select name="show" id="show" onChange={(e) => setSelectedPageLimit(e.target.value)}>
+                        <select name="show" id="show" onChange={(e) => updateParams({limit: e.target.value}, setSearchParams)}>
                             <option value="10">10 por pagina</option>
                             <option value="30">30 por pagina</option>
                             <option value="50">50 por pagina</option>

@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { getUserLanguage } from "../functions/userFunctions";
 import { getAllPetsPublic } from "../functions/petFunctions";
 import { statesOfBrazil, petType, ageRanges } from "../../Interfaces/usefulPetInterface"
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, type SetURLSearchParams } from 'react-router-dom';
+import updateParams from "./setParams";
 
 type StateSelectProp = {
     setPetData: React.Dispatch<React.SetStateAction<any[]>>;
@@ -59,12 +60,10 @@ export default function StateSelect({ setPetData }: StateSelectProp) {
 }
 
 type StateSelectNoApiProps = {
-    setSelectedOrigin: React.Dispatch<any>;
-    setSelectedType: React.Dispatch<any>;
-    setSelectedAge: React.Dispatch<any>;
+    setSearchParams:  SetURLSearchParams;
 };
 
-export function StateSelectNoApi({ setSelectedOrigin, setSelectedType, setSelectedAge }: StateSelectNoApiProps) {
+export function StateSelectNoApi({setSearchParams}: StateSelectNoApiProps) {
     // const [selectedOrigin, setSelectedOrigin] = useState<any | null>(null);
 
     const handleSelectChange = (type: string) => (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -74,13 +73,13 @@ export function StateSelectNoApi({ setSelectedOrigin, setSelectedType, setSelect
 
         switch (type) {
             case "origin":
-                setSelectedOrigin(selected.uf);
+                updateParams({uf: selected.uf}, setSearchParams);
                 break;
             case "type":
-                setSelectedType(selected.type);
+                updateParams({type: selected.type}, setSearchParams);
                 break
             case "age":
-                setSelectedAge(selected.age);
+                updateParams({age: selected.age}, setSearchParams);
                 break
             default:
                 break;
