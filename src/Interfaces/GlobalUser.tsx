@@ -18,6 +18,7 @@ const UserContext = createContext<{
     setToken: (token: string | null) => void;
     loggedIn: boolean | null;
     setLoggedIn: (loggedIn: boolean | null) => void;
+    verifyToken: () => Promise<void>;
 } | undefined>(undefined);
 
 export const useUser = () => {
@@ -65,8 +66,9 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
                         setLoggedIn(true);
                     }
                 }
-            }
 
+                return data.accessToken
+            }
 
         } catch (error) {
             console.error('Failed to fetch token data', error);
@@ -79,7 +81,7 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
     }, [])
 
     return (
-        <UserContext.Provider value={{ user, setUser, token, setToken, loggedIn, setLoggedIn }}>
+        <UserContext.Provider value={{ user, setUser, token, setToken, loggedIn, setLoggedIn, verifyToken }}>
             {children}
         </UserContext.Provider>
     );

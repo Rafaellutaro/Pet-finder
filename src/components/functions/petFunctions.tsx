@@ -5,21 +5,23 @@ import { useEffect, useState } from "react";
 import apiFetch from "../../Interfaces/TokenAuthorization";
 
 const getAllPetsById = () => {
-    const {token} = useUser();
-    const [pets, setPets] = useState<any[]>([]);
+    const {token, verifyToken} = useUser();
+    const [pets, setPets] = useState<any>({});
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (!token) return;
 
         const fetchPets = async () => {
+            const verifiedToken = await verifyToken();
+
             const response = await apiFetch('http://localhost:3000/pets/getAllPetsById', {
                 method: "GET"
-            }, token);
+            }, String(verifiedToken));
 
             const data = await response.json();
 
-            setPets(data.data);
+            setPets(data);
             setLoading(false);
         };
 
@@ -69,13 +71,13 @@ export function getAllPetsPublic(region: string , type: string, breed: string, a
 // }
 
 export default function petContainer() {
-    const { pets, loading } = getAllPetsById();
+    const { pets } = getAllPetsById();
 
-    if (loading) return <div></div>
+    if (!pets?.data) return <div>Loading Data</div>
 
     return (
         <>
-            {pets.map((item: any) => (
+            {pets.data.map((item: any) => (
                 <div key={item.id} className="pet-container">
                     {/* Display first image in imgs array */}
                     <img src={item.imgs[0]?.url} alt={item.name} />
@@ -93,19 +95,19 @@ export default function petContainer() {
 }
 
 export  function PetContainerPublicApi({ petData }: { petData: any }) {
-    if (!petData.data) return <div>loading Data</div>
+    if (!petData?.data) return <div>loading Data</div>
 
     return (
         <>
             {petData.data.map((item: any) => (
-                <div key={item.id} className="pet-container">
+                <div key={item.id} className="pet-container-public">
                     {/* Display first image in imgs array */}
                     <img src={item.imgs[0]?.url} alt={item.name} />
 
-                    <div className="pet-name">
+                    <div className="pet-name-public">
                         {item.name}
                     </div>
-                    <div className="pet-details">
+                    <div className="pet-details-public">
                         <p>{item.details}</p>
                     </div>
                 </div>
@@ -113,6 +115,31 @@ export  function PetContainerPublicApi({ petData }: { petData: any }) {
         </>
     );
 }
+
+export function PetContainerPublicApiLaying({ petData }: { petData: any }) {
+  if (!petData?.data) return <div>Loading data...</div>;
+
+  return (
+    <>
+      {petData.data.map((item: any) => (
+        <article
+          key={item.id}
+          className="pet-card pet-card--horizontal"
+          style={{ "--bg-img": `url(${item.imgs[0]?.url})` } as React.CSSProperties}
+        >
+          <div className="pet-card__image">
+            <img src={item.imgs[0]?.url} alt={item.name} />
+          </div>
+          <div className="pet-card__content">
+            <h3 className="pet-card__name">{item.name}</h3>
+            <p className="pet-card__details">{item.details}</p>
+          </div>
+        </article>
+      ))}
+    </>
+  );
+}
+
 
 export function PetAddContainer() {
     const nav = useNavigate()
