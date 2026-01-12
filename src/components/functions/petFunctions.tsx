@@ -1,5 +1,5 @@
 import { FaPlus } from "react-icons/fa6";
-import useRedirect from "../reusable/Redirect";
+import useRedirect, {usePetRedirect} from "../reusable/Redirect";
 import { useUser } from "../../Interfaces/GlobalUser"
 import { useEffect, useState } from "react";
 import apiFetch from "../../Interfaces/TokenAuthorization";
@@ -97,10 +97,14 @@ export default function petContainer() {
 export  function PetContainerPublicApi({ petData }: { petData: any }) {
     if (!petData?.data) return <div>loading Data</div>
 
+    const singlePet = usePetRedirect();
+
     return (
         <>
             {petData.data.map((item: any) => (
-                <div key={item.id} className="pet-container-public">
+                <div key={item.id} className="pet-container-public" onClick={() => {
+                    singlePet(item.id);
+                }}>
                     {/* Display first image in imgs array */}
                     <img src={item.imgs[0]?.url} alt={item.name} />
 

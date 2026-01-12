@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 
-function useRedirect(defaultPath: string = "/") {
+export default function useRedirect(defaultPath: string = "/") {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -12,4 +12,9 @@ function useRedirect(defaultPath: string = "/") {
   return redirect;
 }
 
-export default useRedirect
+export function usePetRedirect(defaultPath: string = "/Pets") {
+  const navigate = useNavigate();
+  return (id: string) => navigate(`${defaultPath}/${id}`);
+}
+
+
