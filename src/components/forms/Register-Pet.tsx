@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import supabase from "../../../backEnd/client/SupabaseClient";
 import { useUser } from "../../Interfaces/GlobalUser";
-import { useNavigate } from "react-router-dom";
+import useRedirect from "../reusable/Redirect";
 import { cepSearch } from "../functions/userFunctions";
 import type z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,7 +18,7 @@ export default function RegisterPet() {
     //=================================================================================
 
     const { user } = useUser();
-    const nav = useNavigate();
+    const profileRedirect = useRedirect("Profile");
 
     const userAddresses = user?.addresses || [];
 
@@ -162,7 +162,7 @@ export default function RegisterPet() {
             const apiResult = await res.json();
             console.log("API result:", apiResult);
 
-            nav("/Profile");
+            profileRedirect();
         } catch (e) {
             console.log("Error submitting pet:", e);
         }

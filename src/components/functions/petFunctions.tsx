@@ -1,5 +1,5 @@
 import { FaPlus } from "react-icons/fa6";
-import { useNavigate } from "react-router-dom";
+import useRedirect from "../reusable/Redirect";
 import { useUser } from "../../Interfaces/GlobalUser"
 import { useEffect, useState } from "react";
 import apiFetch from "../../Interfaces/TokenAuthorization";
@@ -142,10 +142,10 @@ export function PetContainerPublicApiLaying({ petData }: { petData: any }) {
 
 
 export function PetAddContainer() {
-    const nav = useNavigate()
+    const addPet = useRedirect("/addPet");
 
     return (
-        <div className="pet-container add-pet" onClick={() => nav("/addPet")}>
+        <div className="pet-container add-pet" onClick={() => addPet()}>
             <FaPlus />
         </div>
     )

@@ -5,54 +5,57 @@ import App from './App.tsx'
 import LoginPage from './components/Login.tsx'
 import Menu from './components/Selection-Menu.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import Layout from './components/Header-Layout.tsx'
+import Layout from './components/Router-layout/Header-Layout.tsx'
+import ProtectedLayout from './components/Router-layout/ProtectedLayout.tsx'
 import RegisterCommon from "./components/forms/Register-common.tsx"
 import Profile from './components/profile.tsx'
 import { UserProvider } from './Interfaces/GlobalUser.tsx'
 import RegisterPet from './components/forms/Register-Pet.tsx'
 import Settings from './components/Settings.tsx'
 import Pets from './components/Pets.tsx'
+import { Outlet } from "react-router-dom";
+import Pet from './components/Pet.tsx'
 
+// i realised i did the nesting route wrong when including layout, now it seens correct
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      { index: true, element: <App /> },
 
       {
-        path: "/",
-        element: <Layout><App /></Layout>
-      },
-      {
-        path: "/Login",
-        element: <Layout><LoginPage /></Layout>
-      },
-      {
-        path: "/Register",
-        element: <Layout><Menu /></Layout>
-      },
-      {
-        path: "/Register-Comum",
-        element: <Layout><RegisterCommon /></Layout>
-      },
-      {
-        path: "/Register-Shelter",
-        element: <div>shelter</div>
-      },
-      {
-        path: "/Profile",
-        element: <Layout><Profile /></Layout>
-      },
-      {
-        path: "/Pets",
-        element: <Layout><Pets /></Layout>
-      },
-      {
-        path: "/addPet",
-        element: <Layout><RegisterPet /></Layout>
-      },
-      {
-        path: "/Settings",
-        element: <Layout><Settings /></Layout>
+        element: <ProtectedLayout />,
+        children: [
+        { path: "Profile", element: <Profile /> },
+        { path: "addPet", element: <RegisterPet /> },
+        { path: "Settings", element: <Settings /> },
+        ]
       },
 
-])
+      { path: "Login", element: <LoginPage /> },
+
+      { path: "Register", element: <Menu /> },
+      { path: "Register-Comum", element: <RegisterCommon /> },
+      { path: "Register-Shelter", element: <div>shelter</div> },
+      {
+        path: "Pets",
+        element: <Outlet />,
+        children: [
+          {
+            index: true,
+            element: <Pets />
+          },
+          {
+            path: ":id",
+            element: <Pet />
+          }
+        ]
+      },
+    ]
+  }
+]);
+
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

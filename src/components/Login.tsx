@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import useRedirect from "./reusable/Redirect";
 import "../assets/css/Login.css"
 import { useUser } from '../Interfaces/GlobalUser';
 
@@ -7,7 +8,7 @@ function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const navigate = useNavigate();
+    const profileNavigate = useRedirect("Profile");
     const { setUser } = useUser();
     const { setToken } = useUser();
     const { setLoggedIn } = useUser();
@@ -55,7 +56,7 @@ function LoginPage() {
              setToken(tokenRes.accessToken);
              setLoggedIn(true);
 
-            navigate("/Profile")
+            profileNavigate();
         } catch (e) {
             console.log(e)
         }
