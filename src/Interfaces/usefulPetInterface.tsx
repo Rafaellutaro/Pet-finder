@@ -15,6 +15,17 @@ interface AgeRange {
   age: number;
 }
 
+export interface PetData {
+    id: number;
+    name: string;
+    type: string;
+    userId: number;
+    details: string;
+    breed: string;
+    age: string;
+    imgs: any[];
+}
+
 export const statesOfBrazil: State[] = [
   { name: "Acre", uf: "AC" },
   { name: "Alagoas", uf: "AL" },

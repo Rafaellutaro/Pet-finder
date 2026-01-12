@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import apiFetch from './TokenAuthorization';
 
-interface UserData {
+export interface UserData {
     id: number;
     name: string;
     lastName: string;

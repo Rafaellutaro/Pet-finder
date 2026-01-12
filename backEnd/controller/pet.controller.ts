@@ -2,6 +2,24 @@ import type { Response } from "express";
 import prisma from '../../backEnd/client/PrismaClient.ts'
 import type { AuthRequest } from "../middleware/auth.middleware.ts";
 
+export const getUniquePetById = async (req: AuthRequest, res: Response) => {
+    const {petId} = req.query
+
+    try {
+        const getUnique = await prisma.pet.findUnique({
+            where: {
+                id: Number(petId)
+            },
+            include:{
+                imgs: true
+            },
+        })
+        res.status(200).json({data: getUnique})
+    } catch (e) {
+        console.log(e)
+    }
+} 
+
 // get all pets
 
 export const getAllPets = async (req: AuthRequest, res: Response) => {

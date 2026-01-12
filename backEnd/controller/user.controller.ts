@@ -1,5 +1,7 @@
 import prisma from '../../backEnd/client/PrismaClient.ts'
 import jwt from 'jsonwebtoken'
+import type { Response } from "express";
+import type { AuthRequest } from "../middleware/auth.middleware.ts";
 
 const userClient = prisma
 
@@ -21,6 +23,33 @@ export const getAllUsers = async (req: any, res: any) => {
         console.log(e);
     }
 
+}
+
+//get pet onwer
+
+export const getUserByIdPublic = async (req: AuthRequest, res: Response) => {
+    const {userId} = req.query
+
+    try {
+        const UserByIdPublic = await userClient.user.findUnique({
+            where: {
+                id: Number(userId)
+            },
+            select: {
+                id: true,
+                name: true,
+                lastName: true,
+                email: true,
+                phone: true,
+                pets: true
+            }
+        });
+
+        res.status(200).json({ data: UserByIdPublic });
+
+    } catch (e) {
+        console.log(e);
+    }
 }
 
 //get user by id
