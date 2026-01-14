@@ -126,7 +126,7 @@ export function PetContainerPublicApiLaying({ petData }: { petData: any }) {
   return (
     <>
       {petData.data.map((item: any) => (
-        <article
+        <div
           key={item.id}
           className="pet-card pet-card--horizontal"
           style={{ "--bg-img": `url(${item.imgs[0]?.url})` } as React.CSSProperties}
@@ -138,7 +138,7 @@ export function PetContainerPublicApiLaying({ petData }: { petData: any }) {
             <h3 className="pet-card__name">{item.name}</h3>
             <p className="pet-card__details">{item.details}</p>
           </div>
-        </article>
+        </div>
       ))}
     </>
   );

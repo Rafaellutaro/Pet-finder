@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { PetData } from "../Interfaces/usefulPetInterface";
 import type { UserData } from "../Interfaces/GlobalUser";
+import FancyHeader from "./reusable/fancyProfileHeader";
 
 const getOwner = async (id: string) => {
     try {
@@ -55,7 +56,9 @@ function Pet () {
     console.log("all data", singlePetData, petOwner)
 
     return (
-        <div>salada</div>
+        <div>
+            {petOwner && <FancyHeader user={petOwner}/>}
+        </div>
     )
 }
 

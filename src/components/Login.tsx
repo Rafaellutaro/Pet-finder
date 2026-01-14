@@ -8,7 +8,7 @@ function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const profileNavigate = useRedirect("Profile");
+    const profileNavigate = useRedirect("/Profile");
     const { setUser } = useUser();
     const { setToken } = useUser();
     const { setLoggedIn } = useUser();

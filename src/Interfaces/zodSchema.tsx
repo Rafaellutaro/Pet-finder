@@ -26,17 +26,42 @@ export const RegisterSchema = z.object({
 })
 
 
-export const PetSchema = z.object({
+export const PetSchemaPart1 = z.object({
+    //pet data
     name: z.string(),
     breed: z.string(),
     type: z.string(),
     age: z.string(),
     details: z.string(),
+    gender: z.string(),
+    wayOfLife: z.string(),
     image: z.instanceof(FileList),
 
+    // pet address
     cep: z.string().optional(),
     street: z.string().optional(),
     neighborhood: z.string().optional(),
     city: z.string().optional(),
     region: z.string().optional(),
-})
+}).loose();
+
+export const PetSchemaPart2 = z.object({
+    // personality
+    friendly: z.number().min(0).max(100),
+    energetic: z.number().min(0).max(100),
+    smart: z.number().min(0).max(100),
+    playful: z.number().min(0).max(100),
+    loyal: z.number().min(0).max(100),
+}).loose();
+
+export const PetSchemaPart3 = z.object({
+    // favorite stuff
+    toy: z.string(),
+    food: z.string(),
+    playPlace: z.string(),
+    sleepPlace: z.string(),
+}).loose();
+
+const PetFullSchema = PetSchemaPart1.extend(PetSchemaPart2.shape).extend(PetSchemaPart3.shape);
+
+export type FormFields = z.infer<typeof PetFullSchema>

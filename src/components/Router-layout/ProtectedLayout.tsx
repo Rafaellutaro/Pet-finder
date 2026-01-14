@@ -5,9 +5,9 @@ export default function ProtectedLayout() {
   const { user, loggedIn} = useUser();
   const location = useLocation();
 
-  if (!loggedIn) return
+  if(!user) return 
 
-  if (!user) {
+  if (!user && !loggedIn) {
     return (
       <Navigate
         to="/Login"
