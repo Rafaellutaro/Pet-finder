@@ -40,8 +40,8 @@ model Address {
 
 model petAddress {
   id           Int    @id @default(autoincrement())
-  Pet   Pet    @relation(fields: [petId], references: [id])
-  petId        Int @unique
+  Pet          Pet    @relation(fields: [petId], references: [id])
+  petId        Int    @unique
   cep          String
   street       String
   neighborhood String
@@ -50,14 +50,31 @@ model petAddress {
 }
 
 model Pet {
-  id      Int      @id @default(autoincrement())
-  User    User     @relation(fields: [userId], references: [id])
-  userId  Int
-  name    String
-  type    String
-  breed   String
-  age     String
-  details String
+  id        Int    @id @default(autoincrement())
+  User      User   @relation(fields: [userId], references: [id])
+  userId    Int
+  name      String
+  type      String
+  breed     String
+  gender    String
+  wayOfLyfe String
+  age       String
+  details   String
+
+  // pet personality
+
+  friendly  Int
+  energetic Int
+  playful   Int
+  smart     Int
+  Loyal     Int
+
+  // pet favorites
+
+  toy        String
+  food       String
+  playPlace  String
+  sleepPlace String
 
   imgs    petImg[]
   address petAddress?
