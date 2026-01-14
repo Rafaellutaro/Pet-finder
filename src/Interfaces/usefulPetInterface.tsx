@@ -23,6 +23,15 @@ export interface PetData {
     details: string;
     breed: string;
     age: string;
+    wayOfLife: string;
+    gender: string;
+    food: string;
+    playPlace: string;
+    sleepPlace: string;
+    publishedAt: string;
+    heartsCount: number;
+    viewsCount: number;
+    toy: string;
     imgs: any[];
 }
 

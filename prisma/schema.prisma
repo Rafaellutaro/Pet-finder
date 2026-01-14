@@ -22,36 +22,38 @@ model User {
   phone    String @unique
   password String
 
-  addresses Address[]
-  // pets Pet[]
-  pets      Pet[]
+  addresses    Address[]
+  pets         Pet[]
+
+  preferences  UserPreference[]
 }
 
 model Address {
   id           Int    @id @default(autoincrement())
-  User         User   @relation(fields: [userId], references: [id])
   userId       Int
   cep          String
   street       String
   neighborhood String
   city         String
   state        String
+
+  User User @relation(fields: [userId], references: [id])
 }
 
 model petAddress {
   id           Int    @id @default(autoincrement())
-  Pet          Pet    @relation(fields: [petId], references: [id])
   petId        Int    @unique
   cep          String
   street       String
   neighborhood String
   city         String
   state        String
+
+  Pet Pet @relation(fields: [petId], references: [id])
 }
 
 model Pet {
   id        Int    @id @default(autoincrement())
-  User      User   @relation(fields: [userId], references: [id])
   userId    Int
   name      String
   type      String
@@ -61,28 +63,61 @@ model Pet {
   age       String
   details   String
 
-  // pet personality
-
-  friendly  Int
-  energetic Int
-  playful   Int
-  smart     Int
-  Loyal     Int
-
-  // pet favorites
+  publishedAt DateTime @default(now())
+  viewsCount  Int      @default(0)
+  heartsCount Int      @default(0)
 
   toy        String
   food       String
   playPlace  String
   sleepPlace String
 
-  imgs    petImg[]
-  address petAddress?
+  imgs      petImg[]
+  address   petAddress?
+
+  traits    PetTrait[]
+
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model petImg {
   id    Int    @id @default(autoincrement())
-  Pet   Pet    @relation(fields: [petId], references: [id])
   petId Int
   url   String
+
+  Pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
 }
+
+model Trait {
+  id        Int    @id @default(autoincrement())
+  key       String @unique
+  sortOrder Int @default(0)
+
+  petTraits       PetTrait[]
+  userPreferences UserPreference[]
+}
+
+model PetTrait {
+  id      Int @id @default(autoincrement())
+  petId   Int
+  traitId Int
+  value   Int 
+
+  Pet   Pet   @relation(fields: [petId], references: [id], onDelete: Cascade)
+  Trait Trait @relation(fields: [traitId], references: [id], onDelete: Cascade)
+
+  @@unique([petId, traitId])
+}
+
+model UserPreference {
+  id      Int @id @default(autoincrement())
+  userId  Int
+  traitId Int
+  weight  Int @default(0)
+
+  User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Trait Trait @relation(fields: [traitId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, traitId])
+}
+

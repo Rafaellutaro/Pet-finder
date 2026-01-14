@@ -3,22 +3,22 @@ import prisma from '../../backEnd/client/PrismaClient.ts'
 import type { AuthRequest } from "../middleware/auth.middleware.ts";
 
 export const getUniquePetById = async (req: AuthRequest, res: Response) => {
-    const {petId} = req.query
+    const { petId } = req.query
 
     try {
         const getUnique = await prisma.pet.findUnique({
             where: {
                 id: Number(petId)
             },
-            include:{
+            include: {
                 imgs: true
             },
         })
-        res.status(200).json({data: getUnique})
+        res.status(200).json({ data: getUnique })
     } catch (e) {
         console.log(e)
     }
-} 
+}
 
 // get all pets
 
@@ -48,11 +48,11 @@ export const getAllPets = async (req: AuthRequest, res: Response) => {
     const skip = (Number(page) - 1) * Number(limit);
     const take = Number(limit);
 
-    console.log("skip,", skip,"page", page)
+    console.log("skip,", skip, "page", page)
 
     const orderByKey = typeof orderBy == 'string' ? orderBy : 'name';
     const order = {
-        [orderByKey]: orderDirection === 'desc' ? 'desc' : 'asc',  
+        [orderByKey]: orderDirection === 'desc' ? 'desc' : 'asc',
     };
 
     try {
@@ -70,10 +70,10 @@ export const getAllPets = async (req: AuthRequest, res: Response) => {
         const totalPets = await prisma.pet.count({
             where: filters,
         });
-    
+
         const totalPages = Math.ceil(totalPets / Number(limit));
 
-         res.status(200).json({
+        res.status(200).json({
             data: allPets,
             pagination: {
                 page: Number(page),
@@ -99,16 +99,45 @@ export const getAllPetsById = async (req: AuthRequest, res: Response) => {
             where: {
                 userId: user.userId
             },
-            include:{
+            include: {
                 imgs: true
             },
         })
 
-        res.status(200).json({data: getAllPetsById})
+        res.status(200).json({ data: getAllPetsById })
     } catch (e) {
         console.log(e)
     }
-} 
+}
+
+//get Pet traits
+
+export const getPetTraits = async (req: AuthRequest, res: Response) => {
+    try {
+        const { petIdQuery } = req.query
+
+        const traits = await prisma.petTrait.findMany({
+            where: { petId: Number(petIdQuery) },
+            include: {
+                Trait: {
+                    select: {
+                        id: true,
+                        key: true,
+                        sortOrder: true,
+                    },
+                },
+            },
+            orderBy: {
+                Trait: { sortOrder: "asc" },
+            },
+        });
+
+        res.status(200).json({ data: traits })
+
+    } catch (e) {
+        console.log(e)
+    }
+}
 
 //insert
 export const insertPet = async (req: AuthRequest, res: Response) => {
@@ -120,6 +149,14 @@ export const insertPet = async (req: AuthRequest, res: Response) => {
         const petData = payload.petData
         const petAddress = payload.address
 
+        const petTraitValues: { [key: string]: number } = {
+            friendly: petData.friendly,
+            energetic: petData.energetic,
+            playful: petData.playful,
+            smart: petData.smart,
+            loyal: petData.loyal,
+        };
+
         const createPet = await prisma.pet.create({
             data: {
                 name: petData.name,
@@ -127,7 +164,14 @@ export const insertPet = async (req: AuthRequest, res: Response) => {
                 breed: petData.breed,
                 age: petData.age,
                 details: petData.details,
-                userId: payload.userId
+                userId: payload.userId,
+                //new fields
+                gender: petData.gender,
+                wayOfLyfe: petData.wayOfLife,
+                food: petData.food,
+                playPlace: petData.playPlace,
+                sleepPlace: petData.sleepPlace,
+                toy: petData.toy
             }
         })
 
@@ -142,18 +186,40 @@ export const insertPet = async (req: AuthRequest, res: Response) => {
             data: {
                 petId: createPet.id,
                 cep: petAddress.cep,
-                street:petAddress.street,
+                street: petAddress.street,
                 neighborhood: petAddress.neighborhood,
                 city: petAddress.city,
                 state: petAddress.state
             }
         })
 
-        res.status(201).json({data: {
-            createPet,
-            createImg,
-            createpetAddress
-        }})
+        const traits = await prisma.trait.findMany({
+            where: {
+                key: { in: Object.keys(petTraitValues) },
+            },
+        });
+
+        const petTraitsData = traits.map(trait => ({
+            petId: createPet.id,
+            traitId: trait.id,
+            value: petTraitValues[trait.key],
+        }));
+
+        const createPetTrait = await prisma.petTrait.createMany({
+            data: petTraitsData
+        })
+
+        console.log("im here", petTraitValues, traits, petTraitsData, createPetTrait)
+
+
+        res.status(201).json({
+            data: {
+                createPet,
+                createImg,
+                createpetAddress,
+                createPetTrait
+            }
+        })
     } catch (e) {
         console.log(e)
     }

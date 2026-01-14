@@ -68,71 +68,85 @@ export default function RegisterPet() {
     const onSubmit = async (data: any) => {
         console.log("submit", data)
 
-        // try {
-        //     // Upload image to Supabase
-        //     const file = data.image[0];
-        //     const fileName = `${Date.now()}_${file.name}`;
+        try {
+            // Upload image to Supabase
+            const file = data.image[0];
+            const fileName = `${Date.now()}_${file.name}`;
 
-        //     const { error: uploadError } = await supabase.storage
-        //         .from("pets")
-        //         .upload(fileName, file, {
-        //             cacheControl: "3600",
-        //             upsert: false
-        //         });
+            const { error: uploadError } = await supabase.storage
+                .from("pets")
+                .upload(fileName, file, {
+                    cacheControl: "3600",
+                    upsert: false
+                });
 
-        //     if (uploadError) throw uploadError;
+            if (uploadError) throw uploadError;
 
-        //     const { data: urlData } = supabase.storage
-        //         .from("pets")
-        //         .getPublicUrl(fileName);
+            const { data: urlData } = supabase.storage
+                .from("pets")
+                .getPublicUrl(fileName);
 
-        //     const imageUrl = urlData.publicUrl;
+            const imageUrl = urlData.publicUrl;
 
-        //     // Build address payload
-        //     let addressToUse = null;
+            // Build address payload
+            let addressToUse = null;
 
-        //     if (isAddingNewAddress) {
-        //         addressToUse = {
-        //             cep: data.cep,
-        //             street: data.street,
-        //             neighborhood: data.neighborhood,
-        //             city: data.city,
-        //             state: data.region,
-        //         };
-        //     } else {
-        //         addressToUse = selectedAddress;
-        //     }
+            if (isAddingNewAddress) {
+                addressToUse = {
+                    cep: data.cep,
+                    street: data.street,
+                    neighborhood: data.neighborhood,
+                    city: data.city,
+                    state: data.region,
+                };
+            } else {
+                addressToUse = selectedAddress;
+            }
 
-        //     // Final payload
-        //     const payload = {
-        //         userId: user!.id,
-        //         imageUrl,
-        //         petData: {
-        //             name: data.name,
-        //             breed: data.breed,
-        //             type: data.type,
-        //             age: data.age,
-        //             details: data.details,
-        //         },
-        //         address: addressToUse
-        //     };
+            // Final payload
+            const payload = {
+                userId: user!.id,
+                imageUrl,
+                petData: {
+                    //pet full data
+                    name: data.name,
+                    breed: data.breed,
+                    type: data.type,
+                    age: data.age,
+                    details: data.details,
+                    gender: data.gender,
+                    wayOfLife: data.wayOfLife,
+                    // personality
+                    energetic: data.energetic,
+                    friendly: data.friendly,
+                    loyal: data.loyal,
+                    playful: data.playful,
+                    smart: data.smart,
+                    // favorite
+                    food: data.food,
+                    playPlace: data.playPlace,
+                    sleepPlace: data.sleepPlace,
+                    toy: data.toy,
+                },
+                address: addressToUse
+            };
 
-        //     //Send to API
-        //     const res = await fetch("http://localhost:3000/pets/insert", {
-        //         method: "POST",
-        //         headers: {
-        //             "content-type": "application/json"
-        //         },
-        //         body: JSON.stringify(payload)
-        //     });
+            //Send to API
+            const res = await fetch("http://localhost:3000/pets/insert", {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
 
-        //     const apiResult = await res.json();
-        //     console.log("API result:", apiResult);
+            const apiResult = await res.json();
+            console.log("API result:", apiResult);
 
-        //     profileRedirect();
-        // } catch (e) {
-        //     console.log("Error submitting pet:", e);
-        // }
+            profileRedirect();
+        } catch (e) {
+            console.log("Error submitting pet:", e);
+        }
     };
 
 
