@@ -224,3 +224,35 @@ export const insertPet = async (req: AuthRequest, res: Response) => {
         console.log(e)
     }
 }
+
+// insert heart
+
+export const insertHeart = async (req: AuthRequest, res: Response) => {
+    const id = req.params.petId
+    const user = req.user;
+
+    try {
+        const heart = await prisma.validadeHeart.create({
+            data: {
+                petId: Number(id),
+                userId: user.userId
+            }
+        })
+
+        const incrementHeart = await prisma.pet.update({
+            where: {
+                id: Number(id),
+            },
+            data: {
+                heartsCount: { increment: 1 }
+            }
+        })
+
+        res.status(200).json({
+            heart,
+            incrementHeart
+        })
+    } catch (e) {
+        return res.status(409).json({message: "Already hearted"})
+    }
+}

@@ -1,5 +1,5 @@
 import type { PetData } from "../../Interfaces/usefulPetInterface";
-import type { UserData } from "../../Interfaces/GlobalUser";
+import { useUser, type UserData } from "../../Interfaces/GlobalUser";
 import "../../assets/css/petProfile.css";
 import { FaHeart } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
@@ -7,6 +7,7 @@ import { GrView } from "react-icons/gr";
 import { IoTimeOutline } from "react-icons/io5";
 import { BsFillPuzzleFill } from "react-icons/bs";
 import { getWaitingText } from "../functions/petFunctions";
+import apiFetch from "../../Interfaces/TokenAuthorization";
 
 type petProfile = {
   data: {
@@ -17,6 +18,7 @@ type petProfile = {
 }
 
 export default function PetProfile({ data }: petProfile) {
+  const { verifyToken } = useUser()
   const petData = data.pet
   // userData later to show who posted the pet, i will focus on the other data first
   // const onwerData = data.owner
@@ -42,7 +44,29 @@ export default function PetProfile({ data }: petProfile) {
     { title: "Compatibilidade", icon: <BsFillPuzzleFill />, value: 123 },
   ]
 
-  {petData?.gender == "male" ? petGender = "Macho" : petData?.gender == "female" ? petGender = "Fêmea" : ""}
+  const favoritesConfig = [
+    { icon: "🎾", label: "Não consegue resistir", value: petData?.toy },
+    { icon: "🥩", label: "O caminho para o seu coração", value: petData?.food },
+    { icon: "🏖", label: "Não consegue parar de brincar", value: petData?.playPlace },
+    { icon: "🛋", label: "Soneca depois de um longo dia", value: petData?.sleepPlace },
+  ]
+
+  { petData?.gender == "male" ? petGender = "Macho" : petData?.gender == "female" ? petGender = "Fêmea" : "" }
+
+  const incrementHeart = async () => {
+    try {
+      const token = await verifyToken()
+      const heart = await apiFetch(`http://localhost:3000/pets/${petData?.id}/heart`, {
+        method: "POST"
+      }, String(token))
+
+      const res = await heart.json();
+      console.log(res)
+    } catch (e) {
+      console.log(e)
+    }
+
+  }
 
   return (
     <div className="petProfilePage">
@@ -64,7 +88,7 @@ export default function PetProfile({ data }: petProfile) {
             <div className="pet-description">{petData?.details}</div>
 
             <div className="pet-buttons">
-              <button className="heart-button"><FaHeart /></button>
+              <button className="heart-button" onClick={() => incrementHeart()}><FaHeart /></button>
               <button className="adopt-button">Adotar {petData?.name}</button>
             </div>
           </div>
@@ -116,37 +140,17 @@ export default function PetProfile({ data }: petProfile) {
               <h2>Coisas Favoritas</h2>
             </div>
 
-            <div className="favorite">
-              <div className="icon">🎾</div>
-              <div className="favorite-description">
-                <h3>{petData?.toy}</h3>
-                <p>Não consegue resistir</p>
-              </div>
-            </div>
-
-            <div className="favorite">
-              <div className="icon">🥩</div>
-              <div className="favorite-description">
-                <h3>{petData?.food}</h3>
-                <p>O caminho para o seu coração</p>
-              </div>
-            </div>
-
-            <div className="favorite">
-              <div className="icon">🏖</div>
-              <div className="favorite-description">
-                <h3>{petData?.playPlace}</h3>
-                <p>Não consegue parar de brincar</p>
-              </div>
-            </div>
-
-            <div className="favorite">
-              <div className="icon">🛋</div>
-              <div className="favorite-description">
-                <h3>{petData?.sleepPlace}</h3>
-                <p>Soneca depois de um longo dia</p>
-              </div>
-            </div>
+            {favoritesConfig.map(({ icon, label, value }, i) => {
+              return (
+                <div key={i} className="favorite">
+                  <div className="icon">{icon}</div>
+                  <div className="favorite-description">
+                    <h3>{value}</h3>
+                    <p>{label}</p>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>

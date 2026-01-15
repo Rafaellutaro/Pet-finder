@@ -1,14 +1,16 @@
 import { Router } from 'express';
-import { insertPet, getAllPetsById, getAllPets, getUniquePetById, getPetTraits } from '../controller/pet.controller.ts';
+import { insertPet, getAllPetsById, getAllPets, getUniquePetById, getPetTraits, insertHeart } from '../controller/pet.controller.ts';
 import {verifyJWT} from '../middleware/auth.middleware.ts'
 
 const userRoute = Router();
 
-userRoute.get("/getAllPets", getAllPets);
-userRoute.get("/getUniquePet", getUniquePetById);
-userRoute.post("/insert", insertPet);
+userRoute.get("/getAllPets", getAllPets); // public
+userRoute.get("/getUniquePet", getUniquePetById); // public
+userRoute.post("/insert", verifyJWT , insertPet); // private
 userRoute.get("/getAllPetsById",verifyJWT, getAllPetsById); // private api
-userRoute.get("/getPetTraits", getPetTraits);
+userRoute.get("/getPetTraits", getPetTraits); // public
+userRoute.post("/:petId/view", verifyJWT, );   // private
+userRoute.post("/:petId/heart", verifyJWT, insertHeart);   // private
 
 
 export default userRoute;

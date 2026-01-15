@@ -22,10 +22,16 @@ model User {
   phone    String @unique
   password String
 
-  addresses    Address[]
-  pets         Pet[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 
-  preferences  UserPreference[]
+  addresses Address[]
+  pets      Pet[]
+
+  preferences UserPreference[]
+
+  views  validateView[]
+  hearts validadeHeart[]
 }
 
 model Address {
@@ -52,6 +58,31 @@ model petAddress {
   Pet Pet @relation(fields: [petId], references: [id])
 }
 
+model validateView {
+  id       Int      @id @default(autoincrement())
+  petId    Int
+  userId   Int
+  viewDate DateTime @db.Date
+
+  Pet  Pet  @relation(fields: [petId], references: [id], onDelete: Cascade)
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([petId, userId, viewDate])
+  @@index([petId, userId])
+}
+
+model validadeHeart {
+  id     Int @id @default(autoincrement())
+  petId  Int
+  userId Int
+
+  Pet  Pet  @relation(fields: [petId], references: [id], onDelete: Cascade)
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([petId, userId])
+  @@index([petId, userId])
+}
+
 model Pet {
   id        Int    @id @default(autoincrement())
   userId    Int
@@ -64,6 +95,7 @@ model Pet {
   details   String
 
   publishedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt @default(now())
   viewsCount  Int      @default(0)
   heartsCount Int      @default(0)
 
@@ -72,10 +104,13 @@ model Pet {
   playPlace  String
   sleepPlace String
 
-  imgs      petImg[]
-  address   petAddress?
+  imgs    petImg[]
+  address petAddress?
 
-  traits    PetTrait[]
+  traits PetTrait[]
+
+  views  validateView[]
+  hearts validadeHeart[]
 
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -91,7 +126,7 @@ model petImg {
 model Trait {
   id        Int    @id @default(autoincrement())
   key       String @unique
-  sortOrder Int @default(0)
+  sortOrder Int    @default(0)
 
   petTraits       PetTrait[]
   userPreferences UserPreference[]
@@ -101,7 +136,7 @@ model PetTrait {
   id      Int @id @default(autoincrement())
   petId   Int
   traitId Int
-  value   Int 
+  value   Int
 
   Pet   Pet   @relation(fields: [petId], references: [id], onDelete: Cascade)
   Trait Trait @relation(fields: [traitId], references: [id], onDelete: Cascade)
@@ -120,4 +155,3 @@ model UserPreference {
 
   @@unique([userId, traitId])
 }
-
