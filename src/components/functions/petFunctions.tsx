@@ -3,6 +3,7 @@ import useRedirect, {usePetRedirect} from "../reusable/Redirect";
 import { useUser } from "../../Interfaces/GlobalUser"
 import { useEffect, useState } from "react";
 import apiFetch from "../../Interfaces/TokenAuthorization";
+import type { PetData } from "../../Interfaces/usefulPetInterface";
 
 const getAllPetsById = () => {
     const {token, verifyToken} = useUser();
@@ -153,4 +154,28 @@ export function PetAddContainer() {
             <FaPlus />
         </div>
     )
+}
+
+type waitingText = {
+    petData: PetData | null
+}
+
+export function getWaitingText({petData}: waitingText) {
+    const published = new Date(petData?.publishedAt ?? new Date);
+    const now = new Date();
+
+    const difference = now.getTime() - published.getTime();
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+
+    if (days == 0) return "Hoje";
+    if (days == 1) return "1 dia";
+    if (days < 7) return `${days} dias`;
+
+    const weeks = Math.floor(days / 7);
+    if (weeks == 1) return "1 semana";
+    if (weeks < 5) return `${weeks} semanas`;
+
+    const months = Math.floor(days / 30);
+    if (months == 1) return "1 mês";
+    return `${months} meses`;
 }

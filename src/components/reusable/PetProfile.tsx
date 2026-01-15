@@ -6,6 +6,7 @@ import { FaStar } from "react-icons/fa";
 import { GrView } from "react-icons/gr";
 import { IoTimeOutline } from "react-icons/io5";
 import { BsFillPuzzleFill } from "react-icons/bs";
+import { getWaitingText } from "../functions/petFunctions";
 
 type petProfile = {
   data: {
@@ -20,6 +21,8 @@ export default function PetProfile({ data }: petProfile) {
   // userData later to show who posted the pet, i will focus on the other data first
   // const onwerData = data.owner
 
+  let petGender
+
   const traitMap = Object.fromEntries(
     data.traits.map((t: any) => [t.Trait.key, t.value])
   );
@@ -33,11 +36,13 @@ export default function PetProfile({ data }: petProfile) {
   ];
 
   const viewConfig = [
-    {title: "Visualizações de Perfil", icon: <GrView />, value: petData?.viewsCount},
-    {title: "Corações Recebidos", icon: <FaHeart />, value: petData?.heartsCount},
-    {title: "Tempo de Espera", icon: <IoTimeOutline />, value: 123},
-    {title: "Compatibilidade", icon: <BsFillPuzzleFill />, value: 123},
+    { title: "Visualizações de Perfil", icon: <GrView />, value: petData?.viewsCount },
+    { title: "Corações Recebidos", icon: <FaHeart />, value: petData?.heartsCount },
+    { title: "Esperando Adoção", icon: <IoTimeOutline />, value: getWaitingText({ petData }) },
+    { title: "Compatibilidade", icon: <BsFillPuzzleFill />, value: 123 },
   ]
+
+  {petData?.gender == "male" ? petGender = "Macho" : petData?.gender == "female" ? petGender = "Fêmea" : ""}
 
   return (
     <div className="petProfilePage">
@@ -52,7 +57,7 @@ export default function PetProfile({ data }: petProfile) {
             <div className="pet-information">
               <h1>{petData?.name}</h1>
               <p className="pet-type">{petData?.type}</p>
-              <p className="pet-meta">{petData?.age} anos • {petData?.gender}</p>
+              <p className="pet-meta">{petData?.age} anos • {petGender}</p>
               <p className="pet-location">cidade • estado</p>
             </div>
 
@@ -67,7 +72,7 @@ export default function PetProfile({ data }: petProfile) {
 
         <section className="pet-highlights-banner">
           <div className="pet-highlights-row">
-            {viewConfig.map(({title, icon, value}, i) => (
+            {viewConfig.map(({ title, icon, value }, i) => (
               <div key={i} className="pet-highlight card">
                 <div className="highlight-icon">{icon}</div>
                 <strong>{value}</strong>
