@@ -256,3 +256,39 @@ export const insertHeart = async (req: AuthRequest, res: Response) => {
         return res.status(409).json({message: "Already hearted"})
     }
 }
+
+// insert views
+
+export const insertViews = async (req: AuthRequest, res: Response) => {
+    const id = req.params.petId
+    const user = req.user;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    try {
+        const views = await prisma.validateView.create({
+            data: {
+                petId: Number(id),
+                userId: user.userId,
+                viewDate: today
+            }
+        })
+
+        const incrementView = await prisma.pet.update({
+            where: {
+                id: Number(id),
+            },
+            data: {
+                viewsCount: { increment: 1 }
+            }
+        })
+
+        res.status(200).json({
+            views,
+            incrementView
+        })
+    } catch (e) {
+        return res.status(409).json({message: "Already Viewed Today"})
+    }
+}

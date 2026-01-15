@@ -8,6 +8,7 @@ import { IoTimeOutline } from "react-icons/io5";
 import { BsFillPuzzleFill } from "react-icons/bs";
 import { getWaitingText } from "../functions/petFunctions";
 import apiFetch from "../../Interfaces/TokenAuthorization";
+import { useEffect } from "react";
 
 type petProfile = {
   data: {
@@ -67,6 +68,24 @@ export default function PetProfile({ data }: petProfile) {
     }
 
   }
+
+  const incrementViews = async () => {
+    try {
+      const token = await verifyToken()
+      const views = await apiFetch(`http://localhost:3000/pets/${petData?.id}/view`, {
+        method: "POST"
+      }, String(token))
+
+      const res = await views.json();
+      console.log(res)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  useEffect(() => {
+    incrementViews()
+  }, [])
 
   return (
     <div className="petProfilePage">
