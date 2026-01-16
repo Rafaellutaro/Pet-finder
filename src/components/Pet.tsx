@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { PetData } from "../Interfaces/usefulPetInterface";
-import type { UserData } from "../Interfaces/GlobalUser";
+import type { UserData } from "../Interfaces/userInterface";
 import PetProfile from "./reusable/PetProfile";
 
 const getOwner = async (id: string) => {

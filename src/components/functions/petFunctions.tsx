@@ -73,13 +73,14 @@ export function getAllPetsPublic(region: string , type: string, breed: string, a
 
 export default function petContainer() {
     const { pets } = getAllPetsById();
+    const singlePet = usePetRedirect();
 
     if (!pets?.data) return <div>Loading Data</div>
 
     return (
         <>
             {pets.data.map((item: any) => (
-                <div key={item.id} className="pet-container">
+                <div key={item.id} className="pet-container" onClick={() => singlePet(item.id)}>
                     {/* Display first image in imgs array */}
                     <img src={item.imgs[0]?.url} alt={item.name} />
 

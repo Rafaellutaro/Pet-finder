@@ -6,6 +6,7 @@ import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import StateSelect from "./components/reusable/StateSelection";
+import { usePetRedirect } from "./components/reusable/Redirect";
 
 const dog1 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
 const dog2 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
@@ -14,6 +15,7 @@ const dog4 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/
 
 function App() {
   const [petData, setPetData] = useState<any>({});
+  const singlePet = usePetRedirect();
 
   return (
     <>
@@ -60,7 +62,7 @@ function App() {
           >
             {petData.data.map((item: any) => (
               <SwiperSlide key={item.id}>
-                <img src={item.imgs[0]?.url} alt={item.name} />
+                <img src={item.imgs[0]?.url} alt={item.name} onClick={() => singlePet(item.id)}/>
               </SwiperSlide>
             ))}
           </Swiper>
