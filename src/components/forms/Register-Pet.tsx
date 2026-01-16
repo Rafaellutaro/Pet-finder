@@ -10,6 +10,8 @@ import { PetSchemaPart1, PetSchemaPart2, PetSchemaPart3 } from "../../Interfaces
 import PetData from "./PetData";
 import PetPersonality from "./PetPersonality";
 import PetFavorite from "./PetFavorite";
+import apiFetch from "../../Interfaces/TokenAuthorization";
+import SupabaseUpload from "../reusable/SupabaseUpload";
 
 export default function RegisterPet() {
     //meu deus se eu soubesse o quanto mais de boa é usar o react-hook-form em vez de usar o reducer e criar o proprio form antes velho, que porcaria.
@@ -19,7 +21,7 @@ export default function RegisterPet() {
     //VIDEO THAT I USED TO UNDERSTAND THIS: https://www.youtube.com/watch?v=cc_xmawJ8Kg
     //=================================================================================
 
-    const { user } = useUser();
+    const { user, verifyToken } = useUser();
     const profileRedirect = useRedirect("/Profile");
 
     const allAddress = user?.addresses || [];
@@ -69,24 +71,15 @@ export default function RegisterPet() {
         console.log("submit", data)
 
         try {
+            const token = await verifyToken()
+
+            if (!String(token)) return
+
             // Upload image to Supabase
             const file = data.image[0];
             const fileName = `${Date.now()}_${file.name}`;
 
-            const { error: uploadError } = await supabase.storage
-                .from("pets")
-                .upload(fileName, file, {
-                    cacheControl: "3600",
-                    upsert: false
-                });
-
-            if (uploadError) throw uploadError;
-
-            const { data: urlData } = supabase.storage
-                .from("pets")
-                .getPublicUrl(fileName);
-
-            const imageUrl = urlData.publicUrl;
+            const imageUrl = await SupabaseUpload({fileName: fileName, file: file, bucketName: "pets"});
 
             // Build address payload
             let addressToUse = null;
@@ -131,14 +124,10 @@ export default function RegisterPet() {
                 address: addressToUse
             };
 
-            //Send to API
-            const res = await fetch("http://localhost:3000/pets/insert", {
+            const res = await apiFetch("http://localhost:3000/pets/insert", {
                 method: "POST",
-                headers: {
-                    "content-type": "application/json"
-                },
                 body: JSON.stringify(payload)
-            });
+            }, String(token))
 
             const apiResult = await res.json();
             console.log("API result:", apiResult);

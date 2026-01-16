@@ -1,15 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import apiFetch from './TokenAuthorization';
-
-export interface UserData {
-    id: number;
-    name: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    password: string;
-    addresses: any[];
-}
+import type { UserData } from './userInterface';
 
 const UserContext = createContext<{
     user: UserData | null;

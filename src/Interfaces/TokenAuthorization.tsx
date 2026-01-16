@@ -5,8 +5,9 @@ const apiFetch = async (url: string, options: any = {}, accessToken: string) => 
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${accessToken}`,
-      ...options.headers
-    }
+      ...options.headers,
+    },
+    ...options.body
   });
 };
 

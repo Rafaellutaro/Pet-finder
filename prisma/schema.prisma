@@ -22,8 +22,11 @@ model User {
   phone    String @unique
   password String
 
+  profileImg String?
+  bannerImg  String?
+
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   addresses Address[]
   pets      Pet[]
@@ -95,7 +98,7 @@ model Pet {
   details   String
 
   publishedAt DateTime @default(now())
-  updatedAt   DateTime @updatedAt @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
   viewsCount  Int      @default(0)
   heartsCount Int      @default(0)
 

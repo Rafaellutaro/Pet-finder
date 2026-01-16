@@ -287,3 +287,59 @@ export const deleteUserById = async (req: any, res: any) => {
     }
 
 }
+
+// insert banner img
+
+export const insertBanner = async (req: AuthRequest, res: Response) => {
+    const imgUrl = req.body
+    const user = req.user
+
+    console.log(imgUrl, user)
+
+    try {
+        
+        const banner = await prisma.user.update({
+            where: {
+                id: user.userId
+            },
+            data: {
+                bannerImg: imgUrl.url
+            }
+        }) 
+
+        res.status(200).json({
+            data: banner
+        })
+
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+// insert profile img
+
+export const insertProfileImg = async (req: AuthRequest, res: Response) => {
+    const imgUrl = req.body
+    const user = req.user
+
+    console.log(imgUrl, user)
+
+    try {
+        
+        const profileImg = await prisma.user.update({
+            where: {
+                id: user.userId
+            },
+            data: {
+                profileImg: imgUrl.url
+            }
+        }) 
+
+        res.status(200).json({
+            data: profileImg
+        })
+
+    } catch (e) {
+        console.log(e)
+    }
+}

@@ -40,7 +40,7 @@ export default function PetFavorite({register, handleSubmit, onSubmit, isSubmitt
                     </div>
 
                     <button className="FavoritoBtn" type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? "Avançando..." : "Avançar"}
+                        {isSubmitting ? "Enviando..." : "Enviar"}
                     </button>
                 </form>
             </div>

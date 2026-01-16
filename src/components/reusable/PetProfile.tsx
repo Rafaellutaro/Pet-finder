@@ -1,5 +1,5 @@
 import type { PetData } from "../../Interfaces/usefulPetInterface";
-import { useUser, type UserData } from "../../Interfaces/GlobalUser";
+import { useUser } from "../../Interfaces/GlobalUser";
 import "../../assets/css/petProfile.css";
 import { FaHeart } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
@@ -9,6 +9,7 @@ import { BsFillPuzzleFill } from "react-icons/bs";
 import { getWaitingText } from "../functions/petFunctions";
 import apiFetch from "../../Interfaces/TokenAuthorization";
 import { useEffect } from "react";
+import type { UserData } from "../../Interfaces/userInterface";
 
 type petProfile = {
   data: {

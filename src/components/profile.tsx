@@ -1,8 +1,8 @@
 // import { useLocation } from 'react-router-dom';
-import "../assets/css/Profile.css"
 import PetContainer, { PetAddContainer } from "./functions/petFunctions"
 import { useUser } from "../Interfaces/GlobalUser"
 import FancyHeader from "./reusable/fancyProfileHeader";
+import "../assets/css/addPetProfile.css"
 
 function ProfilePage() {
     const { user } = useUser();

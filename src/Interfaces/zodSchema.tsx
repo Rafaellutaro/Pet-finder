@@ -56,10 +56,10 @@ export const PetSchemaPart2 = z.object({
 
 export const PetSchemaPart3 = z.object({
     // favorite stuff
-    toy: z.string(),
-    food: z.string(),
-    playPlace: z.string(),
-    sleepPlace: z.string(),
+    toy: z.string().nonempty(),
+    food: z.string().nonempty(),
+    playPlace: z.string().nonempty(),
+    sleepPlace: z.string().nonempty(),
 }).loose();
 
 const PetFullSchema = PetSchemaPart1.extend(PetSchemaPart2.shape).extend(PetSchemaPart3.shape);

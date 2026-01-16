@@ -15,6 +15,7 @@ import Settings from './components/Settings.tsx'
 import Pets from './components/Pets.tsx'
 import { Outlet } from "react-router-dom";
 import Pet from './components/Pet.tsx'
+import "./assets/css/Loader.css"
 
 // i realised i did the nesting route wrong when including layout, now it seens correct
 const router = createBrowserRouter([
