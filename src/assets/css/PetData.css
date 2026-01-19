@@ -1,0 +1,185 @@
+/* PAGE / SECTION */
+.registerPet-section {
+  width: 100%;
+}
+
+/* MAIN CONTAINER (your modal content already gives padding, but this helps too) */
+.Pet-container {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+/* FORM */
+.Pet-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* TITLES */
+.Pet-container h1 {
+  margin: 0 0 6px;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.Pet-container h2 {
+  margin: 12px 0 4px;
+  font-size: 18px;
+  font-weight: 800;
+  color: rgba(0, 0, 0, 0.78);
+}
+
+.Pet-container h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 800;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+/* ROWS */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Full-width group inside the grid */
+.form-group.full {
+  grid-column: 1 / -1;
+}
+
+/* LABELS */
+.form-group label {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.60);
+}
+
+/* INPUT BASE */
+.form-group input,
+.form-group select,
+.form-group textarea,
+.new-address-form input {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  padding: 11px 12px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+/* Textarea spacing */
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.35;
+}
+
+/* Focus state */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus,
+.new-address-form input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.12);
+  background: #fff;
+}
+
+/* Readonly fields (address auto-fill) */
+.new-address-form input[readonly] {
+  opacity: 0.9;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+/* FILE INPUT (cleaner) */
+.form-group input[type="file"] {
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.015);
+  cursor: pointer;
+}
+
+/* Error text */
+.error {
+  margin: 0;
+  font-size: 12px;
+  color: #d93025;
+  font-weight: 600;
+}
+
+/* NEW ADDRESS CARD */
+.new-address-form {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 14px;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Make "CEP" full width, feels nicer */
+.new-address-form input:first-of-type {
+  grid-column: 1 / -1;
+}
+
+/* BUTTON */
+.registerPetBtn {
+  align-self: flex-end;
+  margin-top: 6px;
+
+  height: 44px;
+  padding: 0 18px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: var(--primary);
+  color: var(--white);
+
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.registerPetBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.16);
+}
+
+.registerPetBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* RESPONSIVE */
+@media (max-width: 720px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .new-address-form {
+    grid-template-columns: 1fr;
+  }
+
+  .registerPetBtn {
+    width: 100%;
+    align-self: stretch;
+  }
+}

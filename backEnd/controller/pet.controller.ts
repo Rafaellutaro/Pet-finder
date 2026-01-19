@@ -102,6 +102,9 @@ export const getAllPetsById = async (req: AuthRequest, res: Response) => {
             include: {
                 imgs: true
             },
+            orderBy: {
+                id: "desc"
+            }
         })
 
         res.status(200).json({ data: getAllPetsById })

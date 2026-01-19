@@ -1,5 +1,6 @@
 import type { FormFields } from "../../Interfaces/zodSchema";
 import type { UseFormHandleSubmit, UseFormRegister, UseFormWatch } from "react-hook-form";
+import "../../assets/css/PetPersonality.css"
 
 type dogPersonality = {
     register: UseFormRegister<FormFields>;

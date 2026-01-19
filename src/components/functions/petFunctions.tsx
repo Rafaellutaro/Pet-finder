@@ -1,19 +1,16 @@
 import { FaPlus } from "react-icons/fa6";
-import useRedirect, {usePetRedirect} from "../reusable/Redirect";
+import useRedirect, { usePetRedirect } from "../reusable/Redirect";
 import { useUser } from "../../Interfaces/GlobalUser"
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import apiFetch from "../../Interfaces/TokenAuthorization";
 import type { PetData } from "../../Interfaces/usefulPetInterface";
 
 const getAllPetsById = () => {
-    const {token, verifyToken} = useUser();
+    const { token, verifyToken } = useUser();
     const [pets, setPets] = useState<any>({});
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (!token) return;
-
-        const fetchPets = async () => {
+    const fetchPets = async () => {
             const verifiedToken = await verifyToken();
 
             const response = await apiFetch('http://localhost:3000/pets/getAllPetsById', {
@@ -26,13 +23,16 @@ const getAllPetsById = () => {
             setLoading(false);
         };
 
+    useEffect(() => {
+        if (!token) return;
+
         fetchPets();
     }, []);
 
-    return { pets, loading }
+    return { pets, loading, refetch: fetchPets }
 }
 
-export function getAllPetsPublic(region: string , type: string, breed: string, age: string, pageLimit: string, order: string, page: number, setPetData: React.Dispatch<React.SetStateAction<any[]>>) {
+export function getAllPetsPublic(region: string, type: string, breed: string, age: string, pageLimit: string, order: string, page: number, setPetData: React.Dispatch<React.SetStateAction<any[]>>) {
     const FetchPetData = async () => {
         const petApi = await fetch(`http://localhost:3000/pets/getAllPets?uf=${region}&type=${type}&breed=${breed}&age=${age}&limit=${pageLimit}&orderDirection=${order}&page=${page}`, {
             method: "GET",
@@ -71,32 +71,46 @@ export function getAllPetsPublic(region: string , type: string, breed: string, a
 //     );
 // }
 
-export default function petContainer() {
-    const { pets } = getAllPetsById();
-    const singlePet = usePetRedirect();
-
-    if (!pets?.data) return <div>Loading Data</div>
-
-    return (
-        <>
-            {pets.data.map((item: any) => (
-                <div key={item.id} className="pet-container" onClick={() => singlePet(item.id)}>
-                    {/* Display first image in imgs array */}
-                    <img src={item.imgs[0]?.url} alt={item.name} />
-
-                    <div className="pet-name">
-                        {item.name}
-                    </div>
-                    <div className="pet-details">
-                        <p>{item.details}</p>
-                    </div>
-                </div>
-            ))}
-        </>
-    );
+type petContainerProp = {
+    index: number
 }
 
-export  function PetContainerPublicApi({ petData }: { petData: any }) {
+export default function petContainer({index}: petContainerProp) {
+    const { pets, loading, refetch } = getAllPetsById();
+  const singlePet = usePetRedirect();
+
+  // refetch when refreshKey changes
+  useEffect(() => {
+    if (index) {
+      refetch();
+    }
+  }, [index]);
+
+  if (loading) return <div>Loading Data</div>;
+  if (!pets?.data) return null;
+
+  return (
+    <>
+      {pets.data.map((item: any) => (
+        <div
+          key={item.id}
+          className="pet-container"
+          onClick={() => singlePet(item.id)}
+        >
+          <img src={item.imgs?.[0]?.url} alt={item.name} />
+
+          <div className="pet-name">{item.name}</div>
+
+          <div className="pet-details">
+            <p>{item.details}</p>
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
+export function PetContainerPublicApi({ petData }: { petData: any }) {
     if (!petData?.data) return <div>loading Data</div>
 
     const singlePet = usePetRedirect();
@@ -123,35 +137,38 @@ export  function PetContainerPublicApi({ petData }: { petData: any }) {
 }
 
 export function PetContainerPublicApiLaying({ petData }: { petData: any }) {
-  if (!petData?.data) return <div>Loading data...</div>;
-
-  return (
-    <>
-      {petData.data.map((item: any) => (
-        <div
-          key={item.id}
-          className="pet-card pet-card--horizontal"
-          style={{ "--bg-img": `url(${item.imgs[0]?.url})` } as React.CSSProperties}
-        >
-          <div className="pet-card__image">
-            <img src={item.imgs[0]?.url} alt={item.name} />
-          </div>
-          <div className="pet-card__content">
-            <h3 className="pet-card__name">{item.name}</h3>
-            <p className="pet-card__details">{item.details}</p>
-          </div>
-        </div>
-      ))}
-    </>
-  );
-}
-
-
-export function PetAddContainer() {
-    const addPet = useRedirect("/addPet");
+    if (!petData?.data) return <div>Loading data...</div>;
 
     return (
-        <div className="pet-container add-pet" onClick={() => addPet()}>
+        <>
+            {petData.data.map((item: any) => (
+                <div
+                    key={item.id}
+                    className="pet-card pet-card--horizontal"
+                    style={{ "--bg-img": `url(${item.imgs[0]?.url})` } as React.CSSProperties}
+                >
+                    <div className="pet-card__image">
+                        <img src={item.imgs[0]?.url} alt={item.name} />
+                    </div>
+                    <div className="pet-card__content">
+                        <h3 className="pet-card__name">{item.name}</h3>
+                        <p className="pet-card__details">{item.details}</p>
+                    </div>
+                </div>
+            ))}
+        </>
+    );
+}
+
+type addPet = {
+    setAddPetView: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export function PetAddContainer({ setAddPetView }: addPet) {
+    // const addPet = useRedirect("/addPet");
+
+    return (
+        <div className="pet-container add-pet" onClick={() => setAddPetView(true)}>
             <FaPlus />
         </div>
     )
@@ -161,7 +178,7 @@ type waitingText = {
     petData: PetData | null
 }
 
-export function getWaitingText({petData}: waitingText) {
+export function getWaitingText({ petData }: waitingText) {
     const published = new Date(petData?.publishedAt ?? new Date);
     const now = new Date();
 

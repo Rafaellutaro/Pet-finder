@@ -10,7 +10,6 @@ import ProtectedLayout from './components/Router-layout/ProtectedLayout.tsx'
 import RegisterCommon from "./components/forms/Register-common.tsx"
 import Profile from './components/profile.tsx'
 import { UserProvider } from './Interfaces/GlobalUser.tsx'
-import RegisterPet from './components/forms/Register-Pet.tsx'
 import Settings from './components/Settings.tsx'
 import Pets from './components/Pets.tsx'
 import { Outlet } from "react-router-dom";
@@ -30,7 +29,6 @@ const router = createBrowserRouter([
         element: <ProtectedLayout />,
         children: [
           { path: "Profile", element: <Profile /> },
-          { path: "addPet", element: <RegisterPet /> },
           { path: "Settings", element: <Settings /> },
         ]
       },

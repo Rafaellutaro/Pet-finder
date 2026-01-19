@@ -1,8 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import supabase from "../../../backEnd/client/SupabaseClient";
 import { useUser } from "../../Interfaces/GlobalUser";
-import useRedirect from "../reusable/Redirect";
+// import useRedirect from "../reusable/Redirect";
 import { cepSearch } from "../functions/userFunctions";
 import type { FormFields } from "../../Interfaces/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,8 +11,15 @@ import PetPersonality from "./PetPersonality";
 import PetFavorite from "./PetFavorite";
 import apiFetch from "../../Interfaces/TokenAuthorization";
 import SupabaseUpload from "../reusable/SupabaseUpload";
+import useRedirect from "../reusable/Redirect";
 
-export default function RegisterPet() {
+type RegisterPetProp = {
+    onClose: () => void;
+    setFormPart: React.Dispatch<React.SetStateAction<number>>;
+    formPart: number;
+}
+
+export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPetProp) {
     //meu deus se eu soubesse o quanto mais de boa é usar o react-hook-form em vez de usar o reducer e criar o proprio form antes velho, que porcaria.
     // tive que alterar todos os forms, mas pelo menos agora eu consigo emplementar a validação de dados com o zod que parece muito melhor do que eu fazer sozinho.
     // por que eu não pesquisei antes meu deus, aff.
@@ -22,11 +28,9 @@ export default function RegisterPet() {
     //=================================================================================
 
     const { user, verifyToken } = useUser();
-    const profileRedirect = useRedirect("/Profile");
 
     const allAddress = user?.addresses || [];
 
-    const [formPart, setFormPart] = useState(1);
     const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
     const [selectedAddress, setSelectedAddress] = useState<any>(allAddress[0]);
 
@@ -132,7 +136,7 @@ export default function RegisterPet() {
             const apiResult = await res.json();
             console.log("API result:", apiResult);
 
-            profileRedirect();
+            onClose();
         } catch (e) {
             console.log("Error submitting pet:", e);
         }

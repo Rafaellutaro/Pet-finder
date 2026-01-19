@@ -3,6 +3,7 @@ import { useUser } from "../../Interfaces/GlobalUser";
 import type { FormFields } from "../../Interfaces/zodSchema";
 import { catBreed, dogBreeds, ageRanges, petType } from "../../Interfaces/usefulPetInterface"
 import { useEffect } from "react";
+import "../../assets/css/PetData.css"
 
 type petDataForm = {
     register: UseFormRegister<FormFields>;
