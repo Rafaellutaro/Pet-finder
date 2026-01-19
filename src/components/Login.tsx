@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import useRedirect from "./reusable/Redirect";
 import "../assets/css/Login.css"
 import { useUser } from '../Interfaces/GlobalUser';
+import { FaGoogle } from "react-icons/fa";
+// import { FaFacebook } from "react-icons/fa6";
+// import { FaGithub } from "react-icons/fa";
+import loginImage from "../assets/imgs/catLogin.png"
 
 function LoginPage() {
     const [email, setEmail] = useState('');
@@ -62,46 +66,135 @@ function LoginPage() {
         }
     }
 
+    
+    const loginWithGoogle = () => console.log("Google login");
+    // const loginWithFacebook = () => console.log("Facebook login");
+    // const loginWithGitHub = () => console.log("Github login");
+
     return (
-        <>
-            <section className="section-container">
+    <section className="login-page">
+      <div className="login-card">
+        {/* LEFT SIDE (form) */}
+        <div className="login-left">
+          <div className="login-header">
+            <h1 className="login-title">LOGIN</h1>
+          </div>
 
-                <div className="Login-Container">
+          <form className="login-form" onSubmit={login}>
+            <div className="login-field">
+              <label className="login-label" htmlFor="email">
+                Email
+              </label>
+              <div className="input-wrap">
+                <span className="input-icon" aria-hidden="true">
+                  ✉
+                </span>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  placeholder="you@exemplo.com"
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
 
-                    <form onSubmit={login}>
+            <div className="login-field">
+              <label className="login-label" htmlFor="password">
+                Senha
+              </label>
+              <div className="input-wrap">
+                <span className="input-icon" aria-hidden="true">
+                  🔒
+                </span>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  placeholder="Senha"
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
 
-                        <div className="email">
-                            <input type="email"
-                                value={email}
-                                placeholder="email"
-                                onChange={(e) => setEmail(e.target.value)}
-                                required />
-                        </div>
+            <div className="forgot-row">
+              <Link className="forgot-link" to={"/changePassword"}>
+                Esqueceu a sua senha?
+              </Link>
+            </div>
 
-                        <div className="password">
-                            <input type="password"
-                                value={password}
-                                placeholder="Senha"
-                                onChange={(e) => setPassword(e.target.value)}
-                                required />
-                        </div>
+            <button className="loginBtn" type="submit">
+              ENTRAR
+            </button>
 
-                        <button className="loginBtn" type="submit">Login</button>
+            <div className="or-divider">
+              <span>OU</span>
+            </div>
 
-                    </form>
+            <div className="social-row">
+              <button
+                type="button"
+                className="socialBtn"
+                onClick={loginWithGoogle}
+                aria-label="Continue with Google"
+                title="Continue with Google"
+              >
+                <span className="socialIcon google" aria-hidden="true">
+                  <FaGoogle />
+                </span>
+              </button>
 
-                </div>
+              {/* <button
+                type="button"
+                className="socialBtn"
+                onClick={loginWithFacebook}
+                aria-label="Continue with Facebook"
+                title="Continue with Facebook"
+              >
+                <span className="socialIcon facebook" aria-hidden="true">
+                  <FaFacebook />
+                </span>
+              </button>
 
-                <div className="Bellow-Message">
+              <button
+                type="button"
+                className="socialBtn"
+                onClick={loginWithGitHub}
+                aria-label="Continue with GitHub"
+                title="Continue with GitHub"
+              >
+                <span className="socialIcon GitHub" aria-hidden="true">
+                  <FaGithub/>
+                </span>
+              </button> */}
+            </div>
 
-                    <p><Link to={"/changePassword"}>Esqueci a Senha</Link></p>
-                    <p><Link to={"/register"}>Criar Conta</Link></p>
+            <p className="register-row">
+              Não tem uma conta?{" "}
+              <Link className="register-link" to={"/register"}>
+                Registrar Agora
+              </Link>
+            </p>
+          </form>
+        </div>
 
-                </div>
-
-            </section>
-        </>
-    )
+        {/* RIGHT SIDE (image) */}
+        <div className="login-right" aria-hidden="true">
+          <img className="login-image" src={loginImage} alt="" />
+          <div className="login-imageOverlay" />
+          {/* <div className="login-imageText">
+            <h2 className="login-brand">Travelista Tours</h2>
+            <p className="login-tagline">
+              Travel is the only purchase that enriches you in ways beyond
+              material wealth
+            </p>
+          </div> */}
+        </div>
+      </div>
+    </section>
+  );
 
 }
 

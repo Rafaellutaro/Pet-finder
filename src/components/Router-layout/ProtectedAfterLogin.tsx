@@ -1,14 +1,14 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useUser } from "../../Interfaces/GlobalUser"
 
-export default function ProtectedLayout() {
+export default function ProtectedAfterLogin() {
   const { user, loggedIn} = useUser();
   const location = useLocation();
 
-  if (!user && !loggedIn) {
+  if (user && loggedIn) {
     return (
       <Navigate
-        to="/Login"
+        to="/"
         replace
         state={{ from: location }}
       />

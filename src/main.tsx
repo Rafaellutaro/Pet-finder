@@ -16,6 +16,7 @@ import Pets from './components/Pets.tsx'
 import { Outlet } from "react-router-dom";
 import Pet from './components/Pet.tsx'
 import "./assets/css/Loader.css"
+import ProtectedAfterLogin from './components/Router-layout/ProtectedAfterLogin.tsx'
 
 // i realised i did the nesting route wrong when including layout, now it seens correct
 const router = createBrowserRouter([
@@ -28,17 +29,21 @@ const router = createBrowserRouter([
       {
         element: <ProtectedLayout />,
         children: [
-        { path: "Profile", element: <Profile /> },
-        { path: "addPet", element: <RegisterPet /> },
-        { path: "Settings", element: <Settings /> },
+          { path: "Profile", element: <Profile /> },
+          { path: "addPet", element: <RegisterPet /> },
+          { path: "Settings", element: <Settings /> },
         ]
       },
 
-      { path: "Login", element: <LoginPage /> },
-
-      { path: "Register", element: <Menu /> },
-      { path: "Register-Comum", element: <RegisterCommon /> },
-      { path: "Register-Shelter", element: <div>shelter</div> },
+      {
+        element: <ProtectedAfterLogin />,
+        children: [
+          { path: "Login", element: <LoginPage /> },
+          { path: "Register", element: <Menu /> },
+          { path: "Register-Comum", element: <RegisterCommon /> },
+          { path: "Register-Shelter", element: <div>shelter</div> },
+        ]
+      },
       {
         path: "Pets",
         element: <Outlet />,
