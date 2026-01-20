@@ -135,7 +135,8 @@ export default function SettingsForm() {
                     <div className="details-column">
                         <h3>Endereço</h3>
 
-                        <div className="field">
+                        {user.phone ? (
+                            <div className="field">
                             <label>Telefone atual: {user.phone}</label>
                             <input
                                 type="tel"
@@ -144,11 +145,17 @@ export default function SettingsForm() {
                             />
                             {errors.phone && <p className="error">{errors.phone.message}</p>}
                         </div>
+                        ) : (<div className="field">
+                            <label>Telefone atual: não tem</label>
+                            <input type="tel" readOnly placeholder="não é possivel atualizar"/>
+                            </div>
+                        )}
 
                         <div className="field">
                             <label>Escolha o endereço para alterar:</label>
 
-                            <select
+                            {allAddress.length > 0 ? (
+                                <select
                                 onChange={(e) => setSelectedAddress(JSON.parse(e.target.value))}
                                 defaultValue={JSON.stringify(allAddress[0])}
                             >
@@ -158,6 +165,9 @@ export default function SettingsForm() {
                                     </option>
                                 ))}
                             </select>
+                            ): (<select>
+                                <option value="">Não há nenhum endereço</option>
+                            </select>)}
                         </div>
 
                         <div className="field">

@@ -5,6 +5,7 @@ import apiFetch from "../../Interfaces/TokenAuthorization";
 import { useUser } from "../../Interfaces/GlobalUser";
 import Loader from "./Loader";
 import "../../assets/css/Profile.css"
+import bannerDFT from "../../assets/imgs/bannerDFT.png"
 
 interface User {
     user: UserData
@@ -18,6 +19,9 @@ function FancyHeader({ user }: User) {
     const [loadingUpload, setLoadingUpload] = useState(false)
     const [userBanner, setUserBanner] = useState(user.bannerImg)
     const [userProfileImg, setUserProfileImg] = useState(user.profileImg)
+
+    {userBanner ? user.bannerImg : setUserBanner(bannerDFT)}
+    {userProfileImg ? user.profileImg : setUserProfileImg(bannerDFT)}
 
     const handleBannerChange = async (e: any) => {
         console.log("banner change")
@@ -82,7 +86,6 @@ function FancyHeader({ user }: User) {
             <div className="profile-header-li">
 
                 {/* Banner */}
-
                 {loadingUpload == false ? (
                     <div
                         className="profile-banner"
@@ -115,8 +118,7 @@ function FancyHeader({ user }: User) {
 
                 {/* Overlapping avatar */}
                 <div className="profile-avatarSlot" onClick={() => fileProfileRef.current?.click()}>
-                    <img className="profile-avatar" src={userProfileImg} alt="profile avatar"
-                    />
+                    <img className="profile-avatar" src={userProfileImg} alt="profile avatar"/>
 
                     <input
                             ref={fileProfileRef}

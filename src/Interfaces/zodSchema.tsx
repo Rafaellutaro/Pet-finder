@@ -17,12 +17,12 @@ export const RegisterSchema = z.object({
     lastName: z.string(),
     email: z.email(),
     password: z.string().min(6),
-    phone: z.string().max(15),
-    cep: z.string().min(8).max(8),
-    street: z.string(),
-    neighborhood: z.string(),
-    city: z.string(),
-    region: z.string()
+    phone: z.string().max(12).regex(/^[0-9]{10,15}$/).or(z.literal("")).optional(),
+    cep: z.string().regex(/^[0-9]{8}$/).min(8).max(8).or(z.literal("")).optional(),
+    street: z.string().optional(),
+    neighborhood: z.string().optional(),
+    city: z.string().optional(),
+    region: z.string().optional()
 })
 
 

@@ -17,25 +17,29 @@ export default function RegisterCommon() {
     const cep = watch("cep");
     useEffect(() => {
         if (cep) {
-            cepSearch(setValue, cep); 
+            cepSearch(setValue, cep);
         }
     }, [cep]);
+
+    const emptyToNull = (value?: string) =>
+        value == "" ? null : value;
+
 
     const onSubmit = async (data: FormFields) => {
         const userData = {
             name: data.name,
             lastName: data.lastName,
             email: data.email,
-            phone: data.phone,
+            phone: emptyToNull(data.phone),
             password: data.password
         };
 
         const addressData = {
-            cep: data.cep,
-            street: data.street,
-            neighborhood: data.neighborhood,
-            city: data.city,
-            region: data.region
+            cep: emptyToNull(data.cep),
+            street: emptyToNull(data.street),
+            neighborhood: emptyToNull(data.neighborhood),
+            city: emptyToNull(data.city),
+            region: emptyToNull(data.region)
         };
 
         const allUserData = { userData, addressData };
@@ -58,7 +62,7 @@ export default function RegisterCommon() {
         <section className='registerCommon-section'>
             <div className="common-container">
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    
+
                     <h1>Dados Pessoais</h1>
 
                     <div className="personal-data-container">
@@ -84,10 +88,11 @@ export default function RegisterCommon() {
                                 })} placeholder="Email" />
                                 {errors.email && <p className="error">{errors.email.message}</p>}
                             </div>
-
+                            {/* phone is no more 100% necessary */}
                             <div className="form-group">
                                 <label>Telefone:</label>
-                                <input {...register("phone", { required: "Telefone é obrigatório" })} placeholder="Telefone" />
+                                <p>Opcional</p>
+                                <input {...register("phone")} placeholder="Telefone" />
                                 {errors.phone && <p className="error">{errors.phone.message}</p>}
                             </div>
                         </div>
@@ -100,18 +105,20 @@ export default function RegisterCommon() {
                             </div>
                         </div>
                     </div>
-
+                    {/* address is no more 100% necessary */}
                     <h1>Endereço</h1>
 
                     <div className="location-data-container">
                         <div className="form-row">
                             <div className="form-group">
                                 <label>CEP:</label>
-                                <input {...register("cep", { required: "CEP é obrigatório", maxLength: { value: 8, message: "CEP deve ter 8 dígitos" } })} placeholder="CEP" />
+                                <p>Opcional</p>
+                                <input {...register("cep")} placeholder="CEP" />
                                 {errors.cep && <p className="error">{errors.cep.message}</p>}
                             </div>
                             <div className="form-group">
                                 <label>Rua:</label>
+                                <p>Opcional</p>
                                 <input {...register("street")} readOnly />
                             </div>
                         </div>
@@ -119,10 +126,12 @@ export default function RegisterCommon() {
                         <div className="form-row">
                             <div className="form-group">
                                 <label>Bairro:</label>
+                                <p>Opcional</p>
                                 <input {...register("neighborhood")} readOnly />
                             </div>
                             <div className="form-group">
                                 <label>Cidade:</label>
+                                <p>Opcional</p>
                                 <input {...register("city")} readOnly />
                             </div>
                         </div>
@@ -130,6 +139,7 @@ export default function RegisterCommon() {
                         <div className="form-row">
                             <div className="form-group">
                                 <label>Estado:</label>
+                                <p>Opcional</p>
                                 <input {...register("region")} readOnly />
                             </div>
                         </div>

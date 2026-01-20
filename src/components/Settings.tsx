@@ -2,16 +2,15 @@ import { useEffect, useReducer, useState } from 'react';
 import { useUser } from "../Interfaces/GlobalUser"
 import '../assets/css/settings.css';
 import SettingsForm from './forms/SettingsForm';
+import Loader from './reusable/Loader';
 
 function Settings() {
     const { user } = useUser();
     const [activeTab, setActiveTab] = useState("settings");
 
-    if (!user) {
-        return <div>Loading Data</div>
-    }
-
     const complete_name = `${user!.name} ${user!.lastName}`
+
+    if (!user) return <Loader />;
 
     return (
         <div className="settings-page">
