@@ -75,16 +75,16 @@ html, body {
 
 /* Image inside avatar */
 .user-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;        /* IMPORTANT */
-  display: block;
+  width: 28px;
+  height: 28px;
+  object-fit:cover;  
+  display: block;      
 }
 
 .user-avatar .userIcon{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;        /* IMPORTANT */
+  width: 28px;
+  height: 28px;
+  object-fit: cover;    
   display: block;
 }
 

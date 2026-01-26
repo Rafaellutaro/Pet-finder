@@ -6,6 +6,7 @@ import { useUser } from "../../Interfaces/GlobalUser";
 import Loader from "./Loader";
 import "../../assets/css/Profile.css"
 import bannerDFT from "../../assets/imgs/bannerDFT.png"
+import { userBannerImage, userProfileImage } from "../../apis/user.apis";
 
 interface User {
     user: UserData
@@ -15,13 +16,13 @@ function FancyHeader({ user }: User) {
     const complete_name: string = `${user!.name} ${user!.lastName}`
     const fileBannerRef = useRef<HTMLInputElement>(null);
     const fileProfileRef = useRef<HTMLInputElement>(null);
-    const { verifyToken } = useUser()
+    const { verifyToken, token } = useUser()
     const [loadingUpload, setLoadingUpload] = useState(false)
     const [userBanner, setUserBanner] = useState(user.bannerImg)
     const [userProfileImg, setUserProfileImg] = useState(user.profileImg)
 
-    {userBanner ? user.bannerImg : setUserBanner(bannerDFT)}
-    {userProfileImg ? user.profileImg : setUserProfileImg(bannerDFT)}
+    { userBanner ? user.bannerImg : setUserBanner(bannerDFT) }
+    { userProfileImg ? user.profileImg : setUserProfileImg(bannerDFT) }
 
     const handleBannerChange = async (e: any) => {
         console.log("banner change")
@@ -31,53 +32,70 @@ function FancyHeader({ user }: User) {
 
         const fileName = `${Date.now()}_${file.name}`;
 
+        if (!token) return;
+
         const imageUrl = await SupabaseUpload({ fileName: fileName, file: file, bucketName: "users", })
-        const token = await verifyToken()
 
         const img = {
             url: imageUrl
         }
 
-        const response = await apiFetch(`http://localhost:3000/users/banner`, {
-            method: "POST",
-            body: JSON.stringify(img)
-        }, String(token))
+        const response = await userBannerImage(String(token), img)
 
-        const res = await response.json()
+        if (response.ok) {
+            const res = await response.json()
+            setUserBanner(res.data.bannerImg)
+        }
+
+        if (response.status == 401 || response.status == 403) {
+            console.log("refreshing token....")
+
+            const newToken = await verifyToken()
+            const response = await userBannerImage(String(newToken), img)
+
+            if (response.ok) {
+                const res = await response.json();
+                setUserBanner(res.data.bannerImg);
+            }
+        }
 
         setLoadingUpload(false)
-        setUserBanner(res.data.bannerImg)
-
-        console.log(res)
-
     };
 
     const handleProfileImgChange = async (e: any) => {
-        console.log("profile change")
         setLoadingUpload(true)
         const file = e.target.files[0];
         if (!file) return;
 
         const fileName = `${Date.now()}_${file.name}`;
 
+        if (!token) return
+
         const imageUrl = await SupabaseUpload({ fileName: fileName, file: file, bucketName: "users", })
-        const token = await verifyToken()
 
         const img = {
             url: imageUrl
         }
 
-        const response = await apiFetch(`http://localhost:3000/users/profileImg`, {
-            method: "POST",
-            body: JSON.stringify(img)
-        }, String(token))
+        const response = await userProfileImage(token, img)
 
-        const res = await response.json()
+        if (response.ok) {
+            const res = await response.json()
+            setUserProfileImg(res.data.profileImg)
+        }
+
+        if (response.status == 401 || response.status == 403) {
+            console.log("refreshing token.....")
+            const newToken = await verifyToken();
+
+            const response = await userProfileImage(String(newToken), img)
+            if (response.ok) {
+                const res = await response.json()
+                setUserProfileImg(res.data.profileImg)
+            }
+        }
 
         setLoadingUpload(false)
-        setUserProfileImg(res.data.profileImg)
-
-        console.log(res)
 
     };
 
@@ -118,16 +136,16 @@ function FancyHeader({ user }: User) {
 
                 {/* Overlapping avatar */}
                 <div className="profile-avatarSlot" onClick={() => fileProfileRef.current?.click()}>
-                    <img className="profile-avatar" src={userProfileImg} alt="profile avatar"/>
+                    <img className="profile-avatar" src={userProfileImg} alt="profile avatar" />
 
                     <input
-                            ref={fileProfileRef}
-                            type="file"
-                            accept="image/*"
-                            hidden
-                            onChange={handleProfileImgChange}
-                            onAbort={() => setLoadingUpload(false)}
-                        />
+                        ref={fileProfileRef}
+                        type="file"
+                        accept="image/*"
+                        hidden
+                        onChange={handleProfileImgChange}
+                        onAbort={() => setLoadingUpload(false)}
+                    />
                 </div>
 
             </div>

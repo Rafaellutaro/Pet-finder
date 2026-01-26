@@ -7,9 +7,10 @@ const UserContext = createContext<{
     setUser: (data: UserData) => void;
     token: string | null;
     setToken: (token: string | null) => void;
-    loggedIn: boolean | null;
-    setLoggedIn: (loggedIn: boolean | null) => void;
+    loggedIn: boolean;
+    setLoggedIn: (loggedIn: boolean) => void;
     verifyToken: () => Promise<void>;
+    authReady: boolean;
 } | undefined>(undefined);
 
 export const useUser = () => {
@@ -23,7 +24,8 @@ export const useUser = () => {
 export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>) => {
     const [user, setUser] = useState<UserData | null>(null);
     const [token, setToken] = useState<string | null>(null);
-    const [loggedIn, setLoggedIn] = useState<boolean | null>(false);
+    const [loggedIn, setLoggedIn] = useState<boolean>(false);
+    const [authReady, setAuthReady] = useState<boolean>(false);
 
     // =================================================================================
     // video used to understand this: https://www.youtube.com/watch?v=AcYF18oGn6Y&t=742s
@@ -38,28 +40,13 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
                 credentials: 'include'
             });
 
-            if (response.ok) {
-                const data = await response.json();
-
-                if (data) {
-                    setToken(data.accessToken);
-                }
-
-                const resumeUserData = await apiFetch('http://localhost:3000/users/getId', {
-                    method: 'GET'
-                }, data.accessToken)
-
-                if (resumeUserData.ok) {
-                    const userData = await resumeUserData.json();
-
-                    if (userData) {
-                        setUser(userData.data);
-                        setLoggedIn(true);
-                    }
-                }
-
-                return data.accessToken
+            if (!response.ok){
+                return null
             }
+            
+            const data = await response.json();
+            return data.accessToken;
+            
 
         } catch (error) {
             console.error('Failed to fetch token data', error);
@@ -68,11 +55,46 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
     };
 
     useEffect(() => {
-        verifyToken();
-    }, [])
+        let cancelled = false;
+
+        const initAuth = async () => {
+            try {
+                const res = await fetch(
+                    "http://localhost:3000/users/refreshToken",
+                    { method: "POST", credentials: "include" }
+                );
+
+                if (!res.ok) throw new Error("No session");
+
+                const data = await res.json();
+                setToken(data.accessToken);
+                setLoggedIn(true);
+
+                const userRes = await apiFetch(
+                    "http://localhost:3000/users/getId",
+                    { method: "GET" },
+                    data.accessToken
+                );
+
+                if (userRes.ok) {
+                    const u = await userRes.json();
+                    setUser(u.data);
+                }
+            } catch {
+                setUser(null);
+                setToken(null);
+                setLoggedIn(false);
+            } finally {
+                if (!cancelled) setAuthReady(true);
+            }
+        };
+
+        initAuth();
+        return () => { cancelled = true };
+    }, []);
 
     return (
-        <UserContext.Provider value={{ user, setUser, token, setToken, loggedIn, setLoggedIn, verifyToken }}>
+        <UserContext.Provider value={{ user, setUser, token, setToken, loggedIn, setLoggedIn, verifyToken, authReady }}>
             {children}
         </UserContext.Provider>
     );

@@ -3,14 +3,17 @@ import { useUser } from "../Interfaces/GlobalUser"
 import '../assets/css/settings.css';
 import SettingsForm from './forms/SettingsForm';
 import Loader from './reusable/Loader';
+import bannerDFT from "../assets/imgs/bannerDFT.png"
 
 function Settings() {
     const { user } = useUser();
+    if (!user) return <Loader/>
     const [activeTab, setActiveTab] = useState("settings");
+    const [userProfileImg, setUserProfileImg] = useState(user.profileImg)
 
     const complete_name = `${user!.name} ${user!.lastName}`
 
-    if (!user) return <Loader />;
+    { userProfileImg ? user.profileImg : setUserProfileImg(bannerDFT) }
 
     return (
         <div className="settings-page">
@@ -19,7 +22,7 @@ function Settings() {
             <div className="profile-header-settings">
                 <div className="profile-left">
                     <img
-                        src="https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg"
+                        src={userProfileImg}
                         alt="Profile"
                         className="profile-img"
                     />
@@ -34,7 +37,7 @@ function Settings() {
                     </div>
                 </div>
 
-                <button className="edit-btn">✎ Edit</button>
+                {/* <button className="edit-btn">✎ Edit</button> */}
             </div>
 
             {/* Tabs */}
