@@ -7,6 +7,8 @@ import { FaGoogle } from "react-icons/fa";
 // import { FaFacebook } from "react-icons/fa6";
 // import { FaGithub } from "react-icons/fa";
 import loginImage from "../assets/imgs/catLogin.png"
+import { CiLock } from "react-icons/ci";
+import { MdOutlineEmail } from "react-icons/md";
 
 function LoginPage() {
     const [email, setEmail] = useState('');
@@ -87,7 +89,7 @@ function LoginPage() {
               </label>
               <div className="input-wrap">
                 <span className="input-icon" aria-hidden="true">
-                  ✉
+                  <MdOutlineEmail/>
                 </span>
                 <input
                   id="email"
@@ -106,7 +108,7 @@ function LoginPage() {
               </label>
               <div className="input-wrap">
                 <span className="input-icon" aria-hidden="true">
-                  🔒
+                  <CiLock/>
                 </span>
                 <input
                   id="password"
@@ -138,42 +140,17 @@ function LoginPage() {
                 type="button"
                 className="socialBtn"
                 onClick={loginWithGoogle}
-                aria-label="Continue with Google"
-                title="Continue with Google"
               >
                 <span className="socialIcon google" aria-hidden="true">
                   <FaGoogle />
                 </span>
+                Continuar com Google
               </button>
-
-              {/* <button
-                type="button"
-                className="socialBtn"
-                onClick={loginWithFacebook}
-                aria-label="Continue with Facebook"
-                title="Continue with Facebook"
-              >
-                <span className="socialIcon facebook" aria-hidden="true">
-                  <FaFacebook />
-                </span>
-              </button>
-
-              <button
-                type="button"
-                className="socialBtn"
-                onClick={loginWithGitHub}
-                aria-label="Continue with GitHub"
-                title="Continue with GitHub"
-              >
-                <span className="socialIcon GitHub" aria-hidden="true">
-                  <FaGithub/>
-                </span>
-              </button> */}
             </div>
 
-            <p className="register-row">
-              Não tem uma conta?{" "}
-              <Link className="register-link" to={"/register"}>
+            <p className="login-register-row">
+              Não tem uma conta?
+              <Link className="login-register-link" to={"/RegisterPage"}>
                 Registrar Agora
               </Link>
             </p>
@@ -184,13 +161,6 @@ function LoginPage() {
         <div className="login-right" aria-hidden="true">
           <img className="login-image" src={loginImage} alt="" />
           <div className="login-imageOverlay" />
-          {/* <div className="login-imageText">
-            <h2 className="login-brand">Travelista Tours</h2>
-            <p className="login-tagline">
-              Travel is the only purchase that enriches you in ways beyond
-              material wealth
-            </p>
-          </div> */}
         </div>
       </div>
     </section>

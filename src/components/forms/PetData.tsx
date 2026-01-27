@@ -64,7 +64,7 @@ export default function PetData({register, errors, watch, handleSubmit, onContin
 
     // Enable/Disable new address form
     useEffect(() => {
-        if (selectedAddress == "new") {
+        if (selectedAddress == "new" || allAddress.length <= 0) {
             setIsAddingNewAddress(true);
         } else {
             setIsAddingNewAddress(false);

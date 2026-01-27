@@ -12,18 +12,28 @@ export const SettingsSchema = z.object({
     region: z.string()
 })
 
-export const RegisterSchema = z.object({
-    name: z.string(),
-    lastName: z.string(),
+export const RegisterSchemaPart1 = z.object({
     email: z.email(),
+}).loose()
+
+export const RegisterSchemaPart2 = z.object({
+    name: z.string().min(3),
+    lastName: z.string().min(5),
     password: z.string().min(6),
     phone: z.string().max(12).regex(/^[0-9]{10,15}$/).or(z.literal("")).optional(),
+}).loose()
+
+export const RegisterSchemaPart3 = z.object({
     cep: z.string().regex(/^[0-9]{8}$/).min(8).max(8).or(z.literal("")).optional(),
     street: z.string().optional(),
     neighborhood: z.string().optional(),
     city: z.string().optional(),
     region: z.string().optional()
-})
+}).loose()
+
+const userFullSchema = RegisterSchemaPart1.extend(RegisterSchemaPart2.shape).extend(RegisterSchemaPart3.shape)
+
+export type userFormFields = z.infer<typeof userFullSchema>
 
 
 export const PetSchemaPart1 = z.object({

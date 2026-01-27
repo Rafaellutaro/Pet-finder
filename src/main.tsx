@@ -3,11 +3,11 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import LoginPage from './components/Login.tsx'
-import Menu from './components/Selection-Menu.tsx'
+import RegisterPage from './components/RegisterPage.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Router-layout/Header-Layout.tsx'
 import ProtectedLayout from './components/Router-layout/ProtectedLayout.tsx'
-import RegisterCommon from "./components/forms/Register-common.tsx"
+// import RegisterCommon from "./components/forms/Register-common.tsx"
 import Profile from './components/profile.tsx'
 import { UserProvider } from './Interfaces/GlobalUser.tsx'
 import Settings from './components/Settings.tsx'
@@ -37,9 +37,7 @@ const router = createBrowserRouter([
         element: <ProtectedAfterLogin />,
         children: [
           { path: "Login", element: <LoginPage /> },
-          { path: "Register", element: <Menu /> },
-          { path: "Register-Comum", element: <RegisterCommon /> },
-          { path: "Register-Shelter", element: <div>shelter</div> },
+          { path: "RegisterPage", element: <RegisterPage /> },
         ]
       },
       {

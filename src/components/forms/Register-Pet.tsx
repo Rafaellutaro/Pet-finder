@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useUser } from "../../Interfaces/GlobalUser";
-// import useRedirect from "../reusable/Redirect";
 import { cepSearch } from "../functions/userFunctions";
 import type { FormFields } from "../../Interfaces/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,7 +10,6 @@ import PetPersonality from "./PetPersonality";
 import PetFavorite from "./PetFavorite";
 import apiFetch from "../../Interfaces/TokenAuthorization";
 import SupabaseUpload from "../reusable/SupabaseUpload";
-import useRedirect from "../reusable/Redirect";
 
 type RegisterPetProp = {
     onClose: () => void;

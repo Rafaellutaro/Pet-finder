@@ -28,7 +28,7 @@ export const getAllUsers = async (req: any, res: any) => {
 //get pet onwer
 
 export const getUserByIdPublic = async (req: AuthRequest, res: Response) => {
-    const {userId} = req.query
+    const { userId } = req.query
 
     try {
         const UserByIdPublic = await userClient.user.findUnique({
@@ -162,35 +162,44 @@ export const getUserByEmail = async (req: any, res: any) => {
 }
 
 //insert
-export const insertUser = async (req: any, res: any) => {
+export const insertUser = async (req: AuthRequest, res: Response) => {
+    const { userData, addressData } = req.body;
+    const response: any = {};
+
+    const hasAddressData = Object.values(addressData).some(
+        (value) => value !== null && value !== undefined && value !== ""
+    );
+
     try {
-        const { userData, addressData } = req.body;
 
-        const createUser = await userClient.user.create({
-            data: {
-                name: userData.name,
-                lastName: userData.lastName,
-                email: userData.email,
-                phone: userData.phone,
-                password: userData.password
-            }
-        })
+        if (Object.keys(userData).length > 0) {
+            response.createUser = await userClient.user.create({
+                data: {
+                    name: userData.name,
+                    lastName: userData.lastName,
+                    email: userData.email,
+                    phone: userData.phone,
+                    password: userData.password
+                }
+            });
+        }
 
-        const createUserAddres = await userClient.address.create({
-            data: {
-                cep: addressData.cep,
-                street: addressData.street,
-                neighborhood: addressData.neighborhood,
-                city: addressData.city,
-                state: addressData.region,
-                userId: createUser.id
-            }
-        })
+        if (hasAddressData) {
+            response.createUserAddres = await userClient.address.create({
+                data: {
+                    cep: addressData.cep,
+                    street: addressData.street,
+                    neighborhood: addressData.neighborhood,
+                    city: addressData.city,
+                    state: addressData.region,
+                    userId: response.createUser.id
+                }
+            });
+        }
 
         res.status(201).json({
             data: {
-                createUser,
-                createUserAddres
+                response
             }
         })
     } catch (e) {
@@ -202,15 +211,15 @@ export const insertUser = async (req: any, res: any) => {
 
 export const updateUserById = async (req: any, res: any) => {
 
-    const payload  = req.body;
+    const payload = req.body;
     console.log("payload", payload)
-    
+
     const personalData = payload.personal
     const newAddress = payload.newAddress
     const userId = req.user.userId
 
-    const updatePersonalData = { ...personalData};
-    const updateNewAddressData = { ...newAddress};
+    const updatePersonalData = { ...personalData };
+    const updateNewAddressData = { ...newAddress };
 
     if (updatePersonalData.newPassword) {
         updatePersonalData.password = updatePersonalData.newPassword;
@@ -234,20 +243,20 @@ export const updateUserById = async (req: any, res: any) => {
     try {
         const response: any = {};
 
-         if (Object.keys(updatePersonalData).length > 0) {
+        if (Object.keys(updatePersonalData).length > 0) {
             response.personal = await userClient.user.update({
                 where: { id: userId },
                 data: updatePersonalData
             });
         }
 
-         if (Object.keys(updateNewAddressData).length > 0) {
+        if (Object.keys(updateNewAddressData).length > 0) {
             response.address = await userClient.address.update({
                 where: { id: payload.address.id },
                 data: updateNewAddressData
             });
         }
-        
+
         res.status(200).json({ updated: response });
 
     } catch (e) {
@@ -297,7 +306,7 @@ export const insertBanner = async (req: AuthRequest, res: Response) => {
     console.log(imgUrl, user)
 
     try {
-        
+
         const banner = await prisma.user.update({
             where: {
                 id: user.userId
@@ -305,7 +314,7 @@ export const insertBanner = async (req: AuthRequest, res: Response) => {
             data: {
                 bannerImg: imgUrl.url
             }
-        }) 
+        })
 
         res.status(200).json({
             data: banner
@@ -325,7 +334,7 @@ export const insertProfileImg = async (req: AuthRequest, res: Response) => {
     console.log(imgUrl, user)
 
     try {
-        
+
         const profileImg = await prisma.user.update({
             where: {
                 id: user.userId
@@ -333,7 +342,7 @@ export const insertProfileImg = async (req: AuthRequest, res: Response) => {
             data: {
                 profileImg: imgUrl.url
             }
-        }) 
+        })
 
         res.status(200).json({
             data: profileImg
