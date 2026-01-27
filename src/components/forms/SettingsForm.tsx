@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useUser } from "../../Interfaces/GlobalUser";
-import { cepSearch } from "../functions/userFunctions";
+import { cepSearch, UserCepController, UserPhoneController } from "../functions/userFunctions";
 import apiFetch from "../../Interfaces/TokenAuthorization";
 import { z } from "zod"
 import {zodResolver} from '@hookform/resolvers/zod'
 import {SettingsSchema as schema} from "../../Interfaces/zodSchema"
+import { emptyToNull } from "../functions/userFunctions";
 
 export default function SettingsForm() {
     const { user, token } = useUser();
@@ -16,16 +17,17 @@ export default function SettingsForm() {
     // RHF INITIALIZATION
     // -------------------------
 
-    type FormFields = z.infer<typeof schema>
+    type FormFields = z.input<typeof schema>
 
     const {
         register,
         handleSubmit,
         watch,
         setValue,
+        control,
         formState: { errors, isSubmitting }
     } = useForm<FormFields>({
-        resolver: zodResolver(schema)
+        resolver: zodResolver(schema),
     });
 
     // -------------------------
@@ -34,9 +36,7 @@ export default function SettingsForm() {
     const cep = watch("cep");
 
     useEffect(() => {
-        if (cep) {
-            cepSearch(setValue, cep)
-        }
+        cepSearch(setValue, String(cep))
     }, [cep]);
 
     useEffect(() => {
@@ -52,7 +52,7 @@ export default function SettingsForm() {
     // -------------------------
     const onSubmit = async (formData: any) => {
         const newAddress = {
-            cep: formData.cep,
+            cep: emptyToNull(formData.cep),
             street: formData.street,
             neighborhood: formData.neighborhood,
             city: formData.city,
@@ -60,9 +60,9 @@ export default function SettingsForm() {
         };
 
         const personalData = {
-            email: formData.email,
-            newPassword: formData.newPassword,
-            phone: formData.phone
+            email: emptyToNull(formData.email),
+            newPassword: emptyToNull(formData.newPassword),
+            phone: emptyToNull(formData.phone)
         };
 
         // Remove empty values
@@ -78,6 +78,7 @@ export default function SettingsForm() {
                 ? { address: selectedAddress, newAddress: cleanedAddress, personal: cleanedPersonal }
                 : { personal: cleanedPersonal };
 
+        console.log(payload)
         const response = await apiFetch('http://localhost:3000/users/updateById', {
             method: 'PUT',
             body: JSON.stringify(payload)
@@ -107,7 +108,7 @@ export default function SettingsForm() {
                             <input
                                 type="email"
                                 placeholder="novoemail@gmail.com"
-                                {...register("email")}
+                                {...register("email", {setValueAs: (v) => v.trim() == "" ? undefined : v})}
                             />
                             {errors.email && <p className="error">{errors.email.message}</p>}
                         </div>
@@ -119,13 +120,13 @@ export default function SettingsForm() {
                             <input
                                 type="password"
                                 placeholder="Senha atual"
-                                {...register("password")}
+                                {...register("password", {setValueAs: (v) => v.trim() == "" ? undefined : v})}
                             />
 
                             <input
                                 type="password"
                                 placeholder="Nova senha"
-                                {...register("newPassword")}
+                                {...register("newPassword", {setValueAs: (v) => v.trim() == "" ? undefined : v})}
                             />
                             {errors.newPassword && <p className="error">{errors.newPassword.message}</p>}
                         </div>
@@ -138,11 +139,7 @@ export default function SettingsForm() {
                         {user.phone ? (
                             <div className="field">
                             <label>Telefone atual: {user.phone}</label>
-                            <input
-                                type="tel"
-                                placeholder="(00) 0000-0000"
-                                {...register("phone")}
-                            />
+                            <UserPhoneController control={control}/>
                             {errors.phone && <p className="error">{errors.phone.message}</p>}
                         </div>
                         ) : (<div className="field">
@@ -174,18 +171,13 @@ export default function SettingsForm() {
                             <label>Novo Endereço:</label>
 
                             <div className="address-grid">
-                                <input
-                                    type="text"
-                                    placeholder="CEP"
-                                    maxLength={8}
-                                    {...register("cep")}
-                                />
+                                <UserCepController control={control}/>
 
-                                <input placeholder="Rua" readOnly {...register("street")} />
-                                <input placeholder="Bairro" readOnly {...register("neighborhood")} />
-                                <input placeholder="Cidade" readOnly {...register("city")} />
+                                <input placeholder="Rua" readOnly {...register("street", {setValueAs: (v) => v.trim() == "" ? undefined : v})} />
+                                <input placeholder="Bairro" readOnly {...register("neighborhood", {setValueAs: (v) => v.trim() == "" ? undefined : v})} />
+                                <input placeholder="Cidade" readOnly {...register("city", {setValueAs: (v) => v.trim() == "" ? undefined : v})} />
 
-                                <input placeholder="Estado" readOnly className="full" {...register("region")} />
+                                <input placeholder="Estado" readOnly className="full" {...register("region", {setValueAs: (v) => v.trim() == "" ? undefined : v})} />
 
                                 {errors.cep && <p className="error">{errors.cep.message}</p>}
                             </div>

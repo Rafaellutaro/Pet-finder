@@ -9,6 +9,7 @@ import RegisterUserPart2 from "./forms/RegisterUser.part2";
 import RegisterUserPart3 from "./forms/RegisterUser.part3";
 import { cepSearch } from "./functions/userFunctions";
 import useRedirect from "./reusable/Redirect";
+import { emptyToNull } from "./functions/userFunctions";
 
 function RegisterPage() {
   const [formPart, setFormPart] = useState(1)
@@ -27,6 +28,7 @@ function RegisterPage() {
     handleSubmit,
     watch,
     setValue,
+    control,
     formState: { errors, isSubmitting }
   } = useForm<userFormFields>({
     resolver: resolver as any,
@@ -47,9 +49,8 @@ function RegisterPage() {
 
   const onContinue = () => {
     setFormPart(i => i + 1);
+    console.log(watch())
   };
-
-  const emptyToNull = (value?: string) => value == "" ? null : value;
 
   const onSubmit = async (data: any) => {
     const userData = {
@@ -89,9 +90,7 @@ function RegisterPage() {
 
   const cep = watch("cep");
   useEffect(() => {
-    if (cep) {
-      cepSearch(setValue, cep);
-    }
+      cepSearch(setValue, String(cep));
   }, [cep]);
 
   return (
@@ -101,11 +100,11 @@ function RegisterPage() {
       )}
 
       {formPart == 2 && (
-        <RegisterUserPart2 register={register} errors={errors} handleSubmit={handleSubmit} onContinue={onContinue} isSubmitting={isSubmitting} formPart={formPart} />
+        <RegisterUserPart2 register={register} errors={errors} handleSubmit={handleSubmit} onContinue={onContinue} isSubmitting={isSubmitting} formPart={formPart} control={control} />
       )}
 
       {formPart == 3 && (
-        <RegisterUserPart3 register={register} errors={errors} handleSubmit={handleSubmit} onSubmit={onSubmit} isSubmitting={isSubmitting} formPart={formPart} />
+        <RegisterUserPart3 register={register} errors={errors} handleSubmit={handleSubmit} onSubmit={onSubmit} isSubmitting={isSubmitting} formPart={formPart} control={control} />
       )}
     </>
   )

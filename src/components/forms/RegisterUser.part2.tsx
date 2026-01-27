@@ -1,22 +1,26 @@
-import type { FieldErrors, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
+import type { Control, FieldErrors, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import registerImage from "../../assets/imgs/catDog.png"
 import type { userFormFields } from "../../Interfaces/zodSchema";
 import "../../assets/css/RegisterPagePart2.css"
 import { FaRegUser } from "react-icons/fa";
 import { CiLock } from "react-icons/ci";
 import { LuSmartphone } from "react-icons/lu";
+import { PatternFormat } from 'react-number-format';
+import { UserPhoneController } from "../functions/userFunctions";
 
 type RegisterPersonalDataForm = {
-    register: UseFormRegister<userFormFields>;
-    errors: FieldErrors<userFormFields>;
-    handleSubmit: UseFormHandleSubmit<userFormFields>;
-    onContinue: () => void;
-    isSubmitting: boolean;
-    formPart: number;
+  register: UseFormRegister<userFormFields>;
+  errors: FieldErrors<userFormFields>;
+  handleSubmit: UseFormHandleSubmit<userFormFields>;
+  control: Control<userFormFields>
+  onContinue: () => void;
+  isSubmitting: boolean;
+  formPart: number;
 }
 
-function RegisterUserPart2({register, errors, handleSubmit, onContinue, isSubmitting, formPart}: RegisterPersonalDataForm) {
-    return (
+function RegisterUserPart2({ register, errors, handleSubmit, onContinue, isSubmitting, formPart, control }: RegisterPersonalDataForm) {
+  return (
     <section className="register-page">
       <div className="register-card">
         {/* LEFT SIDE (image) */}
@@ -43,7 +47,7 @@ function RegisterUserPart2({register, errors, handleSubmit, onContinue, isSubmit
 
                 <div className="register-input-wrap">
                   <span className="register-input-icon" aria-hidden="true">
-                    <FaRegUser/>
+                    <FaRegUser />
                   </span>
                   <input
                     id="name"
@@ -63,7 +67,7 @@ function RegisterUserPart2({register, errors, handleSubmit, onContinue, isSubmit
 
                 <div className="register-input-wrap">
                   <span className="register-input-icon" aria-hidden="true">
-                    <FaRegUser/>
+                    <FaRegUser />
                   </span>
                   <input
                     id="lastName"
@@ -86,7 +90,7 @@ function RegisterUserPart2({register, errors, handleSubmit, onContinue, isSubmit
 
                 <div className="register-input-wrap">
                   <span className="register-input-icon" aria-hidden="true">
-                    <CiLock/>
+                    <CiLock />
                   </span>
                   <input
                     id="password"
@@ -107,14 +111,9 @@ function RegisterUserPart2({register, errors, handleSubmit, onContinue, isSubmit
 
                 <div className="register-input-wrap">
                   <span className="register-input-icon" aria-hidden="true">
-                    <LuSmartphone/>
+                    <LuSmartphone />
                   </span>
-                  <input
-                    id="phone"
-                    inputMode="tel"
-                    {...register("phone", { required: true })}
-                    placeholder="(11) 99999-9999"
-                  />
+                  <UserPhoneController control={control}/>
                 </div>
                 {errors.phone && (
                   <p className="error">{String(errors.phone.message)}</p>

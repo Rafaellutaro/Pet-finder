@@ -1,20 +1,22 @@
-import type { FieldErrors, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
+import type { Control, FieldErrors, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
 import type { userFormFields } from "../../Interfaces/zodSchema";
 import registerImage from "../../assets/imgs/catDog.png"
 import "../../assets/css/RegisterPagePart3.css"
 import useRedirect from "../reusable/Redirect";
 import { FaStreetView } from "react-icons/fa";
+import {UserCepController} from "../functions/userFunctions"
 
 type RegisterPersonalDataForm = {
     register: UseFormRegister<userFormFields>;
     errors: FieldErrors<userFormFields>;
     handleSubmit: UseFormHandleSubmit<userFormFields>;
     onSubmit: (data: any) => Promise<void>;
+    control: Control<userFormFields>
     isSubmitting: boolean;
     formPart: number;
 }
 
-function RegisterUserPart3({register, errors, handleSubmit, onSubmit, isSubmitting, formPart}: RegisterPersonalDataForm){
+function RegisterUserPart3({register, errors, handleSubmit, onSubmit, isSubmitting, formPart, control}: RegisterPersonalDataForm){
 
     return (
     <section className="register-page">
@@ -45,12 +47,7 @@ function RegisterUserPart3({register, errors, handleSubmit, onSubmit, isSubmitti
                   <span className="register-input-icon" aria-hidden="true">
                     <FaStreetView/>
                   </span>
-                  <input
-                    id="cep"
-                    {...register("cep")}
-                    placeholder="00000-000"
-                    inputMode="numeric"
-                  />
+                  <UserCepController control={control}/>
                 </div>
                 {errors.cep && <p className="error">{String(errors.cep.message)}</p>}
               </div>
@@ -71,6 +68,7 @@ function RegisterUserPart3({register, errors, handleSubmit, onSubmit, isSubmitti
                     id="street"
                     {...register("street")}
                     placeholder="Rua"
+                    readOnly
                   />
                 </div>
                 {errors.street && (
@@ -91,6 +89,7 @@ function RegisterUserPart3({register, errors, handleSubmit, onSubmit, isSubmitti
                     id="neighborhood"
                     {...register("neighborhood")}
                     placeholder="Bairro"
+                    readOnly
                   />
                 </div>
                 {errors.neighborhood && (
@@ -114,6 +113,7 @@ function RegisterUserPart3({register, errors, handleSubmit, onSubmit, isSubmitti
                     id="city"
                     {...register("city")}
                     placeholder="Cidade"
+                    readOnly
                   />
                 </div>
                 {errors.city && <p className="error">{String(errors.city.message)}</p>}
@@ -132,7 +132,7 @@ function RegisterUserPart3({register, errors, handleSubmit, onSubmit, isSubmitti
                     id="region"
                     {...register("region")}
                     placeholder="UF"
-                    maxLength={2}
+                    readOnly
                   />
                 </div>
                 {errors.region && (

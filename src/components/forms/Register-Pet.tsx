@@ -55,9 +55,7 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
     // Watch CEP for auto-fill
     const cep = watch("cep");
     useEffect(() => {
-        if (cep) {
-            cepSearch(setValue, cep);
-        }
+        cepSearch(setValue, String(cep));
     }, [cep]);
 
 
