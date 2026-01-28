@@ -17,14 +17,14 @@ export const RegisterSchemaPart1 = z.object({
 }).loose()
 
 export const RegisterSchemaPart2 = z.object({
-    name: z.string().min(3),
-    lastName: z.string().min(5),
-    password: z.string().min(6),
-    phone: z.string().max(15).optional(),
+    name: z.string().min(3, "minimo de 3 characteres"),
+    lastName: z.string().min(3, "minimo de 3 characteres").max(29, "maximo de 29 characteres"),
+    password: z.string().min(6, "muito curta"),
+    phone: z.string().min(15, "numero invalido").max(15).optional(),
 }).loose()
 
 export const RegisterSchemaPart3 = z.object({
-    cep: z.string().min(9).max(9).optional(),
+    cep: z.string().min(9, "cep invalido").max(9).optional(),
     street: z.string().optional(),
     neighborhood: z.string().optional(),
     city: z.string().optional(),

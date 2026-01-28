@@ -16,6 +16,7 @@ import { Outlet } from "react-router-dom";
 import Pet from './components/Pet.tsx'
 import "./assets/css/Loader.css"
 import ProtectedAfterLogin from './components/Router-layout/ProtectedAfterLogin.tsx'
+import FooterLayout from './components/Router-layout/Footer-Layout.tsx'
 
 // i realised i did the nesting route wrong when including layout, now it seens correct
 const router = createBrowserRouter([
@@ -23,7 +24,26 @@ const router = createBrowserRouter([
     path: "/",
     element: <Layout />,
     children: [
-      { index: true, element: <App /> },
+      {
+        element: <FooterLayout />,
+        children: [
+          { index: true, element: <App /> },
+          {
+            path: "Pets",
+            element: <Outlet />,
+            children: [
+              {
+                index: true,
+                element: <Pets />
+              },
+              {
+                path: ":id",
+                element: <Pet />
+              }
+            ]
+          },
+        ]
+      },
 
       {
         element: <ProtectedLayout />,
@@ -38,20 +58,6 @@ const router = createBrowserRouter([
         children: [
           { path: "Login", element: <LoginPage /> },
           { path: "RegisterPage", element: <RegisterPage /> },
-        ]
-      },
-      {
-        path: "Pets",
-        element: <Outlet />,
-        children: [
-          {
-            index: true,
-            element: <Pets />
-          },
-          {
-            path: ":id",
-            element: <Pet />
-          }
         ]
       },
     ]
