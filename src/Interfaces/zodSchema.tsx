@@ -2,10 +2,10 @@ import { z } from "zod"
 
 export const SettingsSchema = z.object({
     email: z.email().optional(),
-    password: z.string().min(6).optional(),
-    newPassword: z.string().min(6).optional(),
-    phone: z.string().max(15).optional(),
-    cep: z.string().min(9).max(9).optional(),
+    password: z.string().min(6, "minimo de 6 characteres").optional(),
+    newPassword: z.string().min(6, "minimo de 6 characteres").optional(),
+    phone: z.string().min(15, "numero invalido").max(15).optional(),
+    cep: z.string().min(9, "cep invalido").max(9).optional(),
     street: z.string().optional(),
     neighborhood: z.string().optional(),
     city: z.string().optional(),

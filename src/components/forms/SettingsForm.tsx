@@ -4,8 +4,8 @@ import { useUser } from "../../Interfaces/GlobalUser";
 import { cepSearch, UserCepController, UserPhoneController } from "../functions/userFunctions";
 import apiFetch from "../../Interfaces/TokenAuthorization";
 import { z } from "zod"
-import {zodResolver} from '@hookform/resolvers/zod'
-import {SettingsSchema as schema} from "../../Interfaces/zodSchema"
+import { zodResolver } from '@hookform/resolvers/zod'
+import { SettingsSchema as schema } from "../../Interfaces/zodSchema"
 import { emptyToNull } from "../functions/userFunctions";
 
 export default function SettingsForm() {
@@ -18,6 +18,10 @@ export default function SettingsForm() {
     // -------------------------
 
     type FormFields = z.infer<typeof schema>
+
+    const hasValues = (obj: Record<string, any> | undefined) => {
+        return obj && Object.keys(obj).length > 0
+    }
 
     const {
         register,
@@ -78,14 +82,17 @@ export default function SettingsForm() {
                 ? { address: selectedAddress, newAddress: cleanedAddress, personal: cleanedPersonal }
                 : { personal: cleanedPersonal };
 
-        console.log(payload)
-        const response = await apiFetch('http://localhost:3000/users/updateById', {
-            method: 'PUT',
-            body: JSON.stringify(payload)
-        }, token)
+        if (hasValues(payload.personal) || hasValues(payload.newAddress) || hasValues(payload.address)) {
+            const response = await apiFetch('http://localhost:3000/users/updateById', {
+                method: 'PUT',
+                body: JSON.stringify(payload)
+            }, token)
 
-        const res = await response.json();
-        console.log("API Response:", res);
+            const res = await response.json();
+            console.log("API Response:", res);
+        } else{
+            alert("Insira algo primeiro")
+        }
     };
 
     return (
@@ -108,7 +115,7 @@ export default function SettingsForm() {
                             <input
                                 type="email"
                                 placeholder="novoemail@gmail.com"
-                                {...register("email", {setValueAs: (v) => v.trim() == "" ? undefined : v})}
+                                {...register("email", { setValueAs: (v) => v.trim() == "" ? undefined : v })}
                             />
                             {errors.email && <p className="error">{errors.email.message}</p>}
                         </div>
@@ -120,13 +127,13 @@ export default function SettingsForm() {
                             <input
                                 type="password"
                                 placeholder="Senha atual"
-                                {...register("password", {setValueAs: (v) => v.trim() == "" ? undefined : v})}
+                                {...register("password", { setValueAs: (v) => v.trim() == "" ? undefined : v })}
                             />
 
                             <input
                                 type="password"
                                 placeholder="Nova senha"
-                                {...register("newPassword", {setValueAs: (v) => v.trim() == "" ? undefined : v})}
+                                {...register("newPassword", { setValueAs: (v) => v.trim() == "" ? undefined : v })}
                             />
                             {errors.newPassword && <p className="error">{errors.newPassword.message}</p>}
                         </div>
@@ -138,14 +145,14 @@ export default function SettingsForm() {
 
                         {user.phone ? (
                             <div className="field">
-                            <label>Telefone atual: {user.phone}</label>
-                            <UserPhoneController control={control}/>
-                            {errors.phone && <p className="error">{errors.phone.message}</p>}
-                        </div>
+                                <label>Telefone atual: {user.phone}</label>
+                                <UserPhoneController control={control} />
+                                {errors.phone && <p className="error">{errors.phone.message}</p>}
+                            </div>
                         ) : (<div className="field">
                             <label>Telefone atual: não tem</label>
-                            <input type="tel" readOnly placeholder="não é possivel atualizar"/>
-                            </div>
+                            <input type="tel" style={{ background: "#f1f3f5" }} readOnly placeholder="não é possivel atualizar" />
+                        </div>
                         )}
 
                         <div className="field">
@@ -153,16 +160,16 @@ export default function SettingsForm() {
 
                             {allAddress.length > 0 ? (
                                 <select
-                                onChange={(e) => setSelectedAddress(JSON.parse(e.target.value))}
-                                defaultValue={JSON.stringify(allAddress[0])}
-                            >
-                                {allAddress.map((addr: any, i: number) => (
-                                    <option key={i} value={JSON.stringify(addr)}>
-                                        {`${addr.street} | ${addr.neighborhood} | ${addr.city} | ${addr.state}`}
-                                    </option>
-                                ))}
-                            </select>
-                            ): (<select>
+                                    onChange={(e) => setSelectedAddress(JSON.parse(e.target.value))}
+                                    defaultValue={JSON.stringify(allAddress[0])}
+                                >
+                                    {allAddress.map((addr: any, i: number) => (
+                                        <option key={i} value={JSON.stringify(addr)}>
+                                            {`${addr.street} | ${addr.neighborhood} | ${addr.city} | ${addr.state}`}
+                                        </option>
+                                    ))}
+                                </select>
+                            ) : (<select style={{ background: "#f1f3f5" }}>
                                 <option value="">Não há nenhum endereço</option>
                             </select>)}
                         </div>
@@ -170,17 +177,31 @@ export default function SettingsForm() {
                         <div className="field">
                             <label>Novo Endereço:</label>
 
-                            <div className="address-grid">
-                                <UserCepController control={control}/>
+                            {allAddress.length > 0 ? (
+                                <div className="address-grid">
+                                    <UserCepController control={control} />
 
-                                <input placeholder="Rua" readOnly {...register("street", {setValueAs: (v) => v.trim() == "" ? undefined : v})} />
-                                <input placeholder="Bairro" readOnly {...register("neighborhood", {setValueAs: (v) => v.trim() == "" ? undefined : v})} />
-                                <input placeholder="Cidade" readOnly {...register("city", {setValueAs: (v) => v.trim() == "" ? undefined : v})} />
+                                    <input placeholder="Rua" readOnly {...register("street", { setValueAs: (v) => v.trim() == "" ? undefined : v })} />
+                                    <input placeholder="Bairro" readOnly {...register("neighborhood", { setValueAs: (v) => v.trim() == "" ? undefined : v })} />
+                                    <input placeholder="Cidade" readOnly {...register("city", { setValueAs: (v) => v.trim() == "" ? undefined : v })} />
 
-                                <input placeholder="Estado" readOnly className="full" {...register("region", {setValueAs: (v) => v.trim() == "" ? undefined : v})} />
+                                    <input placeholder="Estado" readOnly className="full" {...register("region", { setValueAs: (v) => v.trim() == "" ? undefined : v })} />
 
-                                {errors.cep && <p className="error">{errors.cep.message}</p>}
-                            </div>
+                                    {errors.cep && <p className="error">{errors.cep.message}</p>}
+                                </div>
+                            ) : (
+                                <div className="address-grid">
+                                    <input placeholder="Cep" style={{ background: "#f1f3f5" }} readOnly />
+
+                                    <input placeholder="Rua" style={{ background: "#f1f3f5" }} readOnly />
+                                    <input placeholder="Bairro" style={{ background: "#f1f3f5" }} readOnly />
+                                    <input placeholder="Cidade" style={{ background: "#f1f3f5" }} readOnly />
+
+                                    <input placeholder="Estado" style={{ background: "#f1f3f5" }} readOnly className="full" />
+
+                                    {errors.cep && <p className="error">{errors.cep.message}</p>}
+                                </div>
+                            )}
                         </div>
                     </div>
 
