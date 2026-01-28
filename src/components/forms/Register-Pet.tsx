@@ -2,9 +2,9 @@ import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useUser } from "../../Interfaces/GlobalUser";
 import { cepSearch } from "../functions/userFunctions";
-import type { FormFields } from "../../Interfaces/zodSchema";
+import type { FormFields, FormFieldsEdited } from "../../Interfaces/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PetSchemaPart1, PetSchemaPart2, PetSchemaPart3 } from "../../Interfaces/zodSchema";
+import { PetSchemaPart1, PetSchemaPart1Edited, PetSchemaPart2, PetSchemaPart3 } from "../../Interfaces/zodSchema";
 import PetData from "./PetData";
 import PetPersonality from "./PetPersonality";
 import PetFavorite from "./PetFavorite";
@@ -37,10 +37,11 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
     // If you need to calculate something → useMemo
     // If you need to do something → useEffect
     const resolver = useMemo(() => {
-        if (formPart == 1) return zodResolver(PetSchemaPart1);
+        if (formPart == 1 && allAddress.length <= 0) return zodResolver(PetSchemaPart1Edited);
+        if (formPart == 1 ) return zodResolver(PetSchemaPart1);
         if (formPart == 2) return zodResolver(PetSchemaPart2);
         return zodResolver(PetSchemaPart3);
-    }, [formPart]);
+    }, [formPart, allAddress.length]);
 
     const {
         register,
@@ -49,7 +50,7 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
         setValue,
         control,
         formState: { errors, isSubmitting }
-    } = useForm<FormFields>({
+    } = useForm<FormFields | FormFieldsEdited>({
         resolver: resolver as any,
         shouldUnregister: false
     });

@@ -55,6 +55,25 @@ export const PetSchemaPart1 = z.object({
     region: z.string().optional(),
 }).loose();
 
+export const PetSchemaPart1Edited = z.object({
+    //pet data
+    name: z.string().min(2),
+    breed: z.string().min(1, "Insira Algo"),
+    type: z.string().min(1, "Insira Algo"),
+    age: z.string().min(1, "Insira Algo"),
+    details: z.string().min(255, "insira no minimo 255 characteres").max(600, "você excedeu o limite de 600 characteres"),
+    gender: z.string().min(1, "Insira Algo"),
+    wayOfLife: z.string().min(1, "Insira Algo"),
+    image: z.instanceof(FileList).refine((files) => files.length > 0, "Insira pelo menos 1 foto"),
+
+    // pet address
+    cep: z.string().min(9, "Um cep tem 9 characteres").max(9),
+    street: z.string().min(1, "insira o cep"),
+    neighborhood: z.string().min(1, "insira o cep"),
+    city: z.string().min(1, "insira o cep"),
+    region: z.string().min(1, "insira o cep"),
+}).loose();
+
 export const PetSchemaPart2 = z.object({
     // personality
     friendly: z.number().min(0).max(100),
@@ -73,5 +92,7 @@ export const PetSchemaPart3 = z.object({
 }).loose();
 
 const PetFullSchema = PetSchemaPart1.extend(PetSchemaPart2.shape).extend(PetSchemaPart3.shape);
+const PetFullSchemaEdited = PetSchemaPart1Edited.extend(PetSchemaPart2.shape).extend(PetSchemaPart3.shape);
 
 export type FormFields = z.infer<typeof PetFullSchema>
+export type FormFieldsEdited = z.infer<typeof PetFullSchemaEdited>

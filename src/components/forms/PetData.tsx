@@ -215,6 +215,7 @@ export default function PetData({ register, errors, watch, handleSubmit, onConti
                             <input placeholder="Estado" readOnly {...register("region")} />
 
                             {errors.cep && <p className="error">{errors.cep.message}</p>}
+                            {errors.street && <p className="error">{errors.street.message}</p>}
                         </div>
                     )}
 
