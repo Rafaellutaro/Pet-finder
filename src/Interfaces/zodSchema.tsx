@@ -38,14 +38,14 @@ export type userFormFields = z.infer<typeof userFullSchema>
 
 export const PetSchemaPart1 = z.object({
     //pet data
-    name: z.string(),
-    breed: z.string(),
-    type: z.string(),
-    age: z.string(),
-    details: z.string(),
-    gender: z.string(),
-    wayOfLife: z.string(),
-    image: z.instanceof(FileList),
+    name: z.string().min(2),
+    breed: z.string().min(1, "Insira Algo"),
+    type: z.string().min(1, "Insira Algo"),
+    age: z.string().min(1, "Insira Algo"),
+    details: z.string().min(255, "insira no minimo 255 characteres").max(600, "você excedeu o limite de 600 characteres"),
+    gender: z.string().min(1, "Insira Algo"),
+    wayOfLife: z.string().min(1, "Insira Algo"),
+    image: z.instanceof(FileList).refine((files) => files.length > 0, "Insira pelo menos 1 foto"),
 
     // pet address
     cep: z.string().optional(),
@@ -66,10 +66,10 @@ export const PetSchemaPart2 = z.object({
 
 export const PetSchemaPart3 = z.object({
     // favorite stuff
-    toy: z.string().nonempty(),
-    food: z.string().nonempty(),
-    playPlace: z.string().nonempty(),
-    sleepPlace: z.string().nonempty(),
+    toy: z.string().min(1, "Insira Algo"),
+    food: z.string().min(1, "Insira Algo"),
+    playPlace: z.string().min(1, "Insira Algo"),
+    sleepPlace: z.string().min(1, "Insira Algo"),
 }).loose();
 
 const PetFullSchema = PetSchemaPart1.extend(PetSchemaPart2.shape).extend(PetSchemaPart3.shape);

@@ -17,7 +17,7 @@ export default function SettingsForm() {
     // RHF INITIALIZATION
     // -------------------------
 
-    type FormFields = z.input<typeof schema>
+    type FormFields = z.infer<typeof schema>
 
     const {
         register,

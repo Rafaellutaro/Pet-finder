@@ -5,57 +5,56 @@ import FancyHeader from "./reusable/fancyProfileHeader";
 import "../assets/css/addPetProfile.css"
 import { useState } from "react";
 import RegisterPet from "./forms/Register-Pet";
+import Loader from "./reusable/Loader";
 
 function ProfilePage() {
-    const { user } = useUser();
-    const [addPetView, setAddPetView] = useState(false)
-    const [formPart, setFormPart] = useState(1);
-    const [index, setIndex] = useState(0)
+  const { user } = useUser();
+  const [addPetView, setAddPetView] = useState(false)
+  const [formPart, setFormPart] = useState(1);
+  const [index, setIndex] = useState(0)
 
-    if (!user){
-        return <div>Loading Data</div>
-    }
+  if (!user) {
+    return <Loader/>
+  }
 
-    return (
-        <div className="ProfilePage-mainContainer">
-            
-            <FancyHeader user={user} />
+  return (
+    <div className="ProfilePage-mainContainer">
 
-            {/* PETS */}
-            <div className="details">
-                <div className="pet-grid">
-                    <PetAddContainer setAddPetView={setAddPetView}/>
-                    <PetContainer index={index}/>
-                </div>
-            </div>
+      <FancyHeader user={user} />
 
-             {addPetView && (
+      {/* PETS */}
+      <div className="details">
+        <div className="pet-grid">
+          <PetAddContainer setAddPetView={setAddPetView} />
+          <PetContainer index={index} />
+        </div>
+      </div>
+
+      {addPetView && (
         <div
           className="modal-overlay"
-          onClick={() => setAddPetView(false)}
           role="dialog"
           aria-modal="true"
         >
           <div
             className="modal-content"
-            onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
           >
             <h1>Registrar seu Pet · Passo {formPart} de 3</h1>
             <button
               className="modal-close"
-              onClick={() => setAddPetView(false)}
+              onClick={() => {setAddPetView(false); setFormPart(1); }}
               aria-label="Close"
               type="button"
             >
               ✕
             </button>
 
-            <RegisterPet onClose={() => {setAddPetView(false); setIndex((e) => e + 1);}} formPart={formPart} setFormPart={setFormPart}/>
+            <RegisterPet onClose={() => { setAddPetView(false); setIndex((e) => e + 1); setFormPart(1)}} formPart={formPart} setFormPart={setFormPart} />
           </div>
         </div>
       )}
-        </div>
-    )
+    </div>
+  )
 }
 
 export default ProfilePage;

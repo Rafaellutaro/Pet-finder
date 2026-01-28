@@ -10,6 +10,7 @@ import PetPersonality from "./PetPersonality";
 import PetFavorite from "./PetFavorite";
 import apiFetch from "../../Interfaces/TokenAuthorization";
 import SupabaseUpload from "../reusable/SupabaseUpload";
+import { emptyToNullObject } from "../functions/userFunctions";
 
 type RegisterPetProp = {
     onClose: () => void;
@@ -25,7 +26,7 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
     //VIDEO THAT I USED TO UNDERSTAND THIS: https://www.youtube.com/watch?v=cc_xmawJ8Kg
     //=================================================================================
 
-    const { user, verifyToken } = useUser();
+    const { user, verifyToken, token } = useUser();
 
     const allAddress = user?.addresses || [];
 
@@ -46,6 +47,7 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
         handleSubmit,
         watch,
         setValue,
+        control,
         formState: { errors, isSubmitting }
     } = useForm<FormFields>({
         resolver: resolver as any,
@@ -56,6 +58,7 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
     const cep = watch("cep");
     useEffect(() => {
         cepSearch(setValue, String(cep));
+        console.log(watch())
     }, [cep]);
 
 
@@ -68,15 +71,12 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
 
     // FORM SUBMIT
     const onSubmit = async (data: any) => {
-        console.log("submit", data)
+        const formattedData = emptyToNullObject(data)
+        console.log("submit", formattedData)
 
         try {
-            const token = await verifyToken()
-
-            if (!String(token)) return
-
             // Upload image to Supabase
-            const file = data.image[0];
+            const file = formattedData.image[0];
             const fileName = `${Date.now()}_${file.name}`;
 
             const imageUrl = await SupabaseUpload({fileName: fileName, file: file, bucketName: "pets"});
@@ -86,14 +86,18 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
 
             if (isAddingNewAddress) {
                 addressToUse = {
-                    cep: data.cep,
-                    street: data.street,
-                    neighborhood: data.neighborhood,
-                    city: data.city,
-                    state: data.region,
+                    cep: formattedData.cep,
+                    street: formattedData.street,
+                    neighborhood: formattedData.neighborhood,
+                    city: formattedData.city,
+                    state: formattedData.region,
                 };
             } else {
                 addressToUse = selectedAddress;
+            }
+
+            if (!addressToUse.cep || !addressToUse.street || !addressToUse.neighborhood || !addressToUse.city || !addressToUse.state){
+                addressToUse = allAddress[0]
             }
 
             // Final payload
@@ -102,24 +106,24 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
                 imageUrl,
                 petData: {
                     //pet full data
-                    name: data.name,
-                    breed: data.breed,
-                    type: data.type,
-                    age: data.age,
-                    details: data.details,
-                    gender: data.gender,
-                    wayOfLife: data.wayOfLife,
+                    name: formattedData.name,
+                    breed: formattedData.breed,
+                    type: formattedData.type,
+                    age: formattedData.age,
+                    details: formattedData.details,
+                    gender: formattedData.gender,
+                    wayOfLife: formattedData.wayOfLife,
                     // personality
-                    energetic: data.energetic,
-                    friendly: data.friendly,
-                    loyal: data.loyal,
-                    playful: data.playful,
-                    smart: data.smart,
+                    energetic: formattedData.energetic,
+                    friendly: formattedData.friendly,
+                    loyal: formattedData.loyal,
+                    playful: formattedData.playful,
+                    smart: formattedData.smart,
                     // favorite
-                    food: data.food,
-                    playPlace: data.playPlace,
-                    sleepPlace: data.sleepPlace,
-                    toy: data.toy,
+                    food: formattedData.food,
+                    playPlace: formattedData.playPlace,
+                    sleepPlace: formattedData.sleepPlace,
+                    toy: formattedData.toy,
                 },
                 address: addressToUse
             };
@@ -129,8 +133,24 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
                 body: JSON.stringify(payload)
             }, String(token))
 
-            const apiResult = await res.json();
-            console.log("API result:", apiResult);
+            if (res.ok){
+                const apiResult = await res.json();
+                console.log("API result:", apiResult);
+            }
+
+            if (res.status == 401 || res.status == 403){
+                const newToken = await verifyToken();
+
+                const res = await apiFetch("http://localhost:3000/pets/insert", {
+                method: "POST",
+                body: JSON.stringify(payload)
+                }, String(newToken))
+
+                if (res.ok){
+                const apiResult = await res.json();
+                console.log("API result verified:", apiResult);
+            }
+            }
 
             onClose();
         } catch (e) {
@@ -158,6 +178,7 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
                     watch={watch}
                     handleSubmit={handleSubmit}
                     onContinue={onContinue}
+                    control={control}
                     isSubmitting={isSubmitting}
                     allAddress={allAddress}
                     setSelectedAddress={setSelectedAddress}

@@ -99,4 +99,16 @@ export function UserPhoneController({ control }: ControllerType) {
 export function emptyToNull(value: string) {
     value == "" ? null : value;
     return value;
-} 
+}
+
+export function emptyToNullObject<T extends Record<string, any>>(values: T) {
+    console.log("aqui")
+    return Object.fromEntries(
+        Object.entries(values).map(([k, v]) => [
+            k,
+            v == "" ? null : v,
+        ])
+    ) as {
+            [K in keyof T]: T[K] | null;
+        };
+}

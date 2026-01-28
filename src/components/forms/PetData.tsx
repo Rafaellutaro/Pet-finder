@@ -1,9 +1,11 @@
-import type { FieldErrors, UseFormHandleSubmit, UseFormRegister, UseFormWatch } from "react-hook-form";
+import type { Control, FieldErrors, UseFormHandleSubmit, UseFormRegister, UseFormWatch } from "react-hook-form";
 import { useUser } from "../../Interfaces/GlobalUser";
 import type { FormFields } from "../../Interfaces/zodSchema";
 import { catBreed, dogBreeds, ageRanges, petType } from "../../Interfaces/usefulPetInterface"
 import { useEffect } from "react";
 import "../../assets/css/PetData.css"
+import Loader from "../reusable/Loader";
+import { UserCepController } from "../functions/userFunctions";
 
 type petDataForm = {
     register: UseFormRegister<FormFields>;
@@ -11,6 +13,7 @@ type petDataForm = {
     watch: UseFormWatch<FormFields>;
     handleSubmit: UseFormHandleSubmit<FormFields>;
     onContinue: () => void;
+    control: Control<FormFields>
     isSubmitting: boolean;
     setSelectedAddress: React.Dispatch<any>
     setIsAddingNewAddress: React.Dispatch<React.SetStateAction<boolean>>
@@ -20,40 +23,48 @@ type petDataForm = {
 
 }
 
-const PetBreedComponentChange = (type: string, register: UseFormRegister<FormFields>) => {
-        if (!type) {
-            return <div>loading</div>
-        }
+const PetBreedComponentChange = (type: string, register: UseFormRegister<FormFields>, errors: FieldErrors<FormFields>) => {
+    if (!type) {
+        return <Loader />
+    }
 
-        switch (type) {
-            case "Cachorro":
-                return (
+    switch (type) {
+        case "Cachorro":
+            return (
+                <>
                     <select id="petBreed" {...register("breed", { required: true })}>
-                        <option value={JSON.stringify('undefined')}>escolha a raça do pet</option>
+                        <option value={""}>escolha a raça do pet</option>
                         {dogBreeds.map((pet, i) => (
                             <option key={i} value={pet.name}>
                                 {pet.name}
                             </option>
                         ))}
                     </select>
-                )
-            case "Gato":
-                return (
+
+                    {errors.gender && <p className="error">{errors.gender.message}</p>}
+                </>
+            )
+        case "Gato":
+            return (
+                <>
                     <select id="petBreed" {...register("breed", { required: true })}>
-                        <option value={JSON.stringify('undefined')}>escolha a raça do pet</option>
+                        <option value={""}>escolha a raça do pet</option>
                         {catBreed.map((pet, i) => (
                             <option key={i} value={pet.name}>
                                 {pet.name}
                             </option>
                         ))}
                     </select>
-                )
-            default:
-                return <div>Selecione um tipo primeiro</div>
-        }
-    }
 
-export default function PetData({register, errors, watch, handleSubmit, onContinue, isSubmitting, allAddress, setSelectedAddress, setIsAddingNewAddress, selectedAddress, isAddingNewAddress}: petDataForm) {
+                    {errors.gender && <p className="error">{errors.gender.message}</p>}
+                </>
+            )
+        default:
+            return <div>Selecione um tipo primeiro</div>
+    }
+}
+
+export default function PetData({ register, errors, watch, handleSubmit, onContinue, control, isSubmitting, allAddress, setSelectedAddress, setIsAddingNewAddress, selectedAddress, isAddingNewAddress }: petDataForm) {
     const { user } = useUser();
     const type: any = watch("type")
     const userAddresses = user?.addresses || [];
@@ -89,14 +100,14 @@ export default function PetData({register, errors, watch, handleSubmit, onContin
                         <div className="form-group">
                             <label>Tipo:</label>
                             <select id="" {...register("type", { required: true })}>
-                                <option value={JSON.stringify('undefined')}>escolhar o tipo do pet</option>
+                                <option value={"null"}>escolher o tipo do pet</option>
                                 {petType.map((type, i) => (
                                     <option key={i} value={type.type}>
                                         {type.type}
                                     </option>
                                 ))}
                             </select>
-
+                            {errors.type && <p className="error">{errors.type.message}</p>}
                         </div>
                     </div>
 
@@ -104,21 +115,21 @@ export default function PetData({register, errors, watch, handleSubmit, onContin
                         <div className="form-group">
                             <label>Raça:</label>
 
-                            {PetBreedComponentChange(type, register)}
+                            {PetBreedComponentChange(type, register, errors)}
                         </div>
 
                         <div className="form-group">
                             <label>Idade Aproximada:</label>
                             <select id="petAge" {...register("age", { required: true })}>
-                                <option value={JSON.stringify('undefined')}>escolhar a idade aproximada</option>
+                                <option value={""}>escolhar a idade aproximada</option>
                                 {ageRanges.map((age, i) => (
                                     <option key={i} value={JSON.stringify(age.age)}>
                                         {age.age}
                                     </option>
                                 ))}
-                                <option value={JSON.stringify("20+")}>acima dos 20</option>
                             </select>
 
+                            {errors.age && <p className="error">{errors.age.message}</p>}
                         </div>
                     </div>
 
@@ -126,20 +137,22 @@ export default function PetData({register, errors, watch, handleSubmit, onContin
                         <div className="form-group">
                             <label >Gênero: </label>
                             <select id="petGender" {...register("gender", { required: true })}>
-                                <option value={JSON.stringify('undefined')}>escolha o gênero</option>
+                                <option value={""}>escolha o gênero</option>
                                 <option value="male">Macho</option>
                                 <option value="female">Femea</option>
                             </select>
+                            {errors.gender && <p className="error">{errors.gender.message}</p>}
                         </div>
 
                         <div className="form-group">
                             <label >Onde vive: </label>
                             <select id="petWayOfLiving" {...register("wayOfLife", { required: true })}>
-                                <option value={JSON.stringify('undefined')}>escolha onde vive</option>
+                                <option value={""}>escolha onde vive</option>
                                 <option value="indoors">Dentro de casa</option>
                                 <option value="outdoors">Fora de casa</option>
                                 <option value="both">Ambos</option>
                             </select>
+                            {errors.wayOfLife && <p className="error">{errors.wayOfLife.message}</p>}
                         </div>
                     </div>
                     {/* 
@@ -194,11 +207,7 @@ export default function PetData({register, errors, watch, handleSubmit, onContin
                         <div className="new-address-form">
                             <h3>Novo Endereço</h3>
 
-                            <input
-                                maxLength={8}
-                                placeholder="CEP"
-                                {...register("cep")}
-                            />
+                            <UserCepController control={control} />
 
                             <input placeholder="Rua" readOnly {...register("street")} />
                             <input placeholder="Bairro" readOnly {...register("neighborhood")} />
