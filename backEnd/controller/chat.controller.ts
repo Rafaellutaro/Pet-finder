@@ -4,7 +4,7 @@ import type { AuthRequest } from "../middleware/auth.middleware.ts";
 
 export const ConversationCreate = async (req: AuthRequest, res: Response) => {
     const adopterId = req.user.userId
-    const {petId, ownerId} = req.body
+    const {petId} = req.body
 
     try {
         const getConversation = await prisma.conversation.findUnique({
@@ -20,13 +20,22 @@ export const ConversationCreate = async (req: AuthRequest, res: Response) => {
         })
 
         if (getConversation) {
-            return res.status(200).json({ data: getConversation })
+            return res.status(200).json({ data: getConversation.id })
         }
+
+        const getOwnerId = await prisma.pet.findFirst({
+            where: {
+                id: petId
+            },
+            select: {
+                userId: true
+            }
+        })
 
         const createConversation = await prisma.conversation.create({
             data: {
                 adopterId: Number(adopterId),
-                ownerId: Number(ownerId),
+                ownerId: Number(getOwnerId?.userId),
                 petId: Number(petId),
             }
         })

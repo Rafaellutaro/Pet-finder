@@ -11,6 +11,7 @@ import apiFetch from "../../Interfaces/TokenAuthorization";
 import { useEffect } from "react";
 import type { UserData } from "../../Interfaces/userInterface";
 import { useChatRedirect } from "./Redirect";
+import resendApiPrivate from "./resendApi";
 
 type petProfile = {
   data: {
@@ -21,13 +22,22 @@ type petProfile = {
 }
 
 export default function PetProfile({ data }: petProfile) {
-  const { verifyToken } = useUser()
+  const { verifyToken, token } = useUser()
   const petData = data.pet
   const chatNavigate = useChatRedirect()
   // userData later to show who posted the pet, i will focus on the other data first
   // const onwerData = data.owner
 
   let petGender
+
+  const getConversationId = async () => {
+      const response = await resendApiPrivate({ apiUrl: "http://localhost:3000/chat/conversationCreate", 
+        options: { method: "POST", body: JSON.stringify({petId: petData?.id}) }, 
+        token: String(token), 
+        verifyToken: verifyToken })
+      
+      chatNavigate(response)
+    }
 
   const traitMap = Object.fromEntries(
     data.traits.map((t: any) => [t.Trait.key, t.value])
@@ -111,7 +121,7 @@ export default function PetProfile({ data }: petProfile) {
 
             <div className="pet-buttons">
               <button className="heart-button" onClick={() => incrementHeart()}><FaHeart /></button>
-              <button className="adopt-button" onClick={() => chatNavigate(String(petData?.id))}>Adotar {petData?.name}</button>
+              <button className="adopt-button" onClick={() => getConversationId()}>Adotar {petData?.name}</button>
             </div>
           </div>
         </section>

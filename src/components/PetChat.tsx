@@ -7,60 +7,12 @@ import { CiImageOn } from "react-icons/ci";
 import { FaPhone } from "react-icons/fa6";
 import { AiOutlineVideoCamera } from "react-icons/ai";
 import { SlOptionsVertical } from "react-icons/sl";
-import { useEffect, useState } from "react";
-import apiFetch from "../Interfaces/TokenAuthorization";
-import { useUser } from "../Interfaces/GlobalUser";
 import { useParams } from "react-router-dom";
-import resendApiPrivate from "./reusable/resendApi";
-import type { PetData } from "../Interfaces/usefulPetInterface";
 
 function PetChat() {
   const { id } = useParams()
-  const { token, verifyToken } = useUser()
-  const [conversationId, setConversationId] = useState()
-  const [ownerPetData, setOwnerPetData] = useState<PetData | null>(null)
-
-  const getPetOwnerData = async () => {
-    try {
-      const response = await fetch(`http://localhost:3000/pets/getUniquePet?petId=${id}`, {
-        method: "GET",
-        headers: { 'content-type': 'application/json' }
-      })
-      const res = await response.json()
-      console.log("ownerData", res)
-      return res.data
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  const getConversationId = async (ownerId: string) => {
-    const data = {
-      petId: id, ownerId
-    }
-
-    const response = await resendApiPrivate({ apiUrl: "http://localhost:3000/chat/conversationCreate", 
-      options: { method: "POST", body: JSON.stringify(data) }, 
-      token: String(token), 
-      verifyToken: verifyToken })
-    
-    return response.id
-  }
-
-  useEffect(() => {
-    const setOwner = async () => {
-      setOwnerPetData(await getPetOwnerData())
-    }
-    setOwner()
-  }, [])
-
-  useEffect(() => {
-    const pao = async () => {
-      setConversationId(await getConversationId(String(ownerPetData?.userId)))
-    }
-    pao()
-    console.log(conversationId)
-  }, [ownerPetData])
+  
+  console.log("conversationId", id)
 
   return (
     <div className="pet-chat">
