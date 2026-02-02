@@ -26,7 +26,7 @@ model User {
   bannerImg  String?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  updatedAt DateTime @updatedAt
 
   addresses Address[]
   pets      Pet[]
@@ -35,6 +35,10 @@ model User {
 
   views  validateView[]
   hearts validadeHeart[]
+
+  adoptedConversations Conversation[] @relation("ConversationAdopter")
+  ownedConversations   Conversation[] @relation("ConversationOwner")
+  sendedMessages      Message[] @relation("userSentMessages")
 }
 
 model Address {
@@ -98,7 +102,7 @@ model Pet {
   details   String
 
   publishedAt DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
+  updatedAt   DateTime @updatedAt
   viewsCount  Int      @default(0)
   heartsCount Int      @default(0)
 
@@ -114,6 +118,8 @@ model Pet {
 
   views  validateView[]
   hearts validadeHeart[]
+
+  conversations Conversation[]
 
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -157,4 +163,38 @@ model UserPreference {
   Trait Trait @relation(fields: [traitId], references: [id], onDelete: Cascade)
 
   @@unique([userId, traitId])
+}
+
+model Conversation {
+  id         Int      @id @default(autoincrement())
+  adopterId    Int
+  ownerId    Int
+  petId      Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  userAdopter User @relation("ConversationAdopter",fields: [adopterId], references: [id], onDelete: Cascade)
+  userOwner User @relation("ConversationOwner",fields: [ownerId], references: [id], onDelete: Cascade)
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  messages Message[]
+
+  @@unique([petId, adopterId])
+  @@index([ownerId])
+  @@index([adopterId])
+  @@index([petId])
+}
+
+model Message {
+  id             Int      @id @default(autoincrement())
+  conversationId Int
+  senderId       Int
+  content        String
+  createdAt      DateTime @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation("userSentMessages",fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+  @@index([senderId])
 }
