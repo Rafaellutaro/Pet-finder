@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors';
 import petRoute from "../backEnd/router/pet.router.ts";
 import * as dotenv from 'dotenv';
+import chatRoute from "../backEnd/router/chat.router.ts";
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ app.get("/bob", (req, res) => {
 
 app.use("/users", userRoute)
 app.use("/pets", petRoute)
-// app.use("/books", bookRoute)
+app.use("/chat", chatRoute)
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);

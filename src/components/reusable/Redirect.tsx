@@ -17,4 +17,9 @@ export function usePetRedirect(defaultPath: string = "/Pets") {
   return (id: string) => navigate(`${defaultPath}/${id}`);
 }
 
+export function useChatRedirect(defaultPath: string = "/Chat") {
+  const navigate = useNavigate();
+  return (id: string) => navigate(`${defaultPath}/${id}`);
+}
+
 

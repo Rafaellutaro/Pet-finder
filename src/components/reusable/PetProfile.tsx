@@ -10,6 +10,7 @@ import { getWaitingText } from "../functions/petFunctions";
 import apiFetch from "../../Interfaces/TokenAuthorization";
 import { useEffect } from "react";
 import type { UserData } from "../../Interfaces/userInterface";
+import { useChatRedirect } from "./Redirect";
 
 type petProfile = {
   data: {
@@ -22,6 +23,7 @@ type petProfile = {
 export default function PetProfile({ data }: petProfile) {
   const { verifyToken } = useUser()
   const petData = data.pet
+  const chatNavigate = useChatRedirect()
   // userData later to show who posted the pet, i will focus on the other data first
   // const onwerData = data.owner
 
@@ -109,7 +111,7 @@ export default function PetProfile({ data }: petProfile) {
 
             <div className="pet-buttons">
               <button className="heart-button" onClick={() => incrementHeart()}><FaHeart /></button>
-              <button className="adopt-button">Adotar {petData?.name}</button>
+              <button className="adopt-button" onClick={() => chatNavigate(String(petData?.id))}>Adotar {petData?.name}</button>
             </div>
           </div>
         </section>
