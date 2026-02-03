@@ -46,3 +46,45 @@ export const ConversationCreate = async (req: AuthRequest, res: Response) => {
         return res.status(500).json({message: "unable to create conversation"})
     }
 }
+
+export const getAllDataFromRoomId = async (req: AuthRequest, res: Response) => {
+    const {id} = req.params
+    
+    try {
+        const roomIdData = await prisma.conversation.findFirst({
+            where: {
+                id: Number(id)
+            },
+            include: {
+                pet: {
+                    select: {
+                        id: true,
+                        name: true,
+                        breed: true,
+                        age: true,
+                        imgs: true, 
+                        address: {
+                            select: {
+                                city: true,
+                                state: true
+                            }
+                        }
+                    }
+                },
+                userOwner: {
+                    select:{
+                        id: true,
+                        name: true,
+                        lastName: true,
+                        profileImg: true
+                    }
+                }
+            }
+        })
+
+        res.status(200).json({data: roomIdData})
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({message: "unable to find a conversation"})
+    }
+}
