@@ -12,7 +12,6 @@ import resendApiPrivate from "./reusable/resendApi";
 import { useUser } from "../Interfaces/GlobalUser";
 import { useEffect, useState } from "react";
 import Loader from "./reusable/Loader";
-import { getSocket } from "./socket";
 
 type ChatMessage = {
   id: string | number;
@@ -22,13 +21,11 @@ type ChatMessage = {
 };
 
 function PetChat() {
-  const { token, verifyToken, user } = useUser()
+  const { token, verifyToken, user, socket } = useUser()
   const { id } = useParams()
   const [alldata, setAlldata] = useState<any | null>(null)
   const [message, setMessage] = useState("")
   const [allMessages, setAllMessages] = useState<any[]>([])
-
-  const socket = getSocket(String(token))
 
   const getData = async () => {
     const response = await resendApiPrivate({

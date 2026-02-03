@@ -51,6 +51,8 @@ io.on("connection", (socket: AuthSocket) => {
   console.log("a user connected", socket.id);
   const userId = socket.user.userId
 
+  socket.join(`user:${userId}`);
+
   socket.on("conversation:join", async ({ conversationId }) => {
     console.log("join request", conversationId);
 

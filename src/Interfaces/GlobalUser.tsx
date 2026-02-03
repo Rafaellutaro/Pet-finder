@@ -1,12 +1,15 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import apiFetch from './TokenAuthorization';
 import type { UserData } from './userInterface';
+import { getSocket } from '../components/socket';
+import type { Socket } from 'socket.io-client';
 
 const UserContext = createContext<{
     user: UserData | null;
     setUser: (data: UserData) => void;
     token: string | null;
     setToken: (token: string | null) => void;
+    socket: Socket | null;
     loggedIn: boolean;
     setLoggedIn: (loggedIn: boolean) => void;
     verifyToken: () => Promise<void>;
@@ -26,7 +29,7 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
     const [token, setToken] = useState<string | null>(null);
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
     const [authReady, setAuthReady] = useState<boolean>(false);
-
+    const socketRef = useRef<Socket | null>(null)
     // =================================================================================
     // video used to understand this: https://www.youtube.com/watch?v=AcYF18oGn6Y&t=742s
     // =================================================================================
@@ -93,8 +96,23 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
         return () => { cancelled = true };
     }, []);
 
+    useEffect(() => {
+        if (!token) {
+            socketRef.current?.disconnect();
+            socketRef.current = null;
+            return;
+        };
+
+        const sk = getSocket(String(token));
+        sk.auth = {token};
+
+        if (!sk.connected) sk.connect();
+
+        socketRef.current = sk;
+    }, [token])
+
     return (
-        <UserContext.Provider value={{ user, setUser, token, setToken, loggedIn, setLoggedIn, verifyToken, authReady }}>
+        <UserContext.Provider value={{ user, setUser, token, setToken, loggedIn, setLoggedIn, verifyToken, authReady, socket: socketRef.current }}>
             {children}
         </UserContext.Provider>
     );
