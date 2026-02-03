@@ -12,7 +12,6 @@ import resendApiPrivate from "./reusable/resendApi";
 import { useUser } from "../Interfaces/GlobalUser";
 import { useEffect, useState } from "react";
 import Loader from "./reusable/Loader";
-import { FaUserCircle } from "react-icons/fa";
 
 type ChatMessage = {
   id: string | number;
@@ -22,9 +21,11 @@ type ChatMessage = {
 };
 
 function PetChat() {
-  const { token, verifyToken, user} = useUser()
+  const { token, verifyToken, user } = useUser()
   const { id } = useParams()
   const [alldata, setAlldata] = useState<any | null>(null)
+  const [message, setMessage] = useState("")
+  const [allMessages, setAllMessages] = useState<any[]>([])
 
   const getData = async () => {
     const response = await resendApiPrivate({
@@ -35,35 +36,56 @@ function PetChat() {
     })
 
     setAlldata(response)
-    console.log(response)
+    // console.log(response)
+  }
+
+  const getMessages = async () => {
+    const response = await resendApiPrivate({
+      apiUrl: `http://localhost:3000/chat/conversation/${id}/messages`
+      , options: { method: "GET" },
+      token: String(token),
+      verifyToken: verifyToken
+    })
+
+    return response
+  }
+
+  const sendMessage = async () => {
+    if (!message.trim()) return;
+
+    const response = await resendApiPrivate({
+      apiUrl: `http://localhost:3000/chat/conversation/${id}/messages`
+      , options: { method: "POST", body: JSON.stringify({message}) },
+      token: String(token),
+      verifyToken: verifyToken
+    })
+    console.log("sendMessage", response)
   }
 
   useEffect(() => {
     const run = async () => {
       await getData()
+      setAllMessages(await getMessages())
     }
     run()
   }, [])
 
   if (!alldata) return <Loader />
 
+  console.log(allMessages)
+
   const petImg = alldata.pet.imgs[0].url
   const ownerFullName = `${alldata.userOwner.name} ${alldata.userOwner.lastName}`
 
-  const messages: ChatMessage[] = [
-    {
-      id: 1,
-      direction: "in",
-      text: "Hi! Thank you for your interest in Max! He's such a sweet boy.",
-      sentAt: "10:30 AM",
-    },
-    {
-      id: 2,
-      direction: "out",
-      text: "Hello! I saw Max's profile and I'm very interested in adopting him. Can you tell me more about his personality?",
-      sentAt: "10:32 AM",
-    },
-  ]
+  const messages: ChatMessage[] = allMessages.map((m: any) => ({
+    id: m.id,
+    direction: m.senderId == user?.id ? "out" : "in",
+    text: m.content,
+    sentAt: new Date(m.createdAt).toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit"
+  })
+  }))
 
 
   return (
@@ -166,6 +188,7 @@ function PetChat() {
               <input
                 className="pet-chat__input"
                 placeholder={`Converse com ${alldata.userOwner.name} sobre o ${alldata.pet.name}`}
+                onChange={(e) => setMessage(e.target.value)}
               />
             </div>
 
@@ -173,7 +196,7 @@ function PetChat() {
               <span className="pet-chat__icon"><BsEmojiSmile /></span>
             </button>
 
-            <button className="pet-chat__send">
+            <button className="pet-chat__send" onClick={() => sendMessage()}>
               <span className="pet-chat__send-plane"><BsSend /></span>
               Enviar
             </button>

@@ -82,9 +82,57 @@ export const getAllDataFromRoomId = async (req: AuthRequest, res: Response) => {
             }
         })
 
-        res.status(200).json({data: roomIdData})
+        return res.status(200).json({data: roomIdData})
     } catch (e) {
         console.log(e)
         return res.status(500).json({message: "unable to find a conversation"})
+    }
+}
+
+export const getMessages = async (req: AuthRequest, res: Response) => {
+    const {id} = req.params
+
+    try {
+        const messages = await prisma.message.findMany({
+            where: {
+                conversationId: Number(id)
+            },
+            orderBy: {
+                createdAt: "asc"
+            },
+            include: {
+                sender: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
+            }
+        })
+
+        return res.status(200).json({data: messages})
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({message: "unable to get messages"})
+    }
+}
+
+export const sendMessage = async (req: AuthRequest, res: Response) => {
+    const senderId = req.user.userId
+    const {id} = req.params
+    const message = req.body.message
+
+    try {
+        const send = await prisma.message.create({
+            data: {
+                conversationId: Number(id),
+                senderId: Number(senderId),
+                content: message
+            }
+        })
+        res.status(200).json({data: send})
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({message: "unable to send message"})
     }
 }
