@@ -43,13 +43,13 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
                 credentials: 'include'
             });
 
-            if (!response.ok){
+            if (!response.ok) {
                 return null
             }
-            
+
             const data = await response.json();
             return data.accessToken;
-            
+
 
         } catch (error) {
             console.error('Failed to fetch token data', error);
@@ -104,12 +104,26 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
         };
 
         const sk = getSocket(String(token));
-        sk.auth = {token};
+        sk.auth = { token };
 
         if (!sk.connected) sk.connect();
 
         socketRef.current = sk;
     }, [token])
+
+    useEffect(() => {
+        const socket = socketRef.current
+        if (!socket) return
+
+        const handleNotification = ({ notification }: any) => {
+            if (!notification || typeof notification !== "object") return;
+
+            console.log("new notification", notification);
+
+        };
+
+        socket.on("notification:new", handleNotification)
+    }, [])
 
     return (
         <UserContext.Provider value={{ user, setUser, token, setToken, loggedIn, setLoggedIn, verifyToken, authReady, socket: socketRef.current }}>

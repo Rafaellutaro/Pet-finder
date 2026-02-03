@@ -1,6 +1,7 @@
 import type { Response } from "express";
 import prisma from '../../backEnd/client/PrismaClient.ts'
 import type { AuthRequest } from "../middleware/auth.middleware.ts";
+import  { createNotification} from "../helper.ts"
 import { io } from "../index.ts";
 
 export const ConversationCreate = async (req: AuthRequest, res: Response) => {
@@ -29,7 +30,8 @@ export const ConversationCreate = async (req: AuthRequest, res: Response) => {
                 id: petId
             },
             select: {
-                userId: true
+                userId: true,
+                name: true
             }
         })
 
@@ -40,6 +42,22 @@ export const ConversationCreate = async (req: AuthRequest, res: Response) => {
                 petId: Number(petId),
             }
         })
+
+        const getAdopterName = await prisma.user.findFirst({
+            where:{
+                id: adopterId,
+            },
+            select:{
+                name: true,
+            }
+        })
+
+        const body = `${getAdopterName?.name} quer adotar ${getOwnerId?.name}`
+        const link = `/Chat/${createConversation.id}`
+
+        const notification = await createNotification({userId: Number(getOwnerId?.userId), type: "chat_created", title: "Novo pedido de adoção", body: body, link: link}, prisma)
+
+        io.to(`user:${getOwnerId?.userId}`).emit("notification:new", {notification: notification})
 
         return res.status(201).json({ data: createConversation.id })
     } catch (e) {
