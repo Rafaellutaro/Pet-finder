@@ -12,6 +12,7 @@ import resendApiPrivate from "./reusable/resendApi";
 import { useUser } from "../Interfaces/GlobalUser";
 import { useEffect, useState } from "react";
 import Loader from "./reusable/Loader";
+import { getSocket } from "./socket";
 
 type ChatMessage = {
   id: string | number;
@@ -26,6 +27,8 @@ function PetChat() {
   const [alldata, setAlldata] = useState<any | null>(null)
   const [message, setMessage] = useState("")
   const [allMessages, setAllMessages] = useState<any[]>([])
+
+  const socket = getSocket(String(token))
 
   const getData = async () => {
     const response = await resendApiPrivate({
@@ -55,7 +58,7 @@ function PetChat() {
 
     const response = await resendApiPrivate({
       apiUrl: `http://localhost:3000/chat/conversation/${id}/messages`
-      , options: { method: "POST", body: JSON.stringify({message}) },
+      , options: { method: "POST", body: JSON.stringify({ message }) },
       token: String(token),
       verifyToken: verifyToken
     })
@@ -63,6 +66,10 @@ function PetChat() {
   }
 
   useEffect(() => {
+    if (!id || !socket) return;
+
+    socket.emit("conversation:join", { conversationId: id });
+
     const run = async () => {
       await getData()
       setAllMessages(await getMessages())
@@ -70,9 +77,33 @@ function PetChat() {
     run()
   }, [])
 
-  if (!alldata) return <Loader />
 
-  console.log(allMessages)
+
+  useEffect(() => {
+  if (!id || !socket) return;
+
+  const handleNewMessage = ({ message }: any) => {
+    if (!message || typeof message !== "object") return;
+
+    if (message.conversationId !== Number(id)) return;
+
+    console.log("new realtime message", message);
+
+    setAllMessages((prev) => {
+      if (prev.some((m) => m.id == message.id)) return prev;
+      return [...prev, message];
+    });
+  };
+
+  socket.on("message:new", handleNewMessage);
+
+  return () => {
+    socket.off("message:new", handleNewMessage);
+    socket.emit("conversation:leave", { conversationId: id });
+  };
+}, [socket, id]);
+
+  if (!alldata) return <Loader />
 
   const petImg = alldata.pet.imgs[0].url
   const ownerFullName = `${alldata.userOwner.name} ${alldata.userOwner.lastName}`
@@ -82,9 +113,9 @@ function PetChat() {
     direction: m.senderId == user?.id ? "out" : "in",
     text: m.content,
     sentAt: new Date(m.createdAt).toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-    minute: "2-digit"
-  })
+      hour: "2-digit",
+      minute: "2-digit"
+    })
   }))
 
 
@@ -187,6 +218,7 @@ function PetChat() {
             <div className="pet-chat__input-shell">
               <input
                 className="pet-chat__input"
+                value={message}
                 placeholder={`Converse com ${alldata.userOwner.name} sobre o ${alldata.pet.name}`}
                 onChange={(e) => setMessage(e.target.value)}
               />
@@ -196,7 +228,7 @@ function PetChat() {
               <span className="pet-chat__icon"><BsEmojiSmile /></span>
             </button>
 
-            <button className="pet-chat__send" onClick={() => sendMessage()}>
+            <button className="pet-chat__send" onClick={() => {sendMessage(); setMessage("")}}>
               <span className="pet-chat__send-plane"><BsSend /></span>
               Enviar
             </button>

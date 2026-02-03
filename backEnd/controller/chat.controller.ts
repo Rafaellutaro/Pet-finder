@@ -1,6 +1,7 @@
 import type { Response } from "express";
 import prisma from '../../backEnd/client/PrismaClient.ts'
 import type { AuthRequest } from "../middleware/auth.middleware.ts";
+import { io } from "../index.ts";
 
 export const ConversationCreate = async (req: AuthRequest, res: Response) => {
     const adopterId = req.user.userId
@@ -131,6 +132,9 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
             }
         })
         res.status(200).json({data: send})
+
+        const conversationId = Number(id);
+        io.to(`conversation:${conversationId}`).emit("message:new", { message: send });
     } catch (e) {
         console.log(e)
         return res.status(500).json({message: "unable to send message"})
