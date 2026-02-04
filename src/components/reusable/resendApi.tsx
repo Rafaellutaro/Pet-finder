@@ -1,4 +1,3 @@
-import { useUser } from "../../Interfaces/GlobalUser";
 import apiFetch from "../../Interfaces/TokenAuthorization";
 
 type resendApiType = {

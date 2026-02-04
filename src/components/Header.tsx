@@ -8,24 +8,19 @@ import { useUser } from "../Interfaces/GlobalUser";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaRegBell } from "react-icons/fa";
 import { useMemo, useRef, useState, useEffect } from "react";
-
-type NotificationItem = {
-    id: string | number;
-    title: string;
-    content: string;
-    date: string;
-    icon: React.ReactNode;
-    read: boolean;
-    type?: "message" | "chatCreated";
-};
+import { useChatRedirect } from "./reusable/Redirect";
+import type { NotificationItem } from "../Interfaces/notificationInterface";
+import {setAsRead} from "./reusable/notification"
 
 function Header() {
-    const { loggedIn, user } = useUser();
+    const { loggedIn, user, notification, token, verifyToken } = useUser();
     const [bellOpen, setBellOpen] = useState(false);
+    const chatRedirect = useChatRedirect("")
 
     const bellWrapRef = useRef<HTMLLIElement | null>(null);
 
     useEffect(() => {
+        console.log("aqui porra", notification)
         function onDocMouseDown(e: MouseEvent) {
             if (!bellWrapRef.current) return;
             const target = e.target as Node;
@@ -37,21 +32,10 @@ function Header() {
 
     const link = loggedIn ? "/Profile" : "/Login";
 
-    const notifications: NotificationItem[] = [
-        {
-            id: 1,
-            title: "title",
-            content: "content",
-            date: "2 minutes ago",
-            icon: <FaRegBell />,
-            read: false,
-            type: "chatCreated",
-        },
-        
-    ];
+    const notifications: NotificationItem[] = notification
 
     const newCount = useMemo(
-        () => notifications.filter((n) => !n.read).length,
+        () => notifications.filter((n) => !n.isRead).length,
         [notifications]
     );
 
@@ -125,25 +109,27 @@ function Header() {
 
                                     <div className="right-side-notification-header">
                                         {newCount > 0 && (
-                                            <span className="notification-new-badge">{newCount} new</span>
+                                            <span className="notification-new-badge">{newCount} Novo</span>
                                         )}
                                     </div>
                                 </div>
 
                                 <div className="notification-body">
-                                    {notifications.length === 0 ? (
+                                    {notifications.length == 0 ? (
                                         <div className="notification-empty">
                                             <span className="notification-empty-title">Nenhuma Notificação</span>
                                             <span className="notification-empty-sub">você está atualizado</span>
                                         </div>
                                     ) : (
                                         notifications.map((n) => (
+
                                             <button
                                                 key={n.id}
                                                 type="button"
-                                                className={`notification-row ${n.read ? "is-read" : "is-unread"}`}
+                                                className={`notification-row ${n.isRead ? "is-read" : "is-unread"}`}
                                                 onClick={() => {
-                                                    /* openNotification(n) */
+                                                    chatRedirect(n.link)
+                                                    setAsRead(String(token), verifyToken, String(n.id))
                                                 }}
                                             >
                                                 <div className="left-icon-notification-body">
@@ -154,7 +140,7 @@ function Header() {
 
                                                 <div className="notification-body-content">
                                                     <span className="notification-title">{n.title}</span>
-                                                    <span className="notification-content">{n.content}</span>
+                                                    <span className="notification-content">{n.body}</span>
                                                     <span className="notification-date">{n.date}</span>
                                                 </div>
 

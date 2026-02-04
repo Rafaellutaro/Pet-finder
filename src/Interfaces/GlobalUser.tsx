@@ -3,6 +3,9 @@ import apiFetch from './TokenAuthorization';
 import type { UserData } from './userInterface';
 import { getSocket } from '../components/socket';
 import type { Socket } from 'socket.io-client';
+import type { NotificationItem } from '../Interfaces/notificationInterface';
+import {loadUnread, onSocketNotification} from "../components/reusable/notification"
+
 
 const UserContext = createContext<{
     user: UserData | null;
@@ -10,6 +13,7 @@ const UserContext = createContext<{
     token: string | null;
     setToken: (token: string | null) => void;
     socket: Socket | null;
+    notification: NotificationItem[];
     loggedIn: boolean;
     setLoggedIn: (loggedIn: boolean) => void;
     verifyToken: () => Promise<void>;
@@ -29,6 +33,7 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
     const [token, setToken] = useState<string | null>(null);
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
     const [authReady, setAuthReady] = useState<boolean>(false);
+    const [notification, setNotification] = useState<NotificationItem[]>([]);
     const socketRef = useRef<Socket | null>(null)
     // =================================================================================
     // video used to understand this: https://www.youtube.com/watch?v=AcYF18oGn6Y&t=742s
@@ -112,7 +117,7 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
     }, [token])
 
     useEffect(() => {
-        const socket = socketRef.current
+        const socket = socketRef?.current
         if (!socket) return
 
         const handleNotification = ({ notification }: any) => {
@@ -120,13 +125,21 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
 
             console.log("new notification", notification);
 
+            onSocketNotification(notification, setNotification)
         };
 
         socket.on("notification:new", handleNotification)
-    }, [])
+
+        // notification functions
+        const getallUnread = async () => {
+            await loadUnread(setNotification, String(token), verifyToken)
+        }
+
+        getallUnread()
+    }, [token])
 
     return (
-        <UserContext.Provider value={{ user, setUser, token, setToken, loggedIn, setLoggedIn, verifyToken, authReady, socket: socketRef.current }}>
+        <UserContext.Provider value={{ user, setUser, token, setToken, loggedIn, setLoggedIn, verifyToken, authReady, socket: socketRef.current, notification }}>
             {children}
         </UserContext.Provider>
     );

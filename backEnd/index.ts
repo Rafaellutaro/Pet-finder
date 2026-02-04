@@ -5,6 +5,7 @@ import cors from 'cors';
 import petRoute from "../backEnd/router/pet.router.ts";
 import * as dotenv from 'dotenv';
 import chatRoute from "../backEnd/router/chat.router.ts";
+import notificationRoute from "../backEnd/router/notification.router.ts";
 import { Server } from "socket.io";
 import { createServer } from 'node:http';
 import { verifySocketJWT } from "./middleware/auth.middleware.ts";
@@ -41,6 +42,7 @@ app.get("/bob", (req, res) => {
 app.use("/users", userRoute)
 app.use("/pets", petRoute)
 app.use("/chat", chatRoute)
+app.use("/notifications", notificationRoute)
 io.use(verifySocketJWT)
 
 server.listen(port, () => {
