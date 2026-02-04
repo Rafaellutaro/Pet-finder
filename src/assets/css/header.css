@@ -12,18 +12,18 @@ html, body {
 
 /* Top navigation header (fixed) */
 .header-container {
-  position: fixed; 
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background-color: var(--details-heading); /* was #333 */
+  background-color: var(--details-heading);
   color: var(--white);
   z-index: 1000;
   padding: 10px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 8px var(--shadow-light); /* was rgba(0,0,0,0.2) */
+  box-shadow: 0 4px 8px var(--shadow-light);
   height: 80px;
 }
 
@@ -32,59 +32,116 @@ html, body {
   color: inherit;
   text-decoration: none;
   display: flex;
+  align-items: center;
 }
 
 .header-icon a svg {
   font-size: 50px;
-  color: var(--white); /* was white */
+  color: var(--white);
+  display: block;
 }
 
-.header-icon a svg:hover,
-.header-items a:hover {
-  color: var(--primary-light);
-}
-
-/* Right side icons */
+/* Right side icons container */
 .header-items ul {
   display: flex;
   list-style: none;
   gap: 20px;
+  align-items: center;
 }
 
-.header-items nav {
-  display: inline-block;
+/* Make every li align the same */
+.header-items ul li {
+  display: flex;
+  align-items: center;
 }
 
-.header-items a {
-  color: var(--white); /* was white */
-  font-size: 24px;
+/* Normalize SVG baseline for react-icons */
+.header-items svg {
+  display: block;
+}
+
+/* Make all header actions (links + bell button) aligned and SAME size */
+.header-items a,
+.bell {
+  color: var(--white);
   text-decoration: none;
   transition: color 0.3s ease;
-}
+  cursor: pointer;
 
-.user-avatar {
-  width: 28px;              /* icon size */
-  height: 28px;
-  border-radius: 50%;       /* circle */
-  overflow: hidden;         /* crop image */
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+
+  width: 28px;
+  height: 28px;
+
+  background: transparent; /* important */
+  line-height: 1;
 }
 
-/* Image inside avatar */
+/* ✅ This removes the “black square” default button styles */
+.bell {
+  border: 0;
+  outline: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Optional: nice accessible focus (not a black square) */
+.bell:focus-visible {
+  outline: 2px solid rgba(124, 58, 237, 0.65);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Hover color */
+.header-icon a svg:hover,
+.header-items a:hover,
+.bell:hover {
+  color: var(--primary-light);
+}
+
+/* Size icons consistently */
+.header-items a svg,
+.bell svg {
+  font-size: 24px;
+}
+
+/* --- Avatar --- */
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Make the <Link> inside avatar match avatar size (FIXED: was 36px) */
+.user-avatar a {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .user-avatar img {
-  width: 28px;
-  height: 28px;
-  object-fit:cover;  
-  display: block;      
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-.user-avatar .userIcon{
-  width: 28px;
-  height: 28px;
-  object-fit: cover;    
+.user-avatar .userIcon {
+  width: 100%;
+  height: 100%;
   display: block;
 }
 
@@ -94,10 +151,9 @@ html, body {
   outline-offset: 2px;
 }
 
-
 /* Body background */
 body {
-  background-color: var(--white); /* was #f4f4f4 */
+  background-color: var(--white);
   font-family: Arial, sans-serif;
 }
 
@@ -106,7 +162,17 @@ body {
   .header-items ul {
     gap: 15px;
   }
-  .header-items a {
-    font-size: 20px;
+
+  .header-items a,
+  .bell,
+  .user-avatar,
+  .user-avatar a {
+    width: 26px;
+    height: 26px;
+  }
+
+  .header-items a svg,
+  .bell svg {
+    font-size: 22px;
   }
 }
