@@ -49,6 +49,12 @@ server.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 })
 
+export const conversationPresence = new Map<number, Set<number>>();
+
+export function isUserInConversation(conversationId: number, userId: number) {
+  return conversationPresence.get(conversationId)?.has(userId) ?? false;
+}
+
 io.on("connection", (socket: AuthSocket) => {
   console.log("a user connected", socket.id);
   const userId = socket.user.userId
@@ -57,10 +63,11 @@ io.on("connection", (socket: AuthSocket) => {
 
   socket.on("conversation:join", async ({ conversationId }) => {
     console.log("join request", conversationId);
+    const convId = Number(conversationId)
 
     const verify = await Prisma.conversation.findUnique({
       where: {
-        id: Number(conversationId)
+        id: convId
       },
       select: {
         ownerId: true,
@@ -74,17 +81,36 @@ io.on("connection", (socket: AuthSocket) => {
 
     if (!allowed) return
 
-    // later: verify user is in conversation
     socket.join(`conversation:${conversationId}`);
+
+    let users = conversationPresence.get(convId);
+    if (!users) {
+      users = new Set<number>();
+      conversationPresence.set(convId, users);
+    }
+    users.add(userId);
+    console.log("join", "users", users, "presence", conversationPresence)
   });
 
   socket.on("conversation:leave", ({ conversationId }) => {
-    console.log("leaving conversation ", conversationId)
-    socket.leave(`conversation:${conversationId}`);
+    const convId = Number(conversationId)
+    console.log("leaving conversation ", convId)
+    socket.leave(`conversation:${convId}`);
+
+    const users = conversationPresence.get(convId);
+    users?.delete(userId);
+    if (users?.size == 0) conversationPresence.delete(convId);
+    console.log("leave", "users", users, "presence", conversationPresence)
   });
 
   socket.on("disconnect", () => {
     console.log("user disconnected", socket.id);
+
+    for (const [convId, users] of conversationPresence) {
+      console.log("disconnect", "users", users, "presence", conversationPresence)
+      users.delete(userId);
+      if (users.size == 0) conversationPresence.delete(convId);
+    }
   });
 });
 
