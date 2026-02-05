@@ -66,6 +66,29 @@ export const setIsRead = async (req: AuthRequest, res: Response) => {
         res.status(200).json({data: alreadyRead})
     } catch (e) {
         console.log(e)
-        res.status(500).json({message: "unable to get unread notifications"})
+        res.status(500).json({message: "unable to mark as read"})
+    }
+}
+
+// set isRead as true for all notifications of the user
+
+export const setAllIsRead = async (req: AuthRequest, res: Response) => {
+    const id = req.user.userId
+
+    try {
+        const alreadyAllRead = await prisma.notification.updateMany({
+            where: {
+                userId: Number(id),
+                isRead: false
+            },
+            data: {
+                isRead: true
+            }
+        })
+
+        res.status(200).json({data: alreadyAllRead})
+    } catch (e) {
+        console.log(e)
+        res.status(500).json({message: "unable to mark all as read"})
     }
 }

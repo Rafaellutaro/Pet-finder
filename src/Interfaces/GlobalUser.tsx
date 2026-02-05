@@ -14,6 +14,7 @@ const UserContext = createContext<{
     setToken: (token: string | null) => void;
     socket: Socket | null;
     notification: NotificationItem[];
+    setNotification: React.Dispatch<React.SetStateAction<NotificationItem[]>>
     loggedIn: boolean;
     setLoggedIn: (loggedIn: boolean) => void;
     verifyToken: () => Promise<void>;
@@ -139,7 +140,7 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
     }, [token])
 
     return (
-        <UserContext.Provider value={{ user, setUser, token, setToken, loggedIn, setLoggedIn, verifyToken, authReady, socket: socketRef.current, notification }}>
+        <UserContext.Provider value={{ user, setUser, token, setToken, loggedIn, setLoggedIn, verifyToken, authReady, socket: socketRef.current, notification, setNotification }}>
             {children}
         </UserContext.Provider>
     );

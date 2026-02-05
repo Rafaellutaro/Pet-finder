@@ -53,8 +53,18 @@ export async function loadUnread(setNotification: React.Dispatch<React.SetStateA
     setNotification(mapped);
 }
 
-export async function setAsRead(token: string, verifyToken: () => Promise<void>, id: string) {
+export async function setAsRead(token: string, verifyToken: () => Promise<void>, id: string, setNotification: React.Dispatch<React.SetStateAction<NotificationItem[]>>) {
     const data = await resendApiPrivate({ apiUrl: `http://localhost:3000/notifications/${id}/setAsRead`, options: { method: "PUT" }, token: String(token), verifyToken: verifyToken });
 
-    console.log("setAsRead", data)
+    setNotification((prev: any) => {
+        return prev.filter((n: any) => String(n.id) !== String(data.id));
+    });
+}
+
+export async function setAllAsRead(token: string, verifyToken: () => Promise<void>, setNotification: React.Dispatch<React.SetStateAction<NotificationItem[]>>) {
+    const data = await resendApiPrivate({ apiUrl: `http://localhost:3000/notifications/setAllAsRead`, options: { method: "PUT" }, token: String(token), verifyToken: verifyToken });
+
+    console.log("all read", data)
+
+    setNotification([])
 }

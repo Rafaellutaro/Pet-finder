@@ -10,17 +10,16 @@ import { FaRegBell } from "react-icons/fa";
 import { useMemo, useRef, useState, useEffect } from "react";
 import { useChatRedirect } from "./reusable/Redirect";
 import type { NotificationItem } from "../Interfaces/notificationInterface";
-import {setAsRead} from "./reusable/notification"
+import {setAsRead, setAllAsRead} from "./reusable/notification"
 
 function Header() {
-    const { loggedIn, user, notification, token, verifyToken } = useUser();
+    const { loggedIn, user, notification, token, verifyToken, setNotification } = useUser();
     const [bellOpen, setBellOpen] = useState(false);
     const chatRedirect = useChatRedirect("")
 
     const bellWrapRef = useRef<HTMLLIElement | null>(null);
 
     useEffect(() => {
-        console.log("aqui porra", notification)
         function onDocMouseDown(e: MouseEvent) {
             if (!bellWrapRef.current) return;
             const target = e.target as Node;
@@ -100,7 +99,7 @@ function Header() {
                                             type="button"
                                             className="notification-mark-read"
                                             onClick={() => {
-                                                /* markAllAsRead() */
+                                                setAllAsRead(String(token), verifyToken, setNotification)
                                             }}
                                         >
                                             Marcar todas como lidas
@@ -129,7 +128,7 @@ function Header() {
                                                 className={`notification-row ${n.isRead ? "is-read" : "is-unread"}`}
                                                 onClick={() => {
                                                     chatRedirect(n.link)
-                                                    setAsRead(String(token), verifyToken, String(n.id))
+                                                    setAsRead(String(token), verifyToken, String(n.id), setNotification)
                                                 }}
                                             >
                                                 <div className="left-icon-notification-body">
