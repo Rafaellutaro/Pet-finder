@@ -10,7 +10,7 @@ import { getWaitingText } from "../functions/petFunctions";
 import apiFetch from "../../Interfaces/TokenAuthorization";
 import { useEffect } from "react";
 import type { UserData } from "../../Interfaces/userInterface";
-import { useChatRedirect } from "./Redirect";
+import { useNavigateWithFrom } from "./Redirect";
 import resendApiPrivate from "./resendApi";
 
 type petProfile = {
@@ -24,7 +24,7 @@ type petProfile = {
 export default function PetProfile({ data }: petProfile) {
   const { verifyToken, token } = useUser()
   const petData = data.pet
-  const chatNavigate = useChatRedirect()
+  const chatNavigate = useNavigateWithFrom()
   // userData later to show who posted the pet, i will focus on the other data first
   // const onwerData = data.owner
 
@@ -36,7 +36,7 @@ export default function PetProfile({ data }: petProfile) {
         token: String(token), 
         verifyToken: verifyToken })
       
-      chatNavigate(response)
+      chatNavigate(`/Chat/${response}`)
     }
 
   const traitMap = Object.fromEntries(

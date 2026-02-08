@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import useRedirect from "./reusable/Redirect";
 import "../assets/css/Login.css"
 import { useUser } from '../Interfaces/GlobalUser';
 import { FaGoogle } from "react-icons/fa";
@@ -9,12 +8,13 @@ import { FaGoogle } from "react-icons/fa";
 import loginImage from "../assets/imgs/catLogin.png"
 import { CiLock } from "react-icons/ci";
 import { MdOutlineEmail } from "react-icons/md";
+import { useNavigateWithFrom } from "./reusable/Redirect";
 
 function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const profileNavigate = useRedirect("/Profile");
+    const profileNavigate = useNavigateWithFrom();
     const { setUser } = useUser();
     const { setToken } = useUser();
     const { setLoggedIn } = useUser();
@@ -62,7 +62,7 @@ function LoginPage() {
              setToken(tokenRes.accessToken);
              setLoggedIn(true);
 
-            profileNavigate();
+            profileNavigate("/Profile");
         } catch (e) {
             console.log(e)
         }

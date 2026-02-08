@@ -41,6 +41,8 @@ model User {
   adoptedConversations Conversation[] @relation("ConversationAdopter")
   ownedConversations   Conversation[] @relation("ConversationOwner")
   sendedMessages      Message[] @relation("userSentMessages")
+
+  adoptedRecord PetsAdopted[]
 }
 
 model Address {
@@ -92,6 +94,12 @@ model validadeHeart {
   @@index([petId, userId])
 }
 
+enum PetStatus {
+  AVAILABLE
+  PENDING
+  ADOPTED
+}
+
 model Pet {
   id        Int    @id @default(autoincrement())
   userId    Int
@@ -107,6 +115,7 @@ model Pet {
   updatedAt   DateTime @updatedAt
   viewsCount  Int      @default(0)
   heartsCount Int      @default(0)
+  petStatus PetStatus @default(AVAILABLE)
 
   toy        String
   food       String
@@ -124,6 +133,7 @@ model Pet {
   conversations Conversation[]
 
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  adoptedRecord PetsAdopted?
 }
 
 model petImg {
@@ -167,11 +177,18 @@ model UserPreference {
   @@unique([userId, traitId])
 }
 
+enum ConversationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
 model Conversation {
   id         Int      @id @default(autoincrement())
   adopterId    Int
   ownerId    Int
   petId      Int
+  conversationStatus ConversationStatus @default(PENDING)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -214,5 +231,18 @@ model Notification {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, isRead, createdAt])
+}
+
+model PetsAdopted {
+  id        Int      @id @default(autoincrement())
+  petId     Int       
+  adopterId Int
+  adoptedAt DateTime @default(now())
+
+  Pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+  User User @relation(fields: [adopterId], references: [id], onDelete: Cascade)
+
+  @@unique([petId])
+  @@index([adopterId])
 }
 

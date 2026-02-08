@@ -3,7 +3,7 @@ import { getUserLanguage } from "../functions/userFunctions";
 import { getAllPetsPublic } from "../functions/petFunctions";
 import { statesOfBrazil, petType, ageRanges } from "../../Interfaces/usefulPetInterface"
 import { type SetURLSearchParams } from 'react-router-dom';
-import useRedirect from "./Redirect";
+import { useNavigateWithFrom } from "./Redirect";
 import updateParams from "./setParams";
 
 type StateSelectProp = {
@@ -14,7 +14,7 @@ export default function StateSelect({ setPetData }: StateSelectProp) {
     const [selectedOrigin, setSelectedOrigin] = useState<any | null>(null);
     // const [petData, setPetData] = useState<any[]>([]);
     const [apiRegion, setApiRegion] = useState('');
-    const petsRedirectWithUf = useRedirect(`/Pets?uf=${selectedOrigin}`);
+    const petsRedirectWithUf = useNavigateWithFrom();
 
     useEffect(() => {
         const fetchRegion = async () => {
@@ -47,7 +47,7 @@ export default function StateSelect({ setPetData }: StateSelectProp) {
     const SeachBasedOnUf = () => {
 
         if (selectedOrigin){
-            petsRedirectWithUf();
+            petsRedirectWithUf(`/Pets?uf=${selectedOrigin}`);
         }
     }
 

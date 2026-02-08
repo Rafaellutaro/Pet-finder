@@ -23,11 +23,12 @@ export const getUniquePetById = async (req: AuthRequest, res: Response) => {
 // get all pets
 
 export const getAllPets = async (req: AuthRequest, res: Response) => {
-    const { uf, city, breed, age, type, page = 1, limit = 10, orderBy = 'name', orderDirection = 'asc' } = req.query;
+    const { uf, city, breed, age, type, page = 1, limit, orderBy = 'name', orderDirection = 'asc' } = req.query;
 
     const filters: any = {};
 
     const filterMap: { [key: string]: string | number | undefined } = {
+        petStatus: "AVAILABLE",
         state: typeof uf == 'string' && uf != 'undefined' ? uf : undefined,
         city: typeof city == 'string' && city != 'undefined' ? city : undefined,
         breed: typeof breed == 'string' && breed != 'undefined' ? breed : undefined,
@@ -37,7 +38,7 @@ export const getAllPets = async (req: AuthRequest, res: Response) => {
 
     Object.keys(filterMap).forEach((key) => {
         if (filterMap[key]) {
-            if (key === 'state' || key === 'city') {
+            if (key == 'state' || key == 'city') {
                 filters.address = { ...filters.address, [key]: filterMap[key] };
             } else {
                 filters[key] = filterMap[key];
@@ -293,5 +294,27 @@ export const insertViews = async (req: AuthRequest, res: Response) => {
         })
     } catch (e) {
         return res.status(409).json({message: "Already Viewed Today"})
+    }
+}
+
+export const updatePetStatus = async (req: AuthRequest, res: Response) => {
+    const petId = req.params.petId
+    const status = req.body.status
+
+    console.log("petStatus here", status, petId)
+
+    try {
+        const updateStatus = await prisma.pet.update({
+            where: {
+                id: Number(petId)
+            },
+            data: {
+                petStatus: status
+            }
+        })
+
+        return res.status(200).json({data: updateStatus})
+    } catch (e) {
+        return res.status(500).json({message: "unbale to update petStatus"})
     }
 }

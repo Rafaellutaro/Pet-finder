@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import type { PetData } from "../Interfaces/usefulPetInterface";
 import type { UserData } from "../Interfaces/userInterface";
 import PetProfile from "./reusable/PetProfile";
+import useRedirect from "./reusable/Redirect";
 
 const getOwner = async (id: string) => {
     try {
@@ -49,6 +50,8 @@ function Pet() {
     const [singlePetData, setSinglePetData] = useState<PetData | null>(null);
     const [petOwner, setPetOwner] = useState<UserData | null>(null);
     const [petTraits, setPetTraits] = useState<any[]>([]);
+    const backRedirect = useRedirect("/Pets")
+    
 
     useEffect(() => {
         const setData = async () => {
@@ -59,8 +62,17 @@ function Pet() {
 
     const userId = singlePetData?.userId;
     const petId = singlePetData?.id;
+    const petStatus = singlePetData?.petStatus
+
+    console.log("status", petStatus)
 
     useEffect(() => {
+        if (!petStatus) return
+
+        if (petStatus != "AVAILABLE"){
+            backRedirect()
+        }
+
         const setData = async () => {
             if (userId && petId) {
                 setPetOwner(await getOwner(String(userId)))

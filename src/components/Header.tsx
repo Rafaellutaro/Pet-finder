@@ -8,14 +8,14 @@ import { useUser } from "../Interfaces/GlobalUser";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaRegBell } from "react-icons/fa";
 import { useMemo, useRef, useState, useEffect } from "react";
-import { useChatRedirect } from "./reusable/Redirect";
+import { useNavigateWithFrom } from "./reusable/Redirect";
 import type { NotificationItem } from "../Interfaces/notificationInterface";
 import {setAsRead, setAllAsRead} from "./reusable/notification"
 
 function Header() {
     const { loggedIn, user, notification, token, verifyToken, setNotification } = useUser();
     const [bellOpen, setBellOpen] = useState(false);
-    const chatRedirect = useChatRedirect("")
+    const chatRedirect = useNavigateWithFrom()
 
     const bellWrapRef = useRef<HTMLLIElement | null>(null);
 

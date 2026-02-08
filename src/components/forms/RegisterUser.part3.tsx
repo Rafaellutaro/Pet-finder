@@ -2,7 +2,6 @@ import type { Control, FieldErrors, UseFormHandleSubmit, UseFormRegister } from 
 import type { userFormFields } from "../../Interfaces/zodSchema";
 import registerImage from "../../assets/imgs/catDog.png"
 import "../../assets/css/RegisterPagePart3.css"
-import useRedirect from "../reusable/Redirect";
 import { FaStreetView } from "react-icons/fa";
 import {UserCepController} from "../functions/userFunctions"
 

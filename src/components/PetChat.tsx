@@ -1,5 +1,4 @@
 import "../assets/css/PetChat.css"
-import img from "../assets/imgs/catLogin.png"
 import { BsSend } from "react-icons/bs";
 import { BsEmojiSmile } from "react-icons/bs";
 import { IoIosAttach } from "react-icons/io";
@@ -12,6 +11,8 @@ import resendApiPrivate from "./reusable/resendApi";
 import { useUser } from "../Interfaces/GlobalUser";
 import { useEffect, useState } from "react";
 import Loader from "./reusable/Loader";
+import { FaCheckCircle } from "react-icons/fa";
+import { FaTimesCircle } from "react-icons/fa";
 
 type ChatMessage = {
   id: string | number;
@@ -77,30 +78,32 @@ function PetChat() {
 
 
   useEffect(() => {
-  if (!id || !socket) return;
+    if (!id || !socket) return;
 
-  const handleNewMessage = ({ message }: any) => {
-    if (!message || typeof message !== "object") return;
+    const handleNewMessage = ({ message }: any) => {
+      if (!message || typeof message !== "object") return;
 
-    if (message.conversationId !== Number(id)) return;
+      if (message.conversationId !== Number(id)) return;
 
-    console.log("new realtime message", message);
+      console.log("new realtime message", message);
 
-    setAllMessages((prev) => {
-      if (prev.some((m) => m.id == message.id)) return prev;
-      return [...prev, message];
-    });
-  };
+      setAllMessages((prev) => {
+        if (prev.some((m) => m.id == message.id)) return prev;
+        return [...prev, message];
+      });
+    };
 
-  socket.on("message:new", handleNewMessage);
+    socket.on("message:new", handleNewMessage);
 
-  return () => {
-    socket.off("message:new", handleNewMessage);
-    socket.emit("conversation:leave", { conversationId: id });
-  };
-}, [socket, id]);
+    return () => {
+      socket.off("message:new", handleNewMessage);
+      socket.emit("conversation:leave", { conversationId: id });
+    };
+  }, [socket, id]);
 
   if (!alldata) return <Loader />
+
+  console.log(alldata)
 
   const petImg = alldata.pet.imgs[0].url
   const ownerFullName = `${alldata.userOwner.name} ${alldata.userOwner.lastName}`
@@ -115,6 +118,29 @@ function PetChat() {
     })
   }))
 
+
+  const handleAdoptionAccept = async () => {
+    const changeStatus = await resendApiPrivate({
+      apiUrl: `http://localhost:3000/chat/conversation/${id}/adoption`
+      , options: { method: "PATCH", body: JSON.stringify({ status: "ACCEPTED" }) },
+      token: String(token),
+      verifyToken: verifyToken
+    })
+
+    console.log("ACCEPTED", changeStatus)
+
+    }
+
+  const handleAdoptionReject = async () => {
+    const changeStatus = await resendApiPrivate({
+      apiUrl: `http://localhost:3000/chat/conversation/${id}/adoption`
+      , options: { method: "PATCH", body: JSON.stringify({ status: "DECLINED" }) },
+      token: String(token),
+      verifyToken: verifyToken
+    })
+
+    console.log("DECLINED", changeStatus)
+  }
 
   return (
     <div className="pet-chat">
@@ -137,13 +163,38 @@ function PetChat() {
             </div>
 
             <div className="pet-chat__top-actions">
-              <button className="pet-chat__icon-btn" aria-label="Call">
+              {/* I will mintain this here for future use if i want */}
+
+              {/* <button className="pet-chat__icon-btn" aria-label="Call">
                 <span className="pet-chat__icon"><FaPhone /></span>
               </button>
 
               <button className="pet-chat__icon-btn" aria-label="Video">
                 <span className="pet-chat__icon"><AiOutlineVideoCamera /></span>
-              </button>
+              </button> */}
+
+              {/* <span className="pet-chat__divider" aria-hidden="true" /> */}
+
+              {/* Accept/Decline only for owner + pending */}
+              {alldata.conversationStatus == "PENDING" && (
+                <div className="pet-chat__adoption-inline">
+                  <button
+                    className="pet-chat__action pet-chat__action--accept"
+                    onClick={() => handleAdoptionAccept()}
+                  >
+                    <span className="pet-chat__action-icon" aria-hidden="true"><FaCheckCircle /></span>
+                    <span className="pet-chat__action-text">Aceitar</span>
+                  </button>
+
+                  <button
+                    className="pet-chat__action pet-chat__action--decline"
+                    onClick={() => handleAdoptionReject()}
+                  >
+                    <span className="pet-chat__action-icon" aria-hidden="true"><FaTimesCircle /></span>
+                    <span className="pet-chat__action-text">Rejeitar</span>
+                  </button>
+                </div>
+              )}
 
               <button className="pet-chat__icon-btn" aria-label="More">
                 <span className="pet-chat__icon"><SlOptionsVertical /></span>
@@ -225,7 +276,7 @@ function PetChat() {
               <span className="pet-chat__icon"><BsEmojiSmile /></span>
             </button>
 
-            <button className="pet-chat__send" onClick={() => {sendMessage(); setMessage("")}}>
+            <button className="pet-chat__send" onClick={() => { sendMessage(); setMessage("") }}>
               <span className="pet-chat__send-plane"><BsSend /></span>
               Enviar
             </button>

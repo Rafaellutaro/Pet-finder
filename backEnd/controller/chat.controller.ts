@@ -192,3 +192,45 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
         return res.status(500).json({ message: "unable to send message" })
     }
 }
+
+export const changeConversationStatus = async (req: AuthRequest, res: Response) => {
+    const { id } = req.params
+    const status = req.body.status
+
+    console.log("status here", status)
+
+    /* This transaction from prisma is the best, i didn't know it existed, i could have done so many apis before this way, what a pain :( */
+
+    try {
+        const result = await prisma.$transaction(async (ts) => {
+            const getPetId = await ts.conversation.findUnique({
+                where: {id: Number(id)},
+                select: {petId: true, conversationStatus: true}
+            })
+
+            if (!getPetId) throw new Error("Conversation not found");
+
+            if (getPetId.conversationStatus !== "PENDING") throw new Error("Already decided")
+
+            const updateConversation = await ts.conversation.update({
+                where: {id: Number(id)},
+                data: {conversationStatus: status}
+            })
+
+            let updatePet = null
+            if (status == "ACCEPTED"){
+                updatePet = await ts.pet.update({
+                    where: {id: getPetId?.petId},
+                    data: {petStatus: "PENDING"}
+                })
+            }
+
+            return {updateConversation, updatePet};
+        })
+
+        return res.status(200).json({data: result})
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({ message: "unable to change conversation Status" })
+    }
+}

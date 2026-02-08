@@ -8,12 +8,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import RegisterUserPart2 from "./forms/RegisterUser.part2";
 import RegisterUserPart3 from "./forms/RegisterUser.part3";
 import { cepSearch } from "./functions/userFunctions";
-import useRedirect from "./reusable/Redirect";
+import { useNavigateWithFrom } from "./reusable/Redirect";
 import { emptyToNull } from "./functions/userFunctions";
 
 function RegisterPage() {
   const [formPart, setFormPart] = useState(1)
-  const LoginPage = useRedirect("/Login")
+  const LoginPage = useNavigateWithFrom()
 
   // const { setUser, setToken, setLoggedIn } = useUser();
 
@@ -81,7 +81,7 @@ function RegisterPage() {
       if (res.ok) {
         const result = await res.json();
         console.log("API result:", result);
-        LoginPage()
+        LoginPage("/Login")
       }
     } catch (e) {
       console.error(e);

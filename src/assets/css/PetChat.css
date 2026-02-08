@@ -269,3 +269,89 @@
 .pet-chat__send-plane {
     font-size: 16px;
 }
+
+/* ===== ADOPTION BUTTONS ===== */
+
+.pet-chat__top-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* existing icon button style should work; leaving as-is */
+
+/* divider between video and accept */
+.pet-chat__divider {
+  width: 1px;
+  height: 18px;
+  background: rgba(17, 24, 39, 0.12);
+  margin: 0 2px;
+}
+
+/* accept/decline group */
+.pet-chat__adoption-inline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* inline action buttons (icon + text) */
+.pet-chat__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 10px;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+/* icons */
+.pet-chat__action-icon {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 12px;
+  line-height: 1;
+}
+
+/* Accept styles */
+.pet-chat__action--accept {
+  color: #16a34a;
+}
+
+.pet-chat__action--accept .pet-chat__action-icon {
+  background: rgba(34, 197, 94, 0.14);
+  color: #16a34a;
+}
+
+.pet-chat__action--accept:hover {
+  background: rgba(34, 197, 94, 0.10);
+}
+
+/* Decline styles */
+.pet-chat__action--decline {
+  color: #dc2626;
+}
+
+.pet-chat__action--decline .pet-chat__action-icon {
+  background: rgba(239, 68, 68, 0.14);
+  color: #dc2626;
+}
+
+.pet-chat__action--decline:hover {
+  background: rgba(239, 68, 68, 0.10);
+}
+
+/* subtle click */
+.pet-chat__action:active {
+  transform: scale(0.98);
+}
+

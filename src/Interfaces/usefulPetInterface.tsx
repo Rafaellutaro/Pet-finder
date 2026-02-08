@@ -19,6 +19,7 @@ export interface PetData {
     id: number;
     name: string;
     type: string;
+    petStatus: string;
     userId: number;
     details: string;
     breed: string;
