@@ -11,6 +11,8 @@ import { useMemo, useRef, useState, useEffect } from "react";
 import { useNavigateWithFrom } from "./reusable/Redirect";
 import type { NotificationItem } from "../Interfaces/notificationInterface";
 import {setAsRead, setAllAsRead} from "./reusable/notification"
+import { HiOutlineChatBubbleOvalLeft } from "react-icons/hi2";
+
 
 function Header() {
     const { loggedIn, user, notification, token, verifyToken, setNotification } = useUser();
@@ -61,6 +63,12 @@ function Header() {
                     <li>
                         <Link to="/Pets" aria-label="Pets">
                             <MdPets />
+                        </Link>
+                    </li>
+
+                    <li>
+                        <Link to="/Chat" aria-label="Chats">
+                            <HiOutlineChatBubbleOvalLeft />
                         </Link>
                     </li>
 

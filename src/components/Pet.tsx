@@ -54,6 +54,8 @@ function Pet() {
     
 
     useEffect(() => {
+        if (!id) return
+
         const setData = async () => {
             setSinglePetData(await getUniquePet(String(id)))
         }
@@ -63,8 +65,6 @@ function Pet() {
     const userId = singlePetData?.userId;
     const petId = singlePetData?.id;
     const petStatus = singlePetData?.petStatus
-
-    console.log("status", petStatus)
 
     useEffect(() => {
         if (!petStatus) return

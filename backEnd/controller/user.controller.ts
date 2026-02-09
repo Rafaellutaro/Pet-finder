@@ -2,6 +2,7 @@ import prisma from '../../backEnd/client/PrismaClient.ts'
 import jwt from 'jsonwebtoken'
 import type { Response } from "express";
 import type { AuthRequest } from "../middleware/auth.middleware.ts";
+import { maskEmail, maskPhone } from '../helper.ts';
 
 const userClient = prisma
 
@@ -45,7 +46,14 @@ export const getUserByIdPublic = async (req: AuthRequest, res: Response) => {
             }
         });
 
-        res.status(200).json({ data: UserByIdPublic });
+        const maskedUser = {
+            ...UserByIdPublic,
+            email: maskEmail(String(UserByIdPublic?.email)),
+            phone: maskPhone(String(UserByIdPublic?.phone))
+        };
+
+
+        res.status(200).json({ data: maskedUser });
 
     } catch (e) {
         console.log(e);

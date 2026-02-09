@@ -12,7 +12,7 @@ export default async function resendApiPrivate({ apiUrl, options, token, verifyT
         const response = await apiFetch(apiUrl,
             options
             , token)
-
+        
         if (response.ok) {
             const data = await response.json()
             return data.data
@@ -22,7 +22,7 @@ export default async function resendApiPrivate({ apiUrl, options, token, verifyT
         const newResponse = await apiFetch(apiUrl,
             options
             , String(newToken))
-
+            
         if (newResponse.ok) {
             const data = await newResponse.json()
             return data.data

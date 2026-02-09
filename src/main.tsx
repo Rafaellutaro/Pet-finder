@@ -51,7 +51,20 @@ const router = createBrowserRouter([
         children: [
           { path: "Profile", element: <Profile /> },
           { path: "Settings", element: <Settings /> },
-          { path: "Chat/:id", element: <PetChat/>},
+          { 
+            path: "Chat", 
+            element: <Outlet/>,
+            children: [
+              {
+                index: true,
+                element: <div>element</div>
+              },
+              {
+                path: ":id",
+                element: <PetChat/>
+              }
+            ]
+          },
         ]
       },
 

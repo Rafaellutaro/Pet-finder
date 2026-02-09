@@ -1,7 +1,7 @@
 import type { Response } from "express";
 import prisma from '../../backEnd/client/PrismaClient.ts'
 import type { AuthRequest } from "../middleware/auth.middleware.ts";
-import { createNotification } from "../helper.ts"
+import { createNotification, verifyUserInConversation } from "../helper.ts"
 import { io, isUserInConversation } from "../index.ts";
 
 export const ConversationCreate = async (req: AuthRequest, res: Response) => {
@@ -67,9 +67,13 @@ export const ConversationCreate = async (req: AuthRequest, res: Response) => {
 }
 
 export const getAllDataFromRoomId = async (req: AuthRequest, res: Response) => {
+    const userId = req.user.userId
     const { id } = req.params
 
     try {
+        const usersInConversation = await verifyUserInConversation(Number(id), prisma)
+        if (userId !== usersInConversation?.ownerId && userId !== usersInConversation?.adopterId) return res.status(404).json({message: "conversation can't be found"})
+
         const roomIdData = await prisma.conversation.findFirst({
             where: {
                 id: Number(id)
@@ -109,9 +113,13 @@ export const getAllDataFromRoomId = async (req: AuthRequest, res: Response) => {
 }
 
 export const getMessages = async (req: AuthRequest, res: Response) => {
+    const userId = req.user.userId
     const { id } = req.params
 
     try {
+        const usersInConversation = await verifyUserInConversation(Number(id), prisma)
+        if (userId !== usersInConversation?.ownerId && userId !== usersInConversation?.adopterId) return res.status(404).json({message: "Messages can't be found"})
+
         const messages = await prisma.message.findMany({
             where: {
                 conversationId: Number(id)
@@ -143,6 +151,9 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
     let receiverId: Number | undefined
 
     try {
+        const usersInConversation = await verifyUserInConversation(Number(id), prisma)
+        if (senderId !== usersInConversation?.ownerId && senderId !== usersInConversation?.adopterId) return res.status(404).json({message: "conversation can't be found"})
+
         const send = await prisma.message.create({
             data: {
                 conversationId: Number(id),

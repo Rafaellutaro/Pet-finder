@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import Loader from "./reusable/Loader";
 import { FaCheckCircle } from "react-icons/fa";
 import { FaTimesCircle } from "react-icons/fa";
+import useRedirect from "./reusable/Redirect";
 
 type ChatMessage = {
   id: string | number;
@@ -28,6 +29,8 @@ function PetChat() {
   const [message, setMessage] = useState("")
   const [allMessages, setAllMessages] = useState<any[]>([])
 
+  const backRedirect = useRedirect()
+
   const getData = async () => {
     const response = await resendApiPrivate({
       apiUrl: `http://localhost:3000/chat/conversation/${id}`,
@@ -35,7 +38,8 @@ function PetChat() {
       token: String(token),
       verifyToken: verifyToken
     })
-
+    
+    if (!response) return backRedirect()
     setAlldata(response)
     // console.log(response)
   }
@@ -48,6 +52,7 @@ function PetChat() {
       verifyToken: verifyToken
     })
 
+    if (!response) return backRedirect()
     return response
   }
 
@@ -60,7 +65,8 @@ function PetChat() {
       token: String(token),
       verifyToken: verifyToken
     })
-    console.log("sendMessage", response)
+
+    if (!response) return backRedirect()
   }
 
   useEffect(() => {
@@ -102,8 +108,6 @@ function PetChat() {
   }, [socket, id]);
 
   if (!alldata) return <Loader />
-
-  console.log(alldata)
 
   const petImg = alldata.pet.imgs[0].url
   const ownerFullName = `${alldata.userOwner.name} ${alldata.userOwner.lastName}`
@@ -176,7 +180,7 @@ function PetChat() {
               {/* <span className="pet-chat__divider" aria-hidden="true" /> */}
 
               {/* Accept/Decline only for owner + pending */}
-              {alldata.conversationStatus == "PENDING" && (
+              {alldata.conversationStatus == "PENDING" && user?.id == alldata.ownerId && (
                 <div className="pet-chat__adoption-inline">
                   <button
                     className="pet-chat__action pet-chat__action--accept"

@@ -4,8 +4,6 @@ export function useNavigateWithFrom() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  console.log("location with from", location)
-
   return (path: string) => {
     navigate(path, {
       state: { from: location.pathname }
@@ -17,10 +15,8 @@ export default function useRedirect(defaultPath: string = "/") {
   const navigate = useNavigate();
   const location = useLocation();
 
-  console.log("location", location)
-
   const redirect = () => {
-    const from = location.state?.from || defaultPath;
+    const from = location?.state?.from || defaultPath;
     navigate(from, { replace: true });
   };
 
