@@ -11,7 +11,13 @@ export const getUniquePetById = async (req: AuthRequest, res: Response) => {
                 id: Number(petId)
             },
             include: {
-                imgs: true
+                imgs: true,
+                address: {
+                    select: {
+                        city: true,
+                        state: true
+                    }
+                }
             },
         })
         res.status(200).json({ data: getUnique })

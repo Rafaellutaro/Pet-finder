@@ -35,6 +35,8 @@ export const ConversationCreate = async (req: AuthRequest, res: Response) => {
             }
         })
 
+        if (adopterId == getOwnerId?.userId) return res.status(409).json({message: "You cant addopt your own pet"})
+
         const createConversation = await prisma.conversation.create({
             data: {
                 adopterId: Number(adopterId),

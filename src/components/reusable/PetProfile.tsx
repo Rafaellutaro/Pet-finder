@@ -36,6 +36,7 @@ export default function PetProfile({ data }: petProfile) {
         token: String(token), 
         verifyToken: verifyToken })
       
+      if (!response) return
       chatNavigate(`/Chat/${response}`)
     }
 
@@ -114,7 +115,7 @@ export default function PetProfile({ data }: petProfile) {
               <h1>{petData?.name}</h1>
               <p className="pet-type">{petData?.type}</p>
               <p className="pet-meta">{petData?.age} anos • {petGender}</p>
-              <p className="pet-location">cidade • estado</p>
+              <p className="pet-location">{`${petData?.address?.city} • ${petData?.address?.state}`}</p>
             </div>
 
             <div className="pet-description">{petData?.details}</div>

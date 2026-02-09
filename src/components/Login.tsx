@@ -43,7 +43,6 @@ function LoginPage() {
                 body: JSON.stringify(loginDetails)
             })
             const data = await sendRes.json();
-            console.log("dados do usuario", data);
 
             // creating a global variable for the user data
             if (sendRes.ok){

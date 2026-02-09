@@ -43,7 +43,6 @@ export const getUserByIdPublic = async (req: AuthRequest, res: Response) => {
                 lastName: true,
                 email: true,
                 phone: true,
-                pets: true
             }
         });
 

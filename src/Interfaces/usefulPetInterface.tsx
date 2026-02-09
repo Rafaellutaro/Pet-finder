@@ -34,6 +34,10 @@ export interface PetData {
     viewsCount: number;
     toy: string;
     imgs: any[];
+    address?: {
+      city: string,
+      state: string
+    }
 }
 
 export const statesOfBrazil: State[] = [
