@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { ConversationCreate, getAllDataFromRoomId, getMessages, sendMessage, changeConversationStatus } from '../controller/chat.controller.ts';
+import { ConversationCreate, getAllDataFromRoomId, getMessages, sendMessage, changeConversationStatus, getAllChatsFromUser } from '../controller/chat.controller.ts';
 import {verifyJWT} from '../middleware/auth.middleware.ts'
 
 const chatRoute = Router();
@@ -9,6 +9,7 @@ chatRoute.get("/conversation/:id", verifyJWT, getAllDataFromRoomId)
 chatRoute.get("/conversation/:id/messages", verifyJWT, getMessages)
 chatRoute.post("/conversation/:id/messages", verifyJWT, sendMessage)
 chatRoute.patch("/conversation/:id/adoption", verifyJWT, changeConversationStatus)
+chatRoute.get("/allConversation", verifyJWT, getAllChatsFromUser)
 
 
 export default chatRoute;

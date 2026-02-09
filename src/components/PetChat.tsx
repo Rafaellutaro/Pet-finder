@@ -228,7 +228,7 @@ function PetChat() {
                   {/* INCOMIG */}
                   {isIn && (
                     <img
-                      src={alldata.userOwner.profileImg}
+                      src={user?.id == alldata?.ownerId ? alldata?.userAdopter?.profileImg : alldata?.userOwner?.profileImg}
                       alt=""
                       className="pet-chat__badge pet-chat__badge--in"
                     />

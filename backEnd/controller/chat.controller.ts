@@ -35,7 +35,7 @@ export const ConversationCreate = async (req: AuthRequest, res: Response) => {
             }
         })
 
-        if (adopterId == getOwnerId?.userId) return res.status(409).json({message: "You cant adopt your own pet"})
+        if (adopterId == getOwnerId?.userId) return res.status(409).json({ message: "You cant adopt your own pet" })
 
         const createConversation = await prisma.conversation.create({
             data: {
@@ -74,7 +74,7 @@ export const getAllDataFromRoomId = async (req: AuthRequest, res: Response) => {
 
     try {
         const usersInConversation = await verifyUserInConversation(Number(id), prisma)
-        if (userId !== usersInConversation?.ownerId && userId !== usersInConversation?.adopterId) return res.status(404).json({message: "conversation can't be found"})
+        if (userId !== usersInConversation?.ownerId && userId !== usersInConversation?.adopterId) return res.status(404).json({ message: "conversation can't be found" })
 
         const roomIdData = await prisma.conversation.findFirst({
             where: {
@@ -120,7 +120,7 @@ export const getMessages = async (req: AuthRequest, res: Response) => {
 
     try {
         const usersInConversation = await verifyUserInConversation(Number(id), prisma)
-        if (userId !== usersInConversation?.ownerId && userId !== usersInConversation?.adopterId) return res.status(404).json({message: "Messages can't be found"})
+        if (userId !== usersInConversation?.ownerId && userId !== usersInConversation?.adopterId) return res.status(404).json({ message: "Messages can't be found" })
 
         const messages = await prisma.message.findMany({
             where: {
@@ -154,7 +154,7 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
 
     try {
         const usersInConversation = await verifyUserInConversation(Number(id), prisma)
-        if (senderId !== usersInConversation?.ownerId && senderId !== usersInConversation?.adopterId) return res.status(404).json({message: "conversation can't be found"})
+        if (senderId !== usersInConversation?.ownerId && senderId !== usersInConversation?.adopterId) return res.status(404).json({ message: "conversation can't be found" })
 
         const send = await prisma.message.create({
             data: {
@@ -196,7 +196,7 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
         const notification = await createNotification({ userId: Number(receiverId), type: "message_created", title: `Nova mensagem de ${getSenderName?.name}`, body: send.content, link: link }, prisma)
 
         if (!isUserInConversation(conversationId, Number(receiverId))) {
-            io.to(`user:${receiverId}`).emit("notification:new", {notification: notification});
+            io.to(`user:${receiverId}`).emit("notification:new", { notification: notification });
         }
 
         io.to(`conversation:${conversationId}`).emit("message:new", { message: send });
@@ -217,8 +217,8 @@ export const changeConversationStatus = async (req: AuthRequest, res: Response) 
     try {
         const result = await prisma.$transaction(async (ts) => {
             const getPetId = await ts.conversation.findUnique({
-                where: {id: Number(id)},
-                select: {petId: true, conversationStatus: true}
+                where: { id: Number(id) },
+                select: { petId: true, conversationStatus: true }
             })
 
             if (!getPetId) throw new Error("Conversation not found");
@@ -226,24 +226,61 @@ export const changeConversationStatus = async (req: AuthRequest, res: Response) 
             if (getPetId.conversationStatus !== "PENDING") throw new Error("Already decided")
 
             const updateConversation = await ts.conversation.update({
-                where: {id: Number(id)},
-                data: {conversationStatus: status}
+                where: { id: Number(id) },
+                data: { conversationStatus: status }
             })
 
             let updatePet = null
-            if (status == "ACCEPTED"){
+            if (status == "ACCEPTED") {
                 updatePet = await ts.pet.update({
-                    where: {id: getPetId?.petId},
-                    data: {petStatus: "PENDING"}
+                    where: { id: getPetId?.petId },
+                    data: { petStatus: "PENDING" }
                 })
             }
 
-            return {updateConversation, updatePet};
+            return { updateConversation, updatePet };
         })
 
-        return res.status(200).json({data: result})
+        return res.status(200).json({ data: result })
     } catch (e) {
         console.log(e)
         return res.status(500).json({ message: "unable to change conversation Status" })
     }
+}
+
+export const getAllChatsFromUser = async (req: AuthRequest, res: Response) => {
+  const userId = Number(req.user.userId)
+
+  try {
+    const chats = await prisma.conversation.findMany({
+      where: {
+        OR: [{ ownerId: userId }, { adopterId: userId }],
+      },
+      include: {
+        messages: {
+          orderBy: { createdAt: "desc" },
+          take: 1,
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+            senderId: true,
+          },
+        },
+        userOwner: { select: { id: true, name: true, lastName: true, profileImg: true } },
+        userAdopter: { select: { id: true, name: true, lastName: true, profileImg: true } },
+        pet: {select: {id: true, name: true, imgs: true}}
+      },
+      orderBy: { updatedAt: "desc" }, 
+    })
+
+    const formatted = chats.map(({ messages, ...chat }) => ({
+      ...chat,
+      lastMessage: messages[0] ?? null,
+    }))
+
+    return res.status(200).json({ data: formatted })
+  } catch (e) {
+    return res.status(500).json({ message: "unable to get chats" })
+  }
 }
