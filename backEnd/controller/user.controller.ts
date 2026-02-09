@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import type { Response } from "express";
 import type { AuthRequest } from "../middleware/auth.middleware.ts";
 import { maskEmail, maskPhone } from '../helper.ts';
+import argon2 from "argon2";
 
 const userClient = prisma
 
@@ -153,13 +154,19 @@ export const getUserByEmail = async (req: any, res: any) => {
         const UserById = await userClient.user.findUnique({
             where: {
                 email: userLogin.email,
-                password: userLogin.password
-
             },
             include: {
                 addresses: true
             }
         });
+
+        if (!UserById) return res.status(400).json({ message: "Invalid Credentials" })
+
+        const valid = await argon2.verify(UserById.password, userLogin.password);
+
+        if (!valid) {
+            return res.status(400).json({ message: "Invalid credentials" });
+        }
 
         res.status(200).json({ data: UserById });
 
@@ -180,6 +187,8 @@ export const insertUser = async (req: AuthRequest, res: Response) => {
 
     try {
 
+        const hashedPassword = await argon2.hash(userData.password);
+
         if (Object.keys(userData).length > 0) {
             response.createUser = await userClient.user.create({
                 data: {
@@ -187,7 +196,7 @@ export const insertUser = async (req: AuthRequest, res: Response) => {
                     lastName: userData.lastName,
                     email: userData.email,
                     phone: userData.phone,
-                    password: userData.password
+                    password: hashedPassword
                 }
             });
         }

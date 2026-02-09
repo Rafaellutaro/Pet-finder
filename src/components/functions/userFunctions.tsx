@@ -1,6 +1,5 @@
 import { Controller, type Control } from "react-hook-form";
 import { PatternFormat } from 'react-number-format';
-import type { userFormFields } from "../../Interfaces/zodSchema";
 
 export function cepSearch(setValue: any, cep: string) {
     const cepDigits = (cep || "").replace(/\D/g, "");

@@ -46,8 +46,8 @@ function LoginPage() {
             console.log("dados do usuario", data);
 
             // creating a global variable for the user data
-
-            const createToken = await fetch('http://localhost:3000/users/createToken', {
+            if (sendRes.ok){
+              const createToken = await fetch('http://localhost:3000/users/createToken', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -63,6 +63,7 @@ function LoginPage() {
              setLoggedIn(true);
 
             profileNavigate("/Profile");
+            }
         } catch (e) {
             console.log(e)
         }
