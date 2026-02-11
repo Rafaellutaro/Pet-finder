@@ -14,6 +14,7 @@ import Loader from "./reusable/Loader";
 import { FaCheckCircle } from "react-icons/fa";
 import { FaTimesCircle } from "react-icons/fa";
 import useRedirect from "./reusable/Redirect";
+import { WarningPopUp } from "./reusable/PopUps";
 
 type ChatMessage = {
   id: string | number;
@@ -28,6 +29,8 @@ function PetChat() {
   const [alldata, setAlldata] = useState<any | null>(null)
   const [message, setMessage] = useState("")
   const [allMessages, setAllMessages] = useState<any[]>([])
+  const [open, setOpen] = useState(false)
+  const [openDecline, setOpenDecline] = useState(false)
 
   const backRedirect = useRedirect()
 
@@ -38,7 +41,7 @@ function PetChat() {
       token: String(token),
       verifyToken: verifyToken
     })
-    
+
     if (!response) return backRedirect()
     setAlldata(response)
     // console.log(response)
@@ -133,7 +136,7 @@ function PetChat() {
 
     console.log("ACCEPTED", changeStatus)
 
-    }
+  }
 
   const handleAdoptionReject = async () => {
     const changeStatus = await resendApiPrivate({
@@ -147,29 +150,53 @@ function PetChat() {
   }
 
   return (
-    <div className="pet-chat">
-      <div className="pet-chat__stage">
-        <div className="pet-chat__card">
-          {/* Top Chat Header */}
-          <div className="pet-chat__top">
-            <div className="pet-chat__top-left">
-              <div className="pet-chat__pet-avatar">
-                <img src={petImg} alt="Max" />
-                <span className="pet-chat__online-dot" />
-              </div>
+    <>
+      <WarningPopUp
+        open={open}
+        title="Aceitar Adoção?"
+        details="Você tem certeza que deseja aceitar esta solicitação de adoção? 
+        Ao continuar, você iniciará o processo de adoção. Em uma etapa posterior, ambos precisarão confirmar a adoção de forma definitiva,   após essa confirmação, não será possível voltar."
+        cancelText="Não, cancelar"
+        acceptText="Sim, continuar"
+        onAccept={handleAdoptionAccept}
+        onCancel={() => setOpen(false)}
+        onClose={() => setOpen(false)}
+      />
 
-              <div className="pet-chat__top-meta">
-                <div className="pet-chat__pet-name">
-                  {alldata.pet.name} <span className="pet-chat__pet-heart">❤️</span>
+      <WarningPopUp
+        open={openDecline}
+        title="Rejeitar Adoção?"
+        details="Você tem certeza que deseja rejeitar esta solicitação de adoção? 
+        Após a rejeição, esta conversa será encerrada e não será mais possível trocar mensagens ou continuar o processo de adoção."
+        cancelText="Não, voltar"
+        acceptText="Sim, Continuar"
+        onAccept={handleAdoptionReject}
+        onCancel={() => setOpenDecline(false)}
+        onClose={() => setOpenDecline(false)}
+      />
+      <div className="pet-chat">
+        <div className="pet-chat__stage">
+          <div className="pet-chat__card">
+            {/* Top Chat Header */}
+            <div className="pet-chat__top">
+              <div className="pet-chat__top-left">
+                <div className="pet-chat__pet-avatar">
+                  <img src={petImg} alt="Max" />
+                  <span className="pet-chat__online-dot" />
                 </div>
-                <div className="pet-chat__pet-owner">{ownerFullName} • Online</div>
+
+                <div className="pet-chat__top-meta">
+                  <div className="pet-chat__pet-name">
+                    {alldata.pet.name} <span className="pet-chat__pet-heart">❤️</span>
+                  </div>
+                  <div className="pet-chat__pet-owner">{ownerFullName} • Online</div>
+                </div>
               </div>
-            </div>
 
-            <div className="pet-chat__top-actions">
-              {/* I will mintain this here for future use if i want */}
+              <div className="pet-chat__top-actions">
+                {/* I will mintain this here for future use if i want */}
 
-              {/* <button className="pet-chat__icon-btn" aria-label="Call">
+                {/* <button className="pet-chat__icon-btn" aria-label="Call">
                 <span className="pet-chat__icon"><FaPhone /></span>
               </button>
 
@@ -177,118 +204,118 @@ function PetChat() {
                 <span className="pet-chat__icon"><AiOutlineVideoCamera /></span>
               </button> */}
 
-              {/* <span className="pet-chat__divider" aria-hidden="true" /> */}
+                {/* <span className="pet-chat__divider" aria-hidden="true" /> */}
 
-              {/* Accept/Decline only for owner + pending */}
-              {alldata.conversationStatus == "PENDING" && user?.id == alldata.ownerId && (
-                <div className="pet-chat__adoption-inline">
-                  <button
-                    className="pet-chat__action pet-chat__action--accept"
-                    onClick={() => handleAdoptionAccept()}
+                {/* Accept/Decline only for owner + pending */}
+                {alldata.conversationStatus == "PENDING" && user?.id == alldata.ownerId && (
+                  <div className="pet-chat__adoption-inline">
+                    <button
+                      className="pet-chat__action pet-chat__action--accept"
+                      onClick={() => setOpen(true)}>
+                      <span className="pet-chat__action-icon" aria-hidden="true"><FaCheckCircle /></span>
+                      <span className="pet-chat__action-text">Aceitar</span>
+                    </button>
+
+                    <button
+                      className="pet-chat__action pet-chat__action--decline"
+                      onClick={() => setOpenDecline(true)}
+                    >
+                      <span className="pet-chat__action-icon" aria-hidden="true"><FaTimesCircle /></span>
+                      <span className="pet-chat__action-text">Rejeitar</span>
+                    </button>
+                  </div>
+                )}
+
+                <button className="pet-chat__icon-btn" aria-label="More">
+                  <span className="pet-chat__icon"><SlOptionsVertical /></span>
+                </button>
+              </div>
+            </div>
+
+            {/* Pet Info Pill */}
+            <div className="pet-chat__pet-pill">
+              <span className="pet-chat__pill-item">{alldata.pet.breed}</span>
+              <span className="pet-chat__pill-sep" />
+              <span className="pet-chat__pill-item">{`${alldata.pet.age} Anos de Idade`}</span>
+              <span className="pet-chat__pill-sep" />
+              <span className="pet-chat__pill-item">{`${alldata.pet.address.city}, ${alldata.pet.address.state}`}</span>
+            </div>
+
+            {/* Messages */}
+            <div className="pet-chat__messages">
+              {messages.map((m) => {
+                const isIn = m.direction == "in";
+
+                return (
+                  <div
+                    key={m.id}
+                    className={`pet-chat__row ${isIn ? "pet-chat__row--in" : "pet-chat__row--out"}`}
                   >
-                    <span className="pet-chat__action-icon" aria-hidden="true"><FaCheckCircle /></span>
-                    <span className="pet-chat__action-text">Aceitar</span>
-                  </button>
+                    {/* INCOMIG */}
+                    {isIn && (
+                      <img
+                        src={user?.id == alldata?.ownerId ? alldata?.userAdopter?.profileImg : alldata?.userOwner?.profileImg}
+                        alt=""
+                        className="pet-chat__badge pet-chat__badge--in"
+                      />
+                    )}
 
-                  <button
-                    className="pet-chat__action pet-chat__action--decline"
-                    onClick={() => handleAdoptionReject()}
-                  >
-                    <span className="pet-chat__action-icon" aria-hidden="true"><FaTimesCircle /></span>
-                    <span className="pet-chat__action-text">Rejeitar</span>
-                  </button>
-                </div>
-              )}
+                    <div className={`pet-chat__bubble-wrap ${!isIn ? "pet-chat__bubble-wrap--out" : ""}`}>
+                      <div className={`pet-chat__bubble ${isIn ? "pet-chat__bubble--in" : "pet-chat__bubble--out"}`}>
+                        {m.text}
+                      </div>
 
-              <button className="pet-chat__icon-btn" aria-label="More">
-                <span className="pet-chat__icon"><SlOptionsVertical /></span>
+                      <div className={`pet-chat__time ${isIn ? "pet-chat__time--in" : "pet-chat__time--out"}`}>
+                        {m.sentAt}
+                      </div>
+                    </div>
+
+                    {/* OUTGOING*/}
+                    {!isIn && (
+                      <img
+                        src={user?.profileImg}
+                        alt=""
+                        className="pet-chat__badge pet-chat__badge--out"
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Composer */}
+            <div className="pet-chat__composer">
+              <button className="pet-chat__composer-btn" aria-label="Attach">
+                <span className="pet-chat__icon"><IoIosAttach /></span>
+              </button>
+
+              <button className="pet-chat__composer-btn" aria-label="Image">
+                <span className="pet-chat__icon"><CiImageOn /></span>
+              </button>
+
+              <div className="pet-chat__input-shell">
+                <input
+                  className="pet-chat__input"
+                  value={message}
+                  placeholder={`Converse com ${alldata.userOwner.name} sobre o ${alldata.pet.name}`}
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+              </div>
+
+              <button className="pet-chat__composer-btn" aria-label="Emoji">
+                <span className="pet-chat__icon"><BsEmojiSmile /></span>
+              </button>
+
+              <button className="pet-chat__send" onClick={() => { sendMessage(); setMessage("") }}>
+                <span className="pet-chat__send-plane"><BsSend /></span>
+                Enviar
               </button>
             </div>
           </div>
-
-          {/* Pet Info Pill */}
-          <div className="pet-chat__pet-pill">
-            <span className="pet-chat__pill-item">{alldata.pet.breed}</span>
-            <span className="pet-chat__pill-sep" />
-            <span className="pet-chat__pill-item">{`${alldata.pet.age} Anos de Idade`}</span>
-            <span className="pet-chat__pill-sep" />
-            <span className="pet-chat__pill-item">{`${alldata.pet.address.city}, ${alldata.pet.address.state}`}</span>
-          </div>
-
-          {/* Messages */}
-          <div className="pet-chat__messages">
-            {messages.map((m) => {
-              const isIn = m.direction == "in";
-
-              return (
-                <div
-                  key={m.id}
-                  className={`pet-chat__row ${isIn ? "pet-chat__row--in" : "pet-chat__row--out"}`}
-                >
-                  {/* INCOMIG */}
-                  {isIn && (
-                    <img
-                      src={user?.id == alldata?.ownerId ? alldata?.userAdopter?.profileImg : alldata?.userOwner?.profileImg}
-                      alt=""
-                      className="pet-chat__badge pet-chat__badge--in"
-                    />
-                  )}
-
-                  <div className={`pet-chat__bubble-wrap ${!isIn ? "pet-chat__bubble-wrap--out" : ""}`}>
-                    <div className={`pet-chat__bubble ${isIn ? "pet-chat__bubble--in" : "pet-chat__bubble--out"}`}>
-                      {m.text}
-                    </div>
-
-                    <div className={`pet-chat__time ${isIn ? "pet-chat__time--in" : "pet-chat__time--out"}`}>
-                      {m.sentAt}
-                    </div>
-                  </div>
-
-                  {/* OUTGOING*/}
-                  {!isIn && (
-                    <img
-                      src={user?.profileImg}
-                      alt=""
-                      className="pet-chat__badge pet-chat__badge--out"
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Composer */}
-          <div className="pet-chat__composer">
-            <button className="pet-chat__composer-btn" aria-label="Attach">
-              <span className="pet-chat__icon"><IoIosAttach /></span>
-            </button>
-
-            <button className="pet-chat__composer-btn" aria-label="Image">
-              <span className="pet-chat__icon"><CiImageOn /></span>
-            </button>
-
-            <div className="pet-chat__input-shell">
-              <input
-                className="pet-chat__input"
-                value={message}
-                placeholder={`Converse com ${alldata.userOwner.name} sobre o ${alldata.pet.name}`}
-                onChange={(e) => setMessage(e.target.value)}
-              />
-            </div>
-
-            <button className="pet-chat__composer-btn" aria-label="Emoji">
-              <span className="pet-chat__icon"><BsEmojiSmile /></span>
-            </button>
-
-            <button className="pet-chat__send" onClick={() => { sendMessage(); setMessage("") }}>
-              <span className="pet-chat__send-plane"><BsSend /></span>
-              Enviar
-            </button>
-          </div>
         </div>
       </div>
-    </div>
-  );
+    </>
+  )
 }
 
 export default PetChat;

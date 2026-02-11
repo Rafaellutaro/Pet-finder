@@ -25,14 +25,21 @@ function Chat() {
         getAllChats()
     }, [])
 
+    const languageMap: Record<string, string> = {
+        PENDING: "Pendente",
+        ACCEPTED: "Aceita",
+        DECLINED: "Rejeitada"
+    }
+
     const unreadChatView = allChatsData.map((c) => {
         const content = c.lastMessage?.content?.trim()
         const sentMessageTime = c.lastMessage?.createdAt
+        
 
         return {
             conversationId: c.id,
             petName: c.pet.name,
-            conversationState: c.conversationStatus,
+            conversationState: languageMap[c.conversationStatus] ? languageMap[c.conversationStatus] : c.conversationStatus,
             ownerName: `${c.userOwner.name} ${c.userOwner.lastName}`,
             recentMessage: content ? content : "Nenhuma mensagem enviada ainda",
             recentMessageTime: sentMessageTime ? new Date(sentMessageTime).toLocaleTimeString("pt-BR", {
@@ -79,6 +86,7 @@ function Chat() {
             <div className="all-chats-list">
                 {/* Chat row (Unread) */}
                 {filteredChats.map((c) => {
+
                     return (
                         <button key={c.conversationId} className="all-chats-container" type="button" onClick={() => nav(`/Chat/${c.conversationId}`)}> {/* adding isUnread changes a bit the layout */}
                             <div className="all-chat-petImg">
