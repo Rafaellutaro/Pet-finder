@@ -103,6 +103,11 @@ export const getAllDataFromRoomId = async (req: AuthRequest, res: Response) => {
                         lastName: true,
                         profileImg: true
                     }
+                },
+                userAdopter: {
+                    select: {
+                        profileImg: true
+                    }
                 }
             }
         })
@@ -155,6 +160,17 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
     try {
         const usersInConversation = await verifyUserInConversation(Number(id), prisma)
         if (senderId !== usersInConversation?.ownerId && senderId !== usersInConversation?.adopterId) return res.status(404).json({ message: "conversation can't be found" })
+
+        const verifyConversationState = await prisma.conversation.findUnique({
+            where: {
+                id: Number(id)
+            },
+            select: {
+                conversationStatus: true
+            }
+        })
+
+        if (verifyConversationState?.conversationStatus == "DECLINED") return res.status(403).json({ message: "You are not allowed to send messages here" })
 
         const send = await prisma.message.create({
             data: {
@@ -218,12 +234,12 @@ export const changeConversationStatus = async (req: AuthRequest, res: Response) 
         const result = await prisma.$transaction(async (ts) => {
             const getPetId = await ts.conversation.findUnique({
                 where: { id: Number(id) },
-                select: { petId: true, conversationStatus: true }
+                select: { petId: true, conversationStatus: true, adopterId: true }
             })
 
-            if (!getPetId) throw new Error("Conversation not found");
+            if (!getPetId) return res.status(404).json({ message: "Conversation not Found" });
 
-            if (getPetId.conversationStatus !== "PENDING") throw new Error("Already decided")
+            if (getPetId.conversationStatus !== "PENDING") return res.status(403).json({ message: "Conversation Status already set" })
 
             const updateConversation = await ts.conversation.update({
                 where: { id: Number(id) },
@@ -238,6 +254,13 @@ export const changeConversationStatus = async (req: AuthRequest, res: Response) 
                 })
             }
 
+            if (status == "DECLINED") {
+                io.to(`user:${getPetId?.adopterId}`).emit("conversation:status", {
+                    conversationId: Number(id),
+                    status: "DECLINED",
+                });
+            }
+
             return { updateConversation, updatePet };
         })
 
@@ -249,38 +272,38 @@ export const changeConversationStatus = async (req: AuthRequest, res: Response) 
 }
 
 export const getAllChatsFromUser = async (req: AuthRequest, res: Response) => {
-  const userId = Number(req.user.userId)
+    const userId = Number(req.user.userId)
 
-  try {
-    const chats = await prisma.conversation.findMany({
-      where: {
-        OR: [{ ownerId: userId }, { adopterId: userId }],
-      },
-      include: {
-        messages: {
-          orderBy: { createdAt: "desc" },
-          take: 1,
-          select: {
-            id: true,
-            content: true,
-            createdAt: true,
-            senderId: true,
-          },
-        },
-        userOwner: { select: { id: true, name: true, lastName: true, profileImg: true } },
-        userAdopter: { select: { id: true, name: true, lastName: true, profileImg: true } },
-        pet: {select: {id: true, name: true, imgs: true}}
-      },
-      orderBy: { updatedAt: "desc" }, 
-    })
+    try {
+        const chats = await prisma.conversation.findMany({
+            where: {
+                OR: [{ ownerId: userId }, { adopterId: userId }],
+            },
+            include: {
+                messages: {
+                    orderBy: { createdAt: "desc" },
+                    take: 1,
+                    select: {
+                        id: true,
+                        content: true,
+                        createdAt: true,
+                        senderId: true,
+                    },
+                },
+                userOwner: { select: { id: true, name: true, lastName: true, profileImg: true } },
+                userAdopter: { select: { id: true, name: true, lastName: true, profileImg: true } },
+                pet: { select: { id: true, name: true, imgs: true } }
+            },
+            orderBy: { updatedAt: "desc" },
+        })
 
-    const formatted = chats.map(({ messages, ...chat }) => ({
-      ...chat,
-      lastMessage: messages[0] ?? null,
-    }))
+        const formatted = chats.map(({ messages, ...chat }) => ({
+            ...chat,
+            lastMessage: messages[0] ?? null,
+        }))
 
-    return res.status(200).json({ data: formatted })
-  } catch (e) {
-    return res.status(500).json({ message: "unable to get chats" })
-  }
+        return res.status(200).json({ data: formatted })
+    } catch (e) {
+        return res.status(500).json({ message: "unable to get chats" })
+    }
 }

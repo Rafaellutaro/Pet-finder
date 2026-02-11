@@ -29,4 +29,34 @@ export interface chatInterface {
         lastName: string,
         profileImg: string
     },
-} 
+}
+
+export interface singleChatInterface {
+    adopterId: number,
+    conversationStatus: string,
+    createdAt: string,
+    id: number,
+    ownerId: number,
+    petId: number,
+    updatedAt: string,
+    pet: {
+        age: number,
+        breed: string,
+        id: number,
+        name: string,
+        address: {
+            city: string,
+            state: string
+        }
+        imgs: any[]
+    },
+    userOwner: {
+        id: number,
+        name: string,
+        lastName: string,
+        profileImg: string
+    },
+    userAdopter: {
+        profileImg: string,
+    }
+}
