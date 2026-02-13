@@ -31,10 +31,11 @@ function Chat() {
         DECLINED: "Rejeitada"
     }
 
+    console.log(allChatsData)
+
     const unreadChatView = allChatsData.map((c) => {
         const content = c.lastMessage?.content?.trim()
         const sentMessageTime = c.lastMessage?.createdAt
-        
 
         return {
             conversationId: c.id,
@@ -47,7 +48,9 @@ function Chat() {
                 minute: "2-digit",
             }) : "Não há data",
             petPhotos: c.pet?.imgs[0]?.url,
-            userPhoto: c.userOwner.profileImg ? c.userOwner.profileImg : bannerDFT
+            userPhoto: c.userOwner.profileImg ? c.userOwner.profileImg : bannerDFT,
+            adoptionLink: c.adoptionProcess?.id ? `/PetAdoption/${c.adoptionProcess?.id}` : null,
+            adoptionState: c.adoptionProcess?.step ? c.adoptionProcess?.step : null,
         }
     })
 
@@ -85,10 +88,13 @@ function Chat() {
 
             <div className="all-chats-list">
                 {/* Chat row (Unread) */}
-                {filteredChats.map((c) => {
-
-                    return (
-                        <button key={c.conversationId} className="all-chats-container" type="button" onClick={() => nav(`/Chat/${c.conversationId}`)}> {/* adding isUnread changes a bit the layout */}
+                {filteredChats.map((c) => (
+                    <div key={c.conversationId} className="all-chats-container">
+                        <button
+                            type="button"
+                            className="all-chat-openBtn"
+                            onClick={() => nav(`/Chat/${c.conversationId}`)}
+                        >
                             <div className="all-chat-petImg">
                                 <img src={c.petPhotos} alt="Foto do pet" />
                             </div>
@@ -108,16 +114,30 @@ function Chat() {
                                     {`Ultima Mensagem Enviada: ${c.recentMessage}`}
                                 </span>
                             </div>
-
-                            <div className="all-chats-container-end">
-                                <div className="all-chat-metaRow">
-                                    <span className="all-chat-time">{`Mensagem Enviada as: ${c.recentMessageTime}`}</span>
-                                    {/* <span className="all-chat-unreadCount">2</span> */} {/* unread Messages Count, will not be used for now */}
-                                </div>
-                            </div>
                         </button>
-                    )
-                })}
+
+                        {/* Right side meta + confirm */}
+                        <div className="all-chats-container-end">
+                            <div className="all-chat-metaRow">
+                                <span className="all-chat-time">{`Mensagem Enviada às: ${c.recentMessageTime}`}</span>
+                            </div>
+
+                            {c.adoptionState && (
+                                <button
+                                    type="button"
+                                    className="all-chat-confirm-btn"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        nav(String(c.adoptionLink));
+                                    }}
+                                >
+                                    Ir para confirmação
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                ))}
+
 
                 {/* Chat row (Read) */}
                 {/* <button className="all-chats-container" type="button">

@@ -29,6 +29,11 @@ export interface chatInterface {
         lastName: string,
         profileImg: string
     },
+     adoptionProcess: {
+        id: number,
+        step: string
+     }
+
 }
 
 export interface singleChatInterface {

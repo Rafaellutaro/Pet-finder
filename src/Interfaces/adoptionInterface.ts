@@ -4,7 +4,7 @@ export interface adoptionInterface {
         id: number,
         ownerId: number,
         petId: number,
-        step: string
+        step: "CONFIRMATION" | "MEETING" | "MEETING_CONFIRMED" | "FINALIZE" | "COMPLETED" | "DECLINED"
     },
     getPetInfo: {
         age: string,

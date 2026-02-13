@@ -313,7 +313,8 @@ export const getAllChatsFromUser = async (req: AuthRequest, res: Response) => {
                 },
                 userOwner: { select: { id: true, name: true, lastName: true, profileImg: true } },
                 userAdopter: { select: { id: true, name: true, lastName: true, profileImg: true } },
-                pet: { select: { id: true, name: true, imgs: true } }
+                pet: { select: { id: true, name: true, imgs: true } },
+                adoptionProcess: {select: {id: true, step: true}}
             },
             orderBy: { updatedAt: "desc" },
         })
@@ -323,7 +324,7 @@ export const getAllChatsFromUser = async (req: AuthRequest, res: Response) => {
             lastMessage: messages[0] ?? null,
         }))
 
-        return res.status(200).json({ data: formatted })
+        return res.status(200).json({ data: formatted})
     } catch (e) {
         return res.status(500).json({ message: "unable to get chats" })
     }

@@ -70,7 +70,9 @@ function PetAdoptionSteps() {
         </div>
       </header>
 
-      <PetAdoptionStep1 allData={allData} user={user}/>
+      {allData.getInfo.step == "CONFIRMATION" && (
+        <PetAdoptionStep1 allData={allData} user={user}/>
+      )}
     </div>
   );
 }
