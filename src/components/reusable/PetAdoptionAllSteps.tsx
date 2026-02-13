@@ -136,7 +136,7 @@ export function PetAdoptionStep1({ allData, user }: petAdoptionStep1Type) {
 
             <div className="pet-adoption-person-body">
               <div className="pet-adoption-kv">
-                <span className="pet-adoption-muted">Name</span>
+                <span className="pet-adoption-muted">Nome</span>
                 <strong className="pet-adoption-strong">{`${ownerInfo?.name} ${ownerInfo?.lastName}`}</strong>
               </div>
               <div className="pet-adoption-kv">
@@ -144,11 +144,11 @@ export function PetAdoptionStep1({ allData, user }: petAdoptionStep1Type) {
                 <strong className="pet-adoption-strong">{ownerInfo?.email}</strong>
               </div>
               <div className="pet-adoption-kv">
-                <span className="pet-adoption-muted">Phone</span>
+                <span className="pet-adoption-muted">Celular</span>
                 <strong className="pet-adoption-strong">{ownerInfo?.phone ?? "Nenhum Telefone Cadastrado"}</strong>
               </div>
               <div className="pet-adoption-kv">
-                <span className="pet-adoption-muted">Location</span>
+                <span className="pet-adoption-muted">Localização</span>
                 <strong className="pet-adoption-strong">{ownerInfo?.addresses.city && ownerInfo?.addresses.state ? `${ownerInfo?.addresses?.state} ${ownerInfo?.addresses?.city}` : "Nenhum Endereço Cadastrado"}</strong>
               </div>
             </div>
