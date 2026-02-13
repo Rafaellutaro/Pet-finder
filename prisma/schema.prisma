@@ -196,6 +196,7 @@ model Conversation {
   userOwner User @relation("ConversationOwner",fields: [ownerId], references: [id], onDelete: Cascade)
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
 
+  adoptionProcess AdoptionProcess?
   messages Message[]
 
   @@unique([petId, adopterId])
@@ -231,6 +232,33 @@ model Notification {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, isRead, createdAt])
+}
+
+enum AdoptionStep {
+  CONFIRMATION
+  MEETING
+  MEETING_CONFIRMED
+  FINALIZE
+  COMPLETED
+  DECLINED
+}
+
+model AdoptionProcess {
+  id             Int         @id @default(autoincrement())
+  conversationId Int         @unique
+  petId          Int
+  adopterId      Int
+  ownerId        Int
+
+  step           AdoptionStep @default(CONFIRMATION)
+
+  adopterConfirmedAt DateTime?
+  ownerConfirmedAt   DateTime?
+
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 }
 
 model PetsAdopted {

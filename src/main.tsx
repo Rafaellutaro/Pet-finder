@@ -19,6 +19,7 @@ import ProtectedAfterLogin from './components/Router-layout/ProtectedAfterLogin.
 import FooterLayout from './components/Router-layout/Footer-Layout.tsx'
 import PetChat from './components/PetChat.tsx'
 import Chat from './components/Chat.tsx'
+import PetAdoptionSteps from './components/PetAdoptionSteps.tsx'
 
 // i realised i did the nesting route wrong when including layout, now it seens correct
 const router = createBrowserRouter([
@@ -52,6 +53,7 @@ const router = createBrowserRouter([
         children: [
           { path: "Profile", element: <Profile /> },
           { path: "Settings", element: <Settings /> },
+          {path: "PetAdoption/:id", element: <PetAdoptionSteps/>},
           { 
             path: "Chat", 
             element: <Outlet/>,

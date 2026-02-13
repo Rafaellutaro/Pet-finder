@@ -8,6 +8,7 @@ import { SlOptionsVertical } from "react-icons/sl";
 import { IoIosAttach } from "react-icons/io";
 import { CiImageOn } from "react-icons/ci";
 import { BsEmojiSmile, BsSend } from "react-icons/bs";
+import { useNavigateWithFrom } from "./Redirect";
 
 type ChatMessage = {
     id: string | number;
@@ -32,6 +33,7 @@ type workingChatType = {
 export function WorkingChat({ token, verifyToken, alldata, user, setMessage, message, allMessages, id, setAlldata }: workingChatType) {
     const [open, setOpen] = useState(false)
     const [openDecline, setOpenDecline] = useState(false)
+    const nav = useNavigateWithFrom()
 
     const handleAdoptionAccept = async () => {
         const changeStatus = await resendApiPrivate({
@@ -44,6 +46,7 @@ export function WorkingChat({ token, verifyToken, alldata, user, setMessage, mes
         setOpen(false)
         if (!changeStatus) return
 
+        nav(`/PetAdoption/${changeStatus?.createAdoptionProcess?.id}`)
     }
 
     const handleAdoptionReject = async () => {

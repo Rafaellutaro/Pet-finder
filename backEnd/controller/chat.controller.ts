@@ -25,6 +25,17 @@ export const ConversationCreate = async (req: AuthRequest, res: Response) => {
             return res.status(200).json({ data: getConversation.id })
         }
 
+        const getPetStatus = await prisma.pet.findUnique({
+            where: {
+                id: Number(petId)
+            },
+            select: {
+                petStatus: true
+            }
+        })
+
+        if (getPetStatus?.petStatus == "PENDING" || getPetStatus?.petStatus == "ADOPTED") return res.status(409).json({message: "pet not available currently"})
+
         const getOwnerId = await prisma.pet.findFirst({
             where: {
                 id: petId
@@ -222,7 +233,7 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
     }
 }
 
-export const changeConversationStatus = async (req: AuthRequest, res: Response) => {
+export const progressToConfirmation = async (req: AuthRequest, res: Response) => {
     const { id } = req.params
     const status = req.body.status
 
@@ -232,14 +243,14 @@ export const changeConversationStatus = async (req: AuthRequest, res: Response) 
 
     try {
         const result = await prisma.$transaction(async (ts) => {
-            const getPetId = await ts.conversation.findUnique({
+            const verify = await ts.conversation.findUnique({
                 where: { id: Number(id) },
-                select: { petId: true, conversationStatus: true, adopterId: true }
+                select: { petId: true, conversationStatus: true, adopterId: true, ownerId: true }
             })
 
-            if (!getPetId) return res.status(404).json({ message: "Conversation not Found" });
+            if (!verify) return res.status(404).json({ message: "Conversation not Found" });
 
-            if (getPetId.conversationStatus !== "PENDING") return res.status(403).json({ message: "Conversation Status already set" })
+            if (verify.conversationStatus !== "PENDING") return res.status(403).json({ message: "Conversation Status already set" })
 
             const updateConversation = await ts.conversation.update({
                 where: { id: Number(id) },
@@ -247,21 +258,31 @@ export const changeConversationStatus = async (req: AuthRequest, res: Response) 
             })
 
             let updatePet = null
+            let createAdoptionProcess = null
             if (status == "ACCEPTED") {
                 updatePet = await ts.pet.update({
-                    where: { id: getPetId?.petId },
+                    where: { id: verify?.petId },
                     data: { petStatus: "PENDING" }
+                })
+
+                createAdoptionProcess = await ts.adoptionProcess.create({
+                    data: {
+                        conversationId: Number(id),
+                        petId: verify?.petId,
+                        adopterId: verify?.adopterId,
+                        ownerId: verify.ownerId
+                    }
                 })
             }
 
             if (status == "DECLINED") {
-                io.to(`user:${getPetId?.adopterId}`).emit("conversation:status", {
+                io.to(`user:${verify?.adopterId}`).emit("conversation:status", {
                     conversationId: Number(id),
                     status: "DECLINED",
                 });
             }
 
-            return { updateConversation, updatePet };
+            return { updateConversation, updatePet, createAdoptionProcess };
         })
 
         return res.status(200).json({ data: result })

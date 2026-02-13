@@ -11,6 +11,7 @@ import { createServer } from 'node:http';
 import { verifySocketJWT } from "./middleware/auth.middleware.ts";
 import type { AuthSocket } from "./middleware/auth.middleware.ts";
 import Prisma from "./client/PrismaClient.ts";
+import adoptionRouter from "./router/adoption.router.ts";
 dotenv.config();
 
 const app = express();
@@ -43,6 +44,7 @@ app.use("/users", userRoute)
 app.use("/pets", petRoute)
 app.use("/chat", chatRoute)
 app.use("/notifications", notificationRoute)
+app.use("/adoption", adoptionRouter)
 io.use(verifySocketJWT)
 
 server.listen(port, () => {
