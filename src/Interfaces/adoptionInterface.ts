@@ -5,6 +5,8 @@ export interface adoptionInterface {
         ownerId: number,
         petId: number,
         step: "CONFIRMATION" | "MEETING" | "MEETING_CONFIRMED" | "FINALIZE" | "COMPLETED" | "DECLINED"
+        adopterConfirmedAt: string,
+        ownerConfirmedAt: string
     },
     getPetInfo: {
         age: string,

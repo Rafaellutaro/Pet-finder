@@ -2,14 +2,19 @@ import type { adoptionInterface } from "../../Interfaces/adoptionInterface"
 import { FaHeart } from "react-icons/fa";
 import type { UserData } from "../../Interfaces/userInterface";
 import { useState } from "react";
+import resendApiPrivate from "./resendApi";
 
 type petAdoptionStep1Type = {
   allData: adoptionInterface | null
   user: UserData | null
+  token: string | null,
+  verifyToken: () => Promise<void>
+  id: string | undefined
 }
 
-export function PetAdoptionStep1({ allData, user }: petAdoptionStep1Type) {
+export function PetAdoptionStep1({ allData, user, token, verifyToken, id }: petAdoptionStep1Type) {
   const [agreements, setAgreements] = useState<boolean[]>([false, false, false, false]);
+  const [isButtonActive, setIsButtonActive] = useState<boolean>(true);
 
   const petInfo = allData?.getPetInfo
   const adopterInfo = allData?.maskedAdopterInfo
@@ -17,14 +22,32 @@ export function PetAdoptionStep1({ allData, user }: petAdoptionStep1Type) {
 
   const allChecked = agreements.every(Boolean);
 
-
   const handleCheckboxChange = (index: number) => {
-  setAgreements((prev) =>
-    prev.map((item, i) => (i == index ? !item : item))
-  );
-};
+    setAgreements((prev) =>
+      prev.map((item, i) => (i == index ? !item : item))
+    );
+  };
 
-  
+  const confirmAdoption = async () => {
+    try {
+      const response = await resendApiPrivate({
+        apiUrl: `${import.meta.env.VITE_API_URL}/adoption/confirmation/${id}`,
+        options: { method: "PATCH" },
+        token: String(token),
+        verifyToken: verifyToken
+      })
+
+      if (!response) return
+      setIsButtonActive(false)
+      if (response.setAdoptionStatus == null) {
+        // show notification to kjashdkahsd
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+
 
   return (
     <main className="pet-adoption-container">
@@ -92,9 +115,13 @@ export function PetAdoptionStep1({ allData, user }: petAdoptionStep1Type) {
 
               <div className="pet-adoption-person-badges">
                 {/* <span className="pet-adoption-badge">You</span> */} {/* leave without for now */}
-                <span className="pet-adoption-status pet-adoption-status--wait">
-                  Waiting
-                </span>
+                {allData?.getInfo.adopterConfirmedAt ? (
+                  <span className="pet-adoption-status pet-adoption-status--ok">
+                    Confirmado
+                  </span>
+                ) : <span className="pet-adoption-status pet-adoption-status--wait">
+                  Esperando
+                </span>}
               </div>
             </div>
 
@@ -128,9 +155,13 @@ export function PetAdoptionStep1({ allData, user }: petAdoptionStep1Type) {
               </div>
 
               <div className="pet-adoption-person-badges">
-                <span className="pet-adoption-status pet-adoption-status--ok">
-                  Confirmed
-                </span>
+                {allData?.getInfo.ownerConfirmedAt ? (
+                  <span className="pet-adoption-status pet-adoption-status--ok">
+                    Confirmado
+                  </span>
+                ) : <span className="pet-adoption-status pet-adoption-status--wait">
+                  Esperando
+                </span>}
               </div>
             </div>
 
@@ -156,7 +187,11 @@ export function PetAdoptionStep1({ allData, user }: petAdoptionStep1Type) {
         </div>
 
         {/* Commitment Agreement */}
-        <div className="pet-adoption-agreement">
+        {user?.id == adopterInfo?.id && allData?.getInfo.adopterConfirmedAt ? (
+          ""
+        ) : user?.id == ownerInfo?.id && allData?.getInfo.ownerConfirmedAt ? (
+          ""
+        ) : <div className="pet-adoption-agreement">
           <div className="pet-adoption-agreement-head">
             <h3 className="pet-adoption-agreement-title">Termo de Compromisso</h3>
             <p className="pet-adoption-agreement-subtitle">
@@ -167,10 +202,10 @@ export function PetAdoptionStep1({ allData, user }: petAdoptionStep1Type) {
           <ul className="pet-adoption-agreement-list">
             <li className="pet-adoption-agreement-item">
               <label className="pet-adoption-agreement-label">
-                <input className="pet-adoption-checkbox" 
-                type="checkbox" 
-                checked={agreements[0]}
-                onChange={() => handleCheckboxChange(0)}
+                <input className="pet-adoption-checkbox"
+                  type="checkbox"
+                  checked={agreements[0]}
+                  onChange={() => handleCheckboxChange(0)}
                 />
                 <span className="pet-adoption-agreement-text">
                   Confirmo que todas as informações fornecidas são precisas e completas.
@@ -180,10 +215,10 @@ export function PetAdoptionStep1({ allData, user }: petAdoptionStep1Type) {
 
             <li className="pet-adoption-agreement-item">
               <label className="pet-adoption-agreement-label">
-                <input className="pet-adoption-checkbox" 
-                type="checkbox" 
-                checked={agreements[1]}
-                onChange={() => handleCheckboxChange(1)}
+                <input className="pet-adoption-checkbox"
+                  type="checkbox"
+                  checked={agreements[1]}
+                  onChange={() => handleCheckboxChange(1)}
                 />
                 <span className="pet-adoption-agreement-text">
                   Entendo que este é um compromisso vinculante para prosseguir com a adoção.
@@ -193,10 +228,10 @@ export function PetAdoptionStep1({ allData, user }: petAdoptionStep1Type) {
 
             <li className="pet-adoption-agreement-item">
               <label className="pet-adoption-agreement-label">
-                <input className="pet-adoption-checkbox" 
-                type="checkbox" 
-                checked={agreements[2]}
-                onChange={() => handleCheckboxChange(2)}
+                <input className="pet-adoption-checkbox"
+                  type="checkbox"
+                  checked={agreements[2]}
+                  onChange={() => handleCheckboxChange(2)}
                 />
                 <span className="pet-adoption-agreement-text">
                   Concordo em concluir todas as etapas restantes do processo de adoção.
@@ -206,10 +241,10 @@ export function PetAdoptionStep1({ allData, user }: petAdoptionStep1Type) {
 
             <li className="pet-adoption-agreement-item">
               <label className="pet-adoption-agreement-label">
-                <input className="pet-adoption-checkbox" 
-                type="checkbox" 
-                checked={agreements[3]}
-                onChange={() => handleCheckboxChange(3)}
+                <input className="pet-adoption-checkbox"
+                  type="checkbox"
+                  checked={agreements[3]}
+                  onChange={() => handleCheckboxChange(3)}
                 />
                 <span className="pet-adoption-agreement-text">
                   Comprometo-me a proporcionar um lar seguro e cheio de amor para este pet.
@@ -217,7 +252,7 @@ export function PetAdoptionStep1({ allData, user }: petAdoptionStep1Type) {
               </label>
             </li>
           </ul>
-        </div>
+        </div>}
 
         {/* What happens next */}
         <div className="pet-adoption-next">
@@ -226,21 +261,33 @@ export function PetAdoptionStep1({ allData, user }: petAdoptionStep1Type) {
             <li>Etapa 2: Propor e confirmar um encontro (data/horário + local).</li>
             <li>Etapa 3: Após o encontro, ambas as partes confirmam que ele ocorreu.</li>
             <li>Etapa 4: A confirmação final gera o comprovante de adoção (PDF).</li>
-          </ul> 
+          </ul>
         </div>
 
         {/* CTA */}
         <div className="pet-adoption-cta">
-          <button type="button" className="pet-adoption-btn" disabled={!allChecked} onClick={() => console.log("eu fui clicado")}>
-            {user?.id == adopterInfo?.id ? "Confirmar como Adotador" : "Confirmar como Dono"}
-          </button>
+          {user?.id == adopterInfo?.id && !allData?.getInfo.adopterConfirmedAt ? (
+            <button type="button" className="pet-adoption-btn" disabled={!allChecked || !isButtonActive} onClick={() => confirmAdoption()}>
+              {"Confirmar como Adotador"}
+            </button>
+          ) : user?.id == ownerInfo?.id && !allData?.getInfo.ownerConfirmedAt ? (
+            <button type="button" className="pet-adoption-btn" disabled={!allChecked || !isButtonActive} onClick={() => confirmAdoption()}>
+              {"Confirmar como Dono"}
+            </button>
+          ) : ""}
 
           <p className="pet-adoption-footnote">
-            Ambas as partes devem confirmar antes de prosseguir para a próxima etapa.<br/>
+            Ambas as partes devem confirmar antes de prosseguir para a próxima etapa.<br />
             Você terá 3 dias para confirmar; caso contrário, a adoção será cancelada.
           </p>
         </div>
       </section>
     </main>
+  )
+}
+
+export function PetAdoptionStep2() {
+  return (
+    <div></div>
   )
 }

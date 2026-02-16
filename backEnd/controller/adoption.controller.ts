@@ -20,13 +20,15 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
                     ownerId: true,
                     petId: true,
                     step: true,
+                    adopterConfirmedAt: true,
+                    ownerConfirmedAt: true
                 },
             })
 
             if (getInfo?.adopterId != userId && getInfo?.ownerId != userId) return res.status(403).json({ message: "You dont belong here" })
 
             const getAdopterData = await f.user.findUnique({
-                where: {id: getInfo?.adopterId},
+                where: { id: getInfo?.adopterId },
                 select: {
                     id: true,
                     name: true,
@@ -34,13 +36,13 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
                     email: true,
                     phone: true,
                     addresses: {
-                        select: {state: true, city: true}
+                        select: { state: true, city: true }
                     }
                 }
             })
 
             const getOwnerData = await f.user.findUnique({
-                where: {id: getInfo?.ownerId},
+                where: { id: getInfo?.ownerId },
                 select: {
                     id: true,
                     name: true,
@@ -48,7 +50,7 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
                     email: true,
                     phone: true,
                     addresses: {
-                        select: {state: true, city: true}
+                        select: { state: true, city: true }
                     }
                 }
             })
@@ -56,7 +58,7 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
             let maskedAdopterInfo = getAdopterData
             let maskedOwnerInfo = getOwnerData
 
-            if (Number(userId) == Number(getInfo?.ownerId)){
+            if (Number(userId) == Number(getInfo?.ownerId)) {
                 maskedAdopterInfo = {
                     id: Number(getAdopterData?.id) || Number(),
                     name: getAdopterData?.name || "",
@@ -67,9 +69,9 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
                 }
             }
 
-            if (Number(userId) == Number(getInfo?.adopterId)){
+            if (Number(userId) == Number(getInfo?.adopterId)) {
                 maskedOwnerInfo = {
-                    id: Number(getAdopterData?.id) || Number(),
+                    id: Number(getOwnerData?.id) || Number(),
                     name: getOwnerData?.name || "",
                     lastName: getOwnerData?.lastName || "",
                     email: maskEmail(String(getOwnerData?.email)),
@@ -79,23 +81,87 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
             }
 
             const getPetInfo = await f.pet.findUnique({
-                where: {id: getInfo?.petId},
+                where: { id: getInfo?.petId },
                 select: {
                     name: true,
                     breed: true,
                     age: true,
                     imgs: {
-                        select: {url: true}
+                        select: { url: true }
                     }
                 }
             })
 
-            return {getInfo, maskedAdopterInfo, maskedOwnerInfo, getPetInfo}
+            return { getInfo, maskedAdopterInfo, maskedOwnerInfo, getPetInfo }
         })
 
         return res.status(200).json({ data: final })
     } catch (e) {
         console.log(e)
         return res.status(500).json({ message: "unable to get info from adoptionProcess id" })
+    }
+}
+
+export const confirmAdoption = async (req: AuthRequest, res: Response) => {
+    const userId = req.user.userId
+    const { id } = req.params
+
+    try {
+        const result = await prisma.$transaction(async (f) => {
+            const confirmProcess = await f.adoptionProcess.findUnique({
+                where: {
+                    id: Number(id)
+                },
+                select: {
+                    adopterId: true,
+                    ownerId: true
+                }
+            })
+
+            if (!confirmProcess) return res.status(404).json({ message: "Adoption couldn't be found" })
+
+            let setAsConfirmed = null
+            let setAdoptionStatus = null
+
+            if (userId == confirmProcess?.adopterId) {
+                setAsConfirmed = await f.adoptionProcess.update({
+                    where: {
+                        id: Number(id)
+                    },
+                    data: {
+                        adopterConfirmedAt: new Date()
+                    }
+                })
+            }
+
+            if (userId == confirmProcess?.ownerId) {
+                setAsConfirmed = await f.adoptionProcess.update({
+                    where: {
+                        id: Number(id)
+                    },
+                    data: {
+                        ownerConfirmedAt: new Date()
+                    }
+                })
+            }
+
+            if (setAsConfirmed?.adopterConfirmedAt && setAsConfirmed.ownerConfirmedAt){
+                setAdoptionStatus = await f.adoptionProcess.update({
+                    where: {
+                        id: Number(id)
+                    },
+                    data: {
+                        step: "MEETING"
+                    }
+                })
+            }
+
+            return {setAsConfirmed, setAdoptionStatus}
+        })
+
+        res.status(200).json({data: result})
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({ message: "unable to confirm adoption process" })
     }
 }
