@@ -15,10 +15,10 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
+  id       Int     @id @default(autoincrement())
   name     String
   lastName String
-  email    String @unique
+  email    String  @unique
   phone    String? @unique
   password String
 
@@ -40,7 +40,10 @@ model User {
 
   adoptedConversations Conversation[] @relation("ConversationAdopter")
   ownedConversations   Conversation[] @relation("ConversationOwner")
-  sendedMessages      Message[] @relation("userSentMessages")
+  sendedMessages       Message[]      @relation("userSentMessages")
+
+  createdMeetingProposals   MeetingProposal[] @relation("MeetingProposalCreatedBy")
+  respondedMeetingProposals MeetingProposal[] @relation("MeetingProposalRespondedBy")
 
   adoptedRecord PetsAdopted[]
 }
@@ -54,7 +57,8 @@ model Address {
   city         String
   state        String
 
-  User User @relation(fields: [userId], references: [id])
+  User             User              @relation(fields: [userId], references: [id])
+  meetingProposals MeetingProposal[]
 }
 
 model petAddress {
@@ -111,11 +115,11 @@ model Pet {
   age       String
   details   String
 
-  publishedAt DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  viewsCount  Int      @default(0)
-  heartsCount Int      @default(0)
-  petStatus PetStatus @default(AVAILABLE)
+  publishedAt DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  viewsCount  Int       @default(0)
+  heartsCount Int       @default(0)
+  petStatus   PetStatus @default(AVAILABLE)
 
   toy        String
   food       String
@@ -132,7 +136,7 @@ model Pet {
 
   conversations Conversation[]
 
-  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   adoptedRecord PetsAdopted?
 }
 
@@ -184,20 +188,20 @@ enum ConversationStatus {
 }
 
 model Conversation {
-  id         Int      @id @default(autoincrement())
-  adopterId    Int
-  ownerId    Int
-  petId      Int
+  id                 Int                @id @default(autoincrement())
+  adopterId          Int
+  ownerId            Int
+  petId              Int
   conversationStatus ConversationStatus @default(PENDING)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
 
-  userAdopter User @relation("ConversationAdopter",fields: [adopterId], references: [id], onDelete: Cascade)
-  userOwner User @relation("ConversationOwner",fields: [ownerId], references: [id], onDelete: Cascade)
-  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+  userAdopter User @relation("ConversationAdopter", fields: [adopterId], references: [id], onDelete: Cascade)
+  userOwner   User @relation("ConversationOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  pet         Pet  @relation(fields: [petId], references: [id], onDelete: Cascade)
 
   adoptionProcess AdoptionProcess?
-  messages Message[]
+  messages        Message[]
 
   @@unique([petId, adopterId])
   @@index([ownerId])
@@ -213,7 +217,7 @@ model Message {
   createdAt      DateTime @default(now())
 
   conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  sender       User         @relation("userSentMessages",fields: [senderId], references: [id], onDelete: Cascade)
+  sender       User         @relation("userSentMessages", fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([conversationId, createdAt])
   @@index([senderId])
@@ -222,10 +226,10 @@ model Message {
 model Notification {
   id        Int      @id @default(autoincrement())
   userId    Int
-  type      String   // "chat_created", "new_message", "adoption_accepted", etc
+  type      String // "chat_created", "new_message", "adoption_accepted", etc
   title     String
   body      String?
-  link      String?  
+  link      String?
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 
@@ -244,33 +248,65 @@ enum AdoptionStep {
 }
 
 model AdoptionProcess {
-  id             Int         @id @default(autoincrement())
-  conversationId Int         @unique
+  id             Int @id @default(autoincrement())
+  conversationId Int @unique
   petId          Int
   adopterId      Int
   ownerId        Int
 
-  step           AdoptionStep @default(CONFIRMATION)
+  step AdoptionStep @default(CONFIRMATION)
 
   adopterConfirmedAt DateTime?
   ownerConfirmedAt   DateTime?
 
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversation     Conversation      @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  meetingProposals MeetingProposal[]
+}
+
+enum MeetingProposalStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model MeetingProposal {
+  id                Int @id @default(autoincrement())
+  adoptionProcessId Int
+  createdById       Int
+
+  meetingAt DateTime
+  addressId Int?
+
+  status MeetingProposalStatus @default(PENDING)
+
+  respondedById Int?
+  respondedAt   DateTime?
+
+  createdAt DateTime @default(now())
+
+  address         Address?        @relation(fields: [addressId], references: [id], onDelete: SetNull)
+  adoptionProcess AdoptionProcess @relation(fields: [adoptionProcessId], references: [id], onDelete: Cascade)
+  createdBy       User            @relation("MeetingProposalCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
+  respondedBy     User?           @relation("MeetingProposalRespondedBy", fields: [respondedById], references: [id], onDelete: SetNull)
+
+  @@index([adoptionProcessId])
+  @@index([createdById])
+  @@index([status])
+  @@index([addressId])
 }
 
 model PetsAdopted {
   id        Int      @id @default(autoincrement())
-  petId     Int       
+  petId     Int
   adopterId Int
   adoptedAt DateTime @default(now())
 
-  Pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+  Pet  Pet  @relation(fields: [petId], references: [id], onDelete: Cascade)
   User User @relation(fields: [adopterId], references: [id], onDelete: Cascade)
 
   @@unique([petId])
   @@index([adopterId])
 }
-

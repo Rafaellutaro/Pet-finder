@@ -3,6 +3,7 @@ import { FaHeart } from "react-icons/fa";
 import type { UserData } from "../../Interfaces/userInterface";
 import { useState } from "react";
 import resendApiPrivate from "./resendApi";
+import "../../assets/css/petAdoptionStep2.css"
 
 type petAdoptionStep1Type = {
   allData: adoptionInterface | null
@@ -287,7 +288,152 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id }: petA
 }
 
 export function PetAdoptionStep2() {
+  const [addressMode, setAddressMode] = useState<"SAVED" | "CUSTOM">("SAVED");
+
   return (
-    <div></div>
-  )
+    <section className="pet-adoption2-main">
+      <header className="pet-adoption2-header">
+        <h1 className="pet-adoption2-title">Step 2: Schedule meeting</h1>
+        <p className="pet-adoption2-subtitle">Arrange a Meet &amp; Greet</p>
+        <p className="pet-adoption2-description">
+          Propose a location and time to meet. Both parties must agree to proceed.
+        </p>
+      </header>
+
+      <div className="pet-adoption2-grid">
+        {/* LEFT: Proposal Form */}
+        <aside className="pet-adoption2-left-container">
+          <div className="pet-adoption2-left-top">
+            <span className="pet-adoption2-left-title">Propose New Meeting</span>
+          </div>
+
+          <div className="pet-adoption2-tabs">
+            <button
+              type="button"
+              className={`pet-adoption2-tab ${addressMode === "SAVED" ? "pet-adoption2-tab--active" : ""}`}
+              onClick={() => setAddressMode("SAVED")}
+            >
+              Saved
+            </button>
+
+            <button
+              type="button"
+              className={`pet-adoption2-tab ${addressMode === "CUSTOM" ? "pet-adoption2-tab--active" : ""}`}
+              onClick={() => setAddressMode("CUSTOM")}
+            >
+              Custom
+            </button>
+          </div>
+
+          <div className="pet-adoption2-left-container-details">
+            {addressMode === "SAVED" ? (
+              <div className="pet-adoption2-field">
+                <label className="pet-adoption2-label">Select Address</label>
+                <select className="pet-adoption2-select">
+                  <option value="">Choose a saved address</option>
+                  <option value="1">Address option 1</option>
+                  <option value="2">Address option 2</option>
+                </select>
+              </div>
+            ) : (
+              <div className="pet-adoption2-customGrid">
+                <div className="pet-adoption2-field pet-adoption2-customGrid-full">
+                  <label className="pet-adoption2-label">Street</label>
+                  <input className="pet-adoption2-input" type="text" placeholder="Rua Exemplo" />
+                </div>
+
+                <div className="pet-adoption2-field">
+                  <label className="pet-adoption2-label">Number</label>
+                  <input className="pet-adoption2-input" type="text" placeholder="123" />
+                </div>
+
+                <div className="pet-adoption2-field">
+                  <label className="pet-adoption2-label">Neighborhood</label>
+                  <input className="pet-adoption2-input" type="text" placeholder="Centro" />
+                </div>
+
+                <div className="pet-adoption2-field">
+                  <label className="pet-adoption2-label">City</label>
+                  <input className="pet-adoption2-input" type="text" placeholder="São Paulo" />
+                </div>
+
+                <div className="pet-adoption2-field">
+                  <label className="pet-adoption2-label">State</label>
+                  <input className="pet-adoption2-input" type="text" placeholder="SP" />
+                </div>
+              </div>
+            )}
+
+            <div className="pet-adoption2-field">
+              <label className="pet-adoption2-label">Meeting Date</label>
+              <input className="pet-adoption2-input" type="text" placeholder="dd/mm/yyyy" />
+            </div>
+
+            <div className="pet-adoption2-field">
+              <label className="pet-adoption2-label">Meeting Time</label>
+              <input className="pet-adoption2-input" type="text" placeholder="--:--" />
+            </div>
+
+            <button type="button" className="pet-adoption2-send-btn">
+              Send Proposal
+            </button>
+          </div>
+        </aside>
+
+        {/* RIGHT: Proposals List */}
+        <section className="pet-adoption2-right-container">
+          <div className="pet-adoption2-right-top">
+            <h2 className="pet-adoption2-right-title">Meeting Proposals</h2>
+            <span className="pet-adoption2-right-count">0 proposals</span>
+          </div>
+
+          <div className="pet-adoption2-right-container-all-proposals">
+            {/* Empty State */}
+            <div className="pet-adoption2-empty">
+              <div className="pet-adoption2-empty-icon" aria-hidden="true">
+                📍
+              </div>
+              <p className="pet-adoption2-empty-title">No proposals yet</p>
+              <p className="pet-adoption2-empty-text">
+                Create your first meeting proposal on the left.
+              </p>
+            </div>
+
+            {/* Example proposal card to test UI */}
+            {/* <article className="pet-adoption2-proposal-card">
+              <div className="pet-adoption2-proposal-head">
+                <p className="pet-adoption2-proposal-address">Rua Exemplo, 123 - Centro</p>
+
+                <span className="pet-adoption2-proposal-badge pet-adoption2-proposal-badge--pending">
+                  Pending
+                </span>
+              </div>
+
+              <div className="pet-adoption2-proposal-meta">
+                <span>📅 15/02/2026</span>
+                <span>🕒 14:00</span>
+              </div>
+
+              <div className="pet-adoption2-proposal-footer">
+                <div className="pet-adoption2-proposal-actions">
+                  <button
+                    type="button"
+                    className="pet-adoption2-proposal-btn pet-adoption2-proposal-btn--ghost"
+                  >
+                    Reject
+                  </button>
+                  <button
+                    type="button"
+                    className="pet-adoption2-proposal-btn pet-adoption2-proposal-btn--primary"
+                  >
+                    Accept
+                  </button>
+                </div>
+              </div>
+            </article> */}
+          </div>
+        </section>
+      </div>
+    </section>
+  );
 }
