@@ -2,7 +2,7 @@ import type { Response } from "express";
 import prisma from '../../backEnd/client/PrismaClient.ts'
 import type { AuthRequest } from "../middleware/auth.middleware.ts";
 import { io } from "../index.ts";
-import { maskEmail, maskPhone } from "../helper.ts";
+import { maskEmail, maskPhone, parseBRDateTime } from "../helper.ts";
 
 export const getDataFromId = async (req: AuthRequest, res: Response) => {
     const userId = req.user.userId
@@ -163,5 +163,54 @@ export const confirmAdoption = async (req: AuthRequest, res: Response) => {
     } catch (e) {
         console.log(e)
         return res.status(500).json({ message: "unable to confirm adoption process" })
+    }
+}
+
+export const meetingProposalInitial = async(req: AuthRequest, res: Response) => {
+    const userId = req.user.userId
+    const { id } = req.params
+    const payload = req.body
+
+    console.log("payload", payload)
+
+    try {
+
+        let address = Number(payload.address)
+        const date = parseBRDateTime(payload.meetDate, payload.meetTime)
+
+        if (!date) {
+            return res.status(400).json({ message: "Invalid meeting date or time" })
+        }
+
+        if (!address){
+            const addressResponse = await prisma.address.create({
+                data: {
+                    userId: Number(userId),
+                    cep: payload.address.cep,
+                    street: payload.address.street,
+                    city: payload.address.city,
+                    state: payload.address.state,
+                    neighborhood: payload.address.neighborhood
+                }
+            })
+
+            address = addressResponse.id
+        }
+
+        if (!address) return res.status(400).json({message: "Invalid Address"})
+
+        const initialPropose = await prisma.meetingProposal.create({
+            data: {
+                adoptionProcessId: Number(id),
+                createdById: Number(userId),
+                addressId: address,
+                meetingAt: date
+
+            }
+        })
+        return res.status(200).json({data: initialPropose})
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({ message: "unable to send your initial proposal" })
     }
 }

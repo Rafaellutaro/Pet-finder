@@ -11,53 +11,83 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 function PetAdoptionSteps() {
-    const {id} = useParams()
-    const {token, verifyToken, user} = useUser()
-    const [addressMode, setAddressMode] = useState<"SAVED" | "CUSTOM">("SAVED");
-    const [allData, setAllData] = useState<adoptionInterface | null>(null)
+  const { id } = useParams()
+  const { token, verifyToken, user } = useUser()
+  const [addressMode, setAddressMode] = useState<"SAVED" | "CUSTOM">("SAVED");
+  const [allData, setAllData] = useState<adoptionInterface | null>(null)
 
-    const resolver = useMemo(() => {
-        if (addressMode == "SAVED") return zodResolver(petAdoption2Saved);
-        return zodResolver(PetAdoptionStep2Schema);
-      }, [addressMode]);
-    
-      const onSubmit = async (data: any) => {
-        console.log("batata", data)
+  const resolver = useMemo(() => {
+    if (addressMode == "SAVED") return zodResolver(petAdoption2Saved);
+    return zodResolver(PetAdoptionStep2Schema);
+  }, [addressMode]);
+
+  const onSubmit = async (data: PetAdoption2) => {
+    console.log("batata", data)
+
+    let address = null
+
+    if (!data.addressId) {
+      address = {
+        cep: data.cep,
+        street: data.street,
+        state: data.region,
+        city: data.city,
+        neighborhood: data.neighborhood
       }
-
-   const {
-      register,
-      handleSubmit,
-      watch,
-      setValue,
-      control,
-      formState: { errors, isSubmitting }
-    } = useForm<PetAdoption2>({
-      resolver: resolver as any,
-    });
-
-    const getRelatedIds = async () => {
-        const response = await resendApiPrivate({apiUrl: `http://localhost:3000/adoption/getInfoFromId/${id}`, 
-            options: {method: "GET"}, 
-            token: String(token), 
-            verifyToken: verifyToken})
-        
-        if (!response) return
-
-        console.log(response)
-        setAllData(response)
+    } else {
+      address = data.addressId
     }
 
-    useEffect(() => {
-        if (!id || !token) return
+    const payload = {
+      address: address,
+      meetDate: data.meetDate,
+      meetTime: data.meetTime
+    }
 
-        getRelatedIds()
-    }, [id])
+    const response = await resendApiPrivate({
+      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${id}/initial`, 
+      options: {method: "POST", body: JSON.stringify(payload)}, 
+      token: String(token), 
+      verifyToken: verifyToken})
+    
+    console.log("response here", response)
+  }
 
-    if (!allData) return <Loader/>
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    control,
+    formState: { errors, isSubmitting }
+  } = useForm<PetAdoption2>({
+    resolver: resolver as any,
+  });
+
+  const getRelatedIds = async () => {
+    const response = await resendApiPrivate({
+      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/getInfoFromId/${id}`,
+      options: { method: "GET" },
+      token: String(token),
+      verifyToken: verifyToken
+    })
+
+    if (!response) return
+
+    console.log(response)
+    setAllData(response)
+  }
+
+  useEffect(() => {
+    if (!id || !token) return
+
+    getRelatedIds()
+  }, [id])
+
+  if (!allData) return <Loader />
 
 
-    return (
+  return (
     <div className="pet-adoption-page">
       <header className="pet-adoption-header">
         <h1 className="pet-adoption-title">Processo de Adoção</h1>
@@ -95,52 +125,52 @@ function PetAdoptionSteps() {
       </header>
 
       {allData.getInfo.step == "CONFIRMATION" && (
-        <PetAdoptionStep1 
-        allData={allData} 
-        user={user}
-        token={token}
-        verifyToken={verifyToken}
-        id={id}
+        <PetAdoptionStep1
+          allData={allData}
+          user={user}
+          token={token}
+          verifyToken={verifyToken}
+          id={id}
         />
       )}
 
       {allData.getInfo.step == "MEETING" && (
-        <PetAdoptionStep2 
-        allData={allData} 
-        user={user}
-        token={token}
-        verifyToken={verifyToken}
-        id={id}
-        register={register}
-        handleSubmit={handleSubmit}
-        watch={watch}
-        setValue={setValue}
-        isSubmiting={isSubmitting}
-        control={control}
-        setAddressMode={setAddressMode}
-        addressMode={addressMode}
-        onSubmit={onSubmit}
-        errors={errors}
+        <PetAdoptionStep2
+          allData={allData}
+          user={user}
+          token={token}
+          verifyToken={verifyToken}
+          id={id}
+          register={register}
+          handleSubmit={handleSubmit}
+          watch={watch}
+          setValue={setValue}
+          isSubmiting={isSubmitting}
+          control={control}
+          setAddressMode={setAddressMode}
+          addressMode={addressMode}
+          onSubmit={onSubmit}
+          errors={errors}
         />
       )}
 
       {allData.getInfo.step == "MEETING_CONFIRMED" && (
-        <PetAdoptionStep3 rescheduleComponent={<PetAdoptionStep2 
-        allData={allData} 
-        user={user}
-        token={token}
-        verifyToken={verifyToken}
-        id={id}
-        register={register}
-        handleSubmit={handleSubmit}
-        watch={watch}
-        setValue={setValue}
-        isSubmiting={isSubmitting}
-        control={control}
-        setAddressMode={setAddressMode}
-        addressMode={addressMode}
-        onSubmit={onSubmit}
-        errors={errors}
+        <PetAdoptionStep3 rescheduleComponent={<PetAdoptionStep2
+          allData={allData}
+          user={user}
+          token={token}
+          verifyToken={verifyToken}
+          id={id}
+          register={register}
+          handleSubmit={handleSubmit}
+          watch={watch}
+          setValue={setValue}
+          isSubmiting={isSubmitting}
+          control={control}
+          setAddressMode={setAddressMode}
+          addressMode={addressMode}
+          onSubmit={onSubmit}
+          errors={errors}
         />}
         />
       )}

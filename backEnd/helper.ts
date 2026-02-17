@@ -45,3 +45,24 @@ export function maskEmail(email: string) {
 export function maskPhone(phone: string) {
   return phone.slice(0, 2) + "****" + phone.slice(-2);
 }
+
+export function parseBRDateTime(dateStr: string, timeStr: string): Date | null {
+  const [dd, mm, yyyy] = dateStr.split("/").map(Number);
+  const [hh, min] = timeStr.split(":").map(Number);
+
+  if (!dd || !mm || !yyyy || !hh || min === undefined) return null;
+  if (yyyy < 1900 || yyyy > 2100) return null;
+  if (mm < 1 || mm > 12) return null;
+  if (hh < 0 || hh > 23) return null;
+  if (min < 0 || min > 59) return null;
+
+  const d = new Date(Date.UTC(yyyy, mm - 1, dd, hh, min, 0, 0));
+
+  if (
+    d.getUTCFullYear() !== yyyy ||
+    d.getUTCMonth() !== mm - 1 ||
+    d.getUTCDate() !== dd
+  ) return null;
+
+  return d;
+}

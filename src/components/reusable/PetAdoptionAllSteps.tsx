@@ -335,6 +335,20 @@ export function PetAdoptionStep2({ allData, user, token, verifyToken, id, regist
     cepSearch(setValue, String(cep));
   }, [cep]);
 
+  const getAllProposes = async () => {
+    const response = await resendApiPrivate({
+      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/getInitial`, 
+      options: {method: "GET"}, 
+      token: String(token), 
+      verifyToken: verifyToken})
+
+    console.log("all proposes",response)
+  }
+
+  useEffect(() => {
+    
+  }, [])
+
   return (
     <section className="pet-adoption2-main">
 
