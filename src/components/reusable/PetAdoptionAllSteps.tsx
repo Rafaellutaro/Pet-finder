@@ -1,9 +1,13 @@
 import type { adoptionInterface } from "../../Interfaces/adoptionInterface"
 import { FaHeart } from "react-icons/fa";
 import type { UserData } from "../../Interfaces/userInterface";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import resendApiPrivate from "./resendApi";
 import "../../assets/css/petAdoptionStep2.css"
+import { Controller, type Control, type FieldErrors, type UseFormHandleSubmit, type UseFormRegister, type UseFormSetValue, type UseFormWatch } from "react-hook-form";
+import type { PetAdoption2, PetAdoptionStep2Schema } from "../../Interfaces/zodSchema";
+import { cepSearch } from "../functions/userFunctions";
+import { PatternFormat } from "react-number-format";
 
 type petAdoptionStep1Type = {
   allData: adoptionInterface | null
@@ -287,104 +291,187 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id }: petA
   )
 }
 
-export function PetAdoptionStep2() {
-  const [addressMode, setAddressMode] = useState<"SAVED" | "CUSTOM">("SAVED");
+type petAdoptionStep2Type = {
+  allData: adoptionInterface | null
+  user: UserData | null
+  token: string | null,
+  verifyToken: () => Promise<void>
+  id: string | undefined
+  register: UseFormRegister<PetAdoption2>
+  handleSubmit: UseFormHandleSubmit<PetAdoption2>
+  watch: UseFormWatch<PetAdoption2>
+  setValue: UseFormSetValue<PetAdoption2>
+  errors: FieldErrors<PetAdoption2>
+  isSubmiting: boolean
+  control: Control<PetAdoption2>
+  setAddressMode: React.Dispatch<React.SetStateAction<"SAVED" | "CUSTOM">>
+  addressMode: "SAVED" | "CUSTOM"
+  onSubmit: (data: any) => void
+}
+
+export function PetAdoptionStep2({ allData, user, token, verifyToken, id, register, handleSubmit, watch, setValue, isSubmiting, setAddressMode, addressMode, onSubmit, errors, control }: petAdoptionStep2Type) {
+
+  const cep = watch("cep");
+  useEffect(() => {
+    cepSearch(setValue, String(cep));
+  }, [cep]);
 
   return (
     <section className="pet-adoption2-main">
-      <header className="pet-adoption2-header">
-        <h1 className="pet-adoption2-title">Step 2: Schedule meeting</h1>
-        <p className="pet-adoption2-subtitle">Arrange a Meet &amp; Greet</p>
-        <p className="pet-adoption2-description">
-          Propose a location and time to meet. Both parties must agree to proceed.
-        </p>
-      </header>
+      <div className="pet-adoption-card-top">
+          <div className="pet-adoption-pill">
+            <span className="pet-adoption-pill-icon" aria-hidden="true">
+              <FaHeart />
+            </span>
+            Etapa 2: Agendar Encontro
+          </div>
+
+          <h2 className="pet-adoption-section-title">Organize um Encontro</h2>
+          <p className="pet-adoption-section-desc">
+            Proponha um local e horário para se encontrarem. Ambas as partes precisam concordar para prosseguir.
+          </p>
+        </div>
 
       <div className="pet-adoption2-grid">
         {/* LEFT: Proposal Form */}
         <aside className="pet-adoption2-left-container">
           <div className="pet-adoption2-left-top">
-            <span className="pet-adoption2-left-title">Propose New Meeting</span>
+            <span className="pet-adoption2-left-title">Propor Novo Encontro</span>
           </div>
 
           <div className="pet-adoption2-tabs">
             <button
               type="button"
-              className={`pet-adoption2-tab ${addressMode === "SAVED" ? "pet-adoption2-tab--active" : ""}`}
+              className={`pet-adoption2-tab ${addressMode == "SAVED" ? "pet-adoption2-tab--active" : ""}`}
               onClick={() => setAddressMode("SAVED")}
             >
-              Saved
+              Salvo
             </button>
 
             <button
               type="button"
-              className={`pet-adoption2-tab ${addressMode === "CUSTOM" ? "pet-adoption2-tab--active" : ""}`}
+              className={`pet-adoption2-tab ${addressMode == "CUSTOM" ? "pet-adoption2-tab--active" : ""}`}
               onClick={() => setAddressMode("CUSTOM")}
             >
-              Custom
+              Personalizado
             </button>
           </div>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="pet-adoption2-left-container-details">
+              {addressMode == "SAVED" ? (
+                <div className="pet-adoption2-field">
+                  <label className="pet-adoption2-label">Selecionar Endereço</label>
+                  <select className="pet-adoption2-select" {...register("addressId")}>
+                    <option value="">Escolha um endereço salvo</option>
+                    {user?.addresses.map((t) => {
+                      const completeAddress = `${t.street}, ${t.city}-${t.state}`
+                      return (
+                        <option key={t.id} value={t.id}>{completeAddress}</option>
+                      )
+                    })}
+                  </select>
+                  {errors.addressId && <p className="error">{errors.addressId.message}</p>}
+                </div>
+              ) : (
+                <div className="pet-adoption2-customGrid">
+                  <div className="pet-adoption2-field pet-adoption2-customGrid-full">
+                    <label className="pet-adoption2-label">Cep</label>
+                    <Controller
+                      name="cep"
+                      control={control}
+                      render={({ field }) => (
+                        <PatternFormat
+                          value={field.value || ""}
+                          onValueChange={(vals) => field.onChange(vals.formattedValue)}
+                          format="#####-###"
+                          mask="_"
+                          inputMode="numeric"
+                          placeholder="00000-000"
+                          className="pet-adoption2-input"
+                        />
+                      )}
+                    />
+                    {errors.cep && <p className="error">{errors.cep.message}</p>}
+                  </div>
 
-          <div className="pet-adoption2-left-container-details">
-            {addressMode === "SAVED" ? (
+                  <div className="pet-adoption2-field">
+                    <label className="pet-adoption2-label">Rua</label>
+                    <input className="pet-adoption2-input" type="text" placeholder="rua" {...register("street")} />
+                    {errors.street && <p className="error">{errors.street.message}</p>}
+                  </div>
+
+                  <div className="pet-adoption2-field">
+                    <label className="pet-adoption2-label">Bairro</label>
+                    <input className="pet-adoption2-input" type="text" placeholder="Centro" {...register("neighborhood")} />
+                    {errors.neighborhood && <p className="error">{errors.neighborhood.message}</p>}
+                  </div>
+
+                  <div className="pet-adoption2-field">
+                    <label className="pet-adoption2-label">Cidade</label>
+                    <input className="pet-adoption2-input" type="text" placeholder="São Paulo" {...register("city")} />
+                    {errors.city && <p className="error">{errors.city.message}</p>}
+                  </div>
+
+                  <div className="pet-adoption2-field">
+                    <label className="pet-adoption2-label">Estado</label>
+                    <input className="pet-adoption2-input" type="text" placeholder="SP" {...register("region")} />
+                    {errors.region && <p className="error">{errors.region.message}</p>}
+                  </div>
+                </div>
+              )}
+
               <div className="pet-adoption2-field">
-                <label className="pet-adoption2-label">Select Address</label>
-                <select className="pet-adoption2-select">
-                  <option value="">Choose a saved address</option>
-                  <option value="1">Address option 1</option>
-                  <option value="2">Address option 2</option>
-                </select>
+                <label className="pet-adoption2-label">Data do Encontro</label>
+                <Controller
+                  name="meetDate"
+                  control={control}
+                  render={({ field }) => (
+                    <PatternFormat
+                      value={field.value || ""}
+                      onValueChange={(vals) => field.onChange(vals.formattedValue)}
+                      format="##/##/####"
+                      mask="_"
+                      inputMode="numeric"
+                      placeholder="dd/mm/aaaa"
+                      className="pet-adoption2-input"
+                    />
+                  )}
+                />
+                {errors.meetDate && <p className="error">{errors.meetDate.message}</p>}
               </div>
-            ) : (
-              <div className="pet-adoption2-customGrid">
-                <div className="pet-adoption2-field pet-adoption2-customGrid-full">
-                  <label className="pet-adoption2-label">Street</label>
-                  <input className="pet-adoption2-input" type="text" placeholder="Rua Exemplo" />
-                </div>
 
-                <div className="pet-adoption2-field">
-                  <label className="pet-adoption2-label">Number</label>
-                  <input className="pet-adoption2-input" type="text" placeholder="123" />
-                </div>
-
-                <div className="pet-adoption2-field">
-                  <label className="pet-adoption2-label">Neighborhood</label>
-                  <input className="pet-adoption2-input" type="text" placeholder="Centro" />
-                </div>
-
-                <div className="pet-adoption2-field">
-                  <label className="pet-adoption2-label">City</label>
-                  <input className="pet-adoption2-input" type="text" placeholder="São Paulo" />
-                </div>
-
-                <div className="pet-adoption2-field">
-                  <label className="pet-adoption2-label">State</label>
-                  <input className="pet-adoption2-input" type="text" placeholder="SP" />
-                </div>
+              <div className="pet-adoption2-field">
+                <label className="pet-adoption2-label">Horário do Encontro</label>
+                <Controller
+                  name="meetTime"
+                  control={control}
+                  render={({ field }) => (
+                    <PatternFormat
+                      value={field.value || ""}
+                      onValueChange={(vals) => field.onChange(vals.formattedValue)}
+                      format="##:##"
+                      mask="_"
+                      inputMode="numeric"
+                      placeholder="--:--"
+                      className="pet-adoption2-input"
+                    />
+                  )}
+                />
+                {errors.meetTime && <p className="error">{errors.meetTime.message}</p>}
               </div>
-            )}
 
-            <div className="pet-adoption2-field">
-              <label className="pet-adoption2-label">Meeting Date</label>
-              <input className="pet-adoption2-input" type="text" placeholder="dd/mm/yyyy" />
+              <button type="submit" className="pet-adoption2-send-btn" disabled={isSubmiting}>
+                {isSubmiting ? "Enviando Proposta..." : "Enviar Proposta"}
+              </button>
             </div>
-
-            <div className="pet-adoption2-field">
-              <label className="pet-adoption2-label">Meeting Time</label>
-              <input className="pet-adoption2-input" type="text" placeholder="--:--" />
-            </div>
-
-            <button type="button" className="pet-adoption2-send-btn">
-              Send Proposal
-            </button>
-          </div>
+          </form>
         </aside>
 
         {/* RIGHT: Proposals List */}
         <section className="pet-adoption2-right-container">
           <div className="pet-adoption2-right-top">
-            <h2 className="pet-adoption2-right-title">Meeting Proposals</h2>
-            <span className="pet-adoption2-right-count">0 proposals</span>
+            <h2 className="pet-adoption2-right-title">Propostas de Encontro</h2>
+            <span className="pet-adoption2-right-count">0 propostas</span>
           </div>
 
           <div className="pet-adoption2-right-container-all-proposals">
@@ -393,9 +480,9 @@ export function PetAdoptionStep2() {
               <div className="pet-adoption2-empty-icon" aria-hidden="true">
                 📍
               </div>
-              <p className="pet-adoption2-empty-title">No proposals yet</p>
+              <p className="pet-adoption2-empty-title">Ainda não há propostas</p>
               <p className="pet-adoption2-empty-text">
-                Create your first meeting proposal on the left.
+                Crie sua primeira proposta de encontro ao lado esquerdo.
               </p>
             </div>
 

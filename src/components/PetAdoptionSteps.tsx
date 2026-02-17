@@ -1,16 +1,40 @@
 import { useParams } from "react-router-dom";
 import "../assets/css/PetAdoptionSteps.css"
 import { PetAdoptionStep1, PetAdoptionStep2 } from "./reusable/PetAdoptionAllSteps";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import resendApiPrivate from "./reusable/resendApi";
 import { useUser } from "../Interfaces/GlobalUser";
 import type { adoptionInterface } from "../Interfaces/adoptionInterface";
 import Loader from "./reusable/Loader";
+import { petAdoption2Saved, PetAdoptionStep2Schema, type PetAdoption2 } from "../Interfaces/zodSchema";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 function PetAdoptionSteps() {
     const {id} = useParams()
     const {token, verifyToken, user} = useUser()
+    const [addressMode, setAddressMode] = useState<"SAVED" | "CUSTOM">("SAVED");
     const [allData, setAllData] = useState<adoptionInterface | null>(null)
+
+    const resolver = useMemo(() => {
+        if (addressMode == "SAVED") return zodResolver(petAdoption2Saved);
+        return zodResolver(PetAdoptionStep2Schema);
+      }, [addressMode]);
+    
+      const onSubmit = async (data: any) => {
+        console.log("batata", data)
+      }
+
+   const {
+      register,
+      handleSubmit,
+      watch,
+      setValue,
+      control,
+      formState: { errors, isSubmitting }
+    } = useForm<PetAdoption2>({
+      resolver: resolver as any,
+    });
 
     const getRelatedIds = async () => {
         const response = await resendApiPrivate({apiUrl: `http://localhost:3000/adoption/getInfoFromId/${id}`, 
@@ -81,7 +105,23 @@ function PetAdoptionSteps() {
       )}
 
       {allData.getInfo.step == "MEETING" && (
-        <PetAdoptionStep2 />
+        <PetAdoptionStep2 
+        allData={allData} 
+        user={user}
+        token={token}
+        verifyToken={verifyToken}
+        id={id}
+        register={register}
+        handleSubmit={handleSubmit}
+        watch={watch}
+        setValue={setValue}
+        isSubmiting={isSubmitting}
+        control={control}
+        setAddressMode={setAddressMode}
+        addressMode={addressMode}
+        onSubmit={onSubmit}
+        errors={errors}
+        />
       )}
     </div>
   );

@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { isWithinNextDays, parseBRDateTime } from "../components/functions/userFunctions"
 
 export const SettingsSchema = z.object({
     email: z.email().optional(),
@@ -96,3 +97,55 @@ const PetFullSchemaEdited = PetSchemaPart1Edited.extend(PetSchemaPart2.shape).ex
 
 export type FormFields = z.infer<typeof PetFullSchema>
 export type FormFieldsEdited = z.infer<typeof PetFullSchemaEdited>
+
+export const PetAdoptionStep2Schema = z.object({
+    cep: z.string().min(9, "cep invalido").max(9),
+    street: z.string(),
+    neighborhood: z.string(),
+    city: z.string(),
+    region: z.string(),
+    meetDate: z.string().min(10, "Data invalida").max(10),
+    meetTime: z.string().min(5, "Tempo Invalido").max(5),
+}).superRefine((data, ctx) => {
+    const dt = parseBRDateTime(data.meetDate, data.meetTime);
+
+    if (!dt){
+        ctx.addIssue({ path: ["meetDate"], code: "custom", message: "Data inválida" });
+        ctx.addIssue({ path: ["meetTime"], code: "custom", message: "Horário inválido" });
+        return;
+    }
+
+    if (!isWithinNextDays(dt, 30)) {
+    ctx.addIssue({
+      path: ["meetDate"],
+      code: "custom",
+      message: "O encontro deve ser entre agora e os próximos 30 dias",
+    });
+  }
+})
+
+export const petAdoption2Saved = z.object({
+    addressId: z.string().min(1, "Insira algo"),
+    meetDate: z.string().min(10, "Data invalida").max(10),
+    meetTime: z.string().min(5, "Tempo Invalido").max(5),
+}).superRefine((data, ctx) => {
+    const dt = parseBRDateTime(data.meetDate, data.meetTime);
+
+    if (!dt){
+        ctx.addIssue({ path: ["meetDate"], code: "custom", message: "Data inválida" });
+        ctx.addIssue({ path: ["meetTime"], code: "custom", message: "Horário inválido" });
+        return;
+    }
+
+    if (!isWithinNextDays(dt, 30)) {
+    ctx.addIssue({
+      path: ["meetDate"],
+      code: "custom",
+      message: "O encontro deve ser entre agora e os próximos 30 dias",
+    });
+  }
+})
+
+const adoptionStep2FullSchema = PetAdoptionStep2Schema.safeExtend(petAdoption2Saved.shape)
+
+export type PetAdoption2 = z.infer<typeof adoptionStep2FullSchema>

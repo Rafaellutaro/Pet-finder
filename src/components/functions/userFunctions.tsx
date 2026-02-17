@@ -111,3 +111,30 @@ export function emptyToNullObject<T extends Record<string, any>>(values: T) {
             [K in keyof T]: T[K] | null;
         };
 }
+
+export function parseBRDateTime(dateStr: string, timeStr: string): Date | null {
+  const [dd, mm, yyyy] = dateStr.split("/").map(Number);
+  const [hh, min] = timeStr.split(":").map(Number);
+
+  if (yyyy < 1900 || yyyy > 2100) return null;
+  if (mm < 1 || mm > 12) return null;
+  if (hh < 0 || hh > 23) return null;
+  if (min < 0 || min > 59) return null;
+
+  const d = new Date(yyyy, mm - 1, dd, hh, min, 0, 0);
+
+  if (
+    d.getFullYear() !== yyyy ||
+    d.getMonth() !== mm - 1 ||
+    d.getDate() !== dd
+  ) return null;
+
+  return d;
+}
+
+export function isWithinNextDays(target: Date, days: number) {
+  const now = new Date();
+  const max = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+  return target >= now && target <= max;
+}
+
