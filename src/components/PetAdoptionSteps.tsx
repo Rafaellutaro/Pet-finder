@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import "../assets/css/PetAdoptionSteps.css"
-import { PetAdoptionStep1, PetAdoptionStep2 } from "./reusable/PetAdoptionAllSteps";
+import { PetAdoptionStep1, PetAdoptionStep2, PetAdoptionStep3 } from "./reusable/PetAdoptionAllSteps";
 import { useEffect, useMemo, useState } from "react";
 import resendApiPrivate from "./reusable/resendApi";
 import { useUser } from "../Interfaces/GlobalUser";
@@ -121,6 +121,27 @@ function PetAdoptionSteps() {
         addressMode={addressMode}
         onSubmit={onSubmit}
         errors={errors}
+        />
+      )}
+
+      {allData.getInfo.step == "MEETING_CONFIRMED" && (
+        <PetAdoptionStep3 rescheduleComponent={<PetAdoptionStep2 
+        allData={allData} 
+        user={user}
+        token={token}
+        verifyToken={verifyToken}
+        id={id}
+        register={register}
+        handleSubmit={handleSubmit}
+        watch={watch}
+        setValue={setValue}
+        isSubmiting={isSubmitting}
+        control={control}
+        setAddressMode={setAddressMode}
+        addressMode={addressMode}
+        onSubmit={onSubmit}
+        errors={errors}
+        />}
         />
       )}
     </div>

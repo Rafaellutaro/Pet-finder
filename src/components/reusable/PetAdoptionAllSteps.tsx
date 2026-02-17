@@ -1,9 +1,10 @@
 import type { adoptionInterface } from "../../Interfaces/adoptionInterface"
 import { FaHeart } from "react-icons/fa";
 import type { UserData } from "../../Interfaces/userInterface";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import resendApiPrivate from "./resendApi";
 import "../../assets/css/petAdoptionStep2.css"
+import "../../assets/css/petAdoptionStep3.css"
 import { Controller, type Control, type FieldErrors, type UseFormHandleSubmit, type UseFormRegister, type UseFormSetValue, type UseFormWatch } from "react-hook-form";
 import type { PetAdoption2, PetAdoptionStep2Schema } from "../../Interfaces/zodSchema";
 import { cepSearch } from "../functions/userFunctions";
@@ -15,6 +16,31 @@ type petAdoptionStep1Type = {
   token: string | null,
   verifyToken: () => Promise<void>
   id: string | undefined
+}
+
+type headerType = {
+  step: string,
+  title: string,
+  sectionTitle: string,
+  desc: string
+}
+
+function PetAdoptionHeader({step, title, sectionTitle, desc}: headerType) {
+  return (
+    <div className="pet-adoption-card-top">
+      <div className="pet-adoption-pill">
+        <span className="pet-adoption-pill-icon" aria-hidden="true">
+          <FaHeart />
+        </span>
+        Etapa {step}: {title}
+      </div>
+
+      <h2 className="pet-adoption-section-title">{sectionTitle}</h2>
+      <p className="pet-adoption-section-desc">
+        {desc}
+      </p>
+    </div>
+  )
 }
 
 export function PetAdoptionStep1({ allData, user, token, verifyToken, id }: petAdoptionStep1Type) {
@@ -57,19 +83,12 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id }: petA
   return (
     <main className="pet-adoption-container">
       <section className="pet-adoption-card">
-        <div className="pet-adoption-card-top">
-          <div className="pet-adoption-pill">
-            <span className="pet-adoption-pill-icon" aria-hidden="true">
-              <FaHeart />
-            </span>
-            Etapa 1: Confirmação & Compromissos
-          </div>
-
-          <h2 className="pet-adoption-section-title">Revise os Detalhes da Adoção</h2>
-          <p className="pet-adoption-section-desc">
-            Por favor revise todos os detalhes sobre a adoção com calma
-          </p>
-        </div>
+        <PetAdoptionHeader 
+        step={"1"} 
+        title={"Confirmação & Compromissos"} 
+        sectionTitle={"Revise os Detalhes da Adoção"} 
+        desc={"Por favor revise todos os detalhes sobre a adoção com calma"}
+        />
 
         {/* Pet Information */}
         <div className="pet-adoption-block">
@@ -318,19 +337,15 @@ export function PetAdoptionStep2({ allData, user, token, verifyToken, id, regist
 
   return (
     <section className="pet-adoption2-main">
-      <div className="pet-adoption-card-top">
-          <div className="pet-adoption-pill">
-            <span className="pet-adoption-pill-icon" aria-hidden="true">
-              <FaHeart />
-            </span>
-            Etapa 2: Agendar Encontro
-          </div>
 
-          <h2 className="pet-adoption-section-title">Organize um Encontro</h2>
-          <p className="pet-adoption-section-desc">
-            Proponha um local e horário para se encontrarem. Ambas as partes precisam concordar para prosseguir.
-          </p>
-        </div>
+      {allData?.getInfo.step == "MEETING" && (
+        <PetAdoptionHeader 
+        step={"2"} 
+        title={"Agendar Encontro"} 
+        sectionTitle={"Organize um Encontro"} 
+        desc={"Proponha um local e horário para se encontrarem. Ambas as partes precisam concordar para prosseguir."}
+        />
+      )}
 
       <div className="pet-adoption2-grid">
         {/* LEFT: Proposal Form */}
@@ -521,6 +536,202 @@ export function PetAdoptionStep2({ allData, user, token, verifyToken, id, regist
           </div>
         </section>
       </div>
+    </section>
+  );
+}
+
+type Step3Props = {
+  rescheduleComponent: ReactNode;
+};
+
+export function PetAdoptionStep3({ rescheduleComponent }:Step3Props) {
+  const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
+
+  const openReschedule = () => setIsRescheduleOpen(true);
+  const closeReschedule = () => setIsRescheduleOpen(false);
+
+  // Close on ESC
+  useEffect(() => {
+    if (!isRescheduleOpen) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeReschedule();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isRescheduleOpen]);
+
+  return (
+    <section className="petAdoption3-mainCard">
+      <PetAdoptionHeader
+        step={"3"}
+        title={"Confirmar Entrega do Pet"}
+        sectionTitle={"Confirme que tudo ocorreu como previsto"}
+        desc={"Ambas as partes precisam confirmar que a entrega foi concluída com sucesso."}
+      />
+
+      <div className="petAdoption3-info">
+        {/* PET */}
+        <div className="petAdoption3-petInfo">
+          <div className="petAdoption3-petMedia">
+            <div className="petAdoption3-petFrame">
+              <img
+                className="petAdoption3-petImg"
+                src="https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=800&auto=format&fit=crop"
+                alt="Pet"
+              />
+            </div>
+
+            <div className="petAdoption3-petChip">
+              <span className="petAdoption3-petChipIcon" aria-hidden="true">
+                ✦
+              </span>
+              <span className="petAdoption3-petName">Max</span>
+            </div>
+          </div>
+
+          <span className="petAdoption3-petData">Golden Retriever • 3 anos</span>
+        </div>
+
+        {/* MEETING DETAILS */}
+        <div className="petAdoption3-meeting-details">
+          <div className="petAdoption3-meetingTopRow">
+            <div className="petAdoption3-meetingHead">
+              <span className="petAdoption3-meetingHeadDot" aria-hidden="true">
+                📍
+              </span>
+              <h3 className="petAdoption3-meetingTitle">Detalhes do Encontro</h3>
+            </div>
+
+            <button
+              type="button"
+              className="petAdoption3-meetingActionBtn"
+              onClick={openReschedule}
+            >
+              <span className="petAdoption3-meetingActionIcon" aria-hidden="true">
+                ↺
+              </span>
+              Reagendar
+            </button>
+          </div>
+
+          <div className="petAdoption3-meetingRow">
+            <span className="petAdoption3-meetingIcon" aria-hidden="true">
+              📌
+            </span>
+            <span className="petAdoption3-meetingText">
+              Rua das Flores, 123 — São Paulo, SP
+            </span>
+          </div>
+
+          <div className="petAdoption3-meetingRow">
+            <span className="petAdoption3-meetingIcon" aria-hidden="true">
+              📅
+            </span>
+            <span className="petAdoption3-meetingText">12/12/2025 • 14:30</span>
+          </div>
+        </div>
+
+        {/* PARTIES */}
+        <div className="petAdoption3-owners">
+          <div className="petAdoption3-ownerCard petAdoption3-ownerCard--adopter">
+            <div className="petAdoption3-ownerTop">
+              <div className="petAdoption3-ownerAvatar" aria-hidden="true">
+                👤
+              </div>
+
+              <div className="petAdoption3-ownerMeta">
+                <span className="petAdoption3-ownerName">Sarah Johnson</span>
+                <span className="petAdoption3-ownerRole">Adotante</span>
+              </div>
+            </div>
+
+            <span className="petAdoption3-ownerStatus">Aguardando confirmação...</span>
+          </div>
+
+          <div className="petAdoption3-ownerCard petAdoption3-ownerCard--owner">
+            <div className="petAdoption3-ownerTop">
+              <div className="petAdoption3-ownerAvatar" aria-hidden="true">
+                👤
+              </div>
+
+              <div className="petAdoption3-ownerMeta">
+                <span className="petAdoption3-ownerName">Michael Chen</span>
+                <span className="petAdoption3-ownerRole">Dono Atual</span>
+              </div>
+            </div>
+
+            <span className="petAdoption3-ownerStatus">Aguardando confirmação...</span>
+          </div>
+        </div>
+
+        {/* CONFIRMATION */}
+        <div className="petAdoption3-confirmation">
+          <span className="petAdoption3-confirmationHint">
+            Por favor, confirme que você recebeu Max de Michael Chen no local combinado.
+          </span>
+
+          <button type="button" className="petAdoption3-confirmBtn">
+            <span className="petAdoption3-confirmBtnIcon" aria-hidden="true">
+              ✓
+            </span>
+            Confirmar que Recebi o Pet
+          </button>
+
+          <span className="petAdoption3-confirmationNote">
+            A confirmação finaliza esta etapa e libera a conclusão da adoção.
+          </span>
+        </div>
+      </div>
+
+      {/* MODAL */}
+      {isRescheduleOpen && (
+        <div
+          className="petAdoption3-modalOverlay"
+          role="presentation"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) closeReschedule();
+          }}
+        >
+          <div className="petAdoption3-modal" role="dialog" aria-modal="true">
+            <div className="petAdoption3-modalHeader">
+              <div className="petAdoption3-modalHeaderLeft">
+                <div className="petAdoption3-modalBadge" aria-hidden="true">
+                  ↺
+                </div>
+                <div className="petAdoption3-modalTitles">
+                  <span className="petAdoption3-modalTitle">Reagendar Encontro</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="petAdoption3-modalClose"
+                onClick={closeReschedule}
+                aria-label="Fechar"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="petAdoption3-modalBody">
+              {/* warning */}
+              <div className="petAdoption3-modalWarning">
+                <span className="petAdoption3-modalWarningIcon" aria-hidden="true">
+                  ⚠
+                </span>
+                <span className="petAdoption3-modalWarningText">
+                  Ambas as partes precisarão aceitar o novo horário do encontro.
+                </span>
+              </div>
+
+              {/* Step 2 mounted here */}
+              <div className="petAdoption3-modalStep2Slot">{rescheduleComponent}</div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

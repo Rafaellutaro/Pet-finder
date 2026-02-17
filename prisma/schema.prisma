@@ -254,6 +254,7 @@ model AdoptionProcess {
   adopterId      Int
   ownerId        Int
 
+  meetingRound Int @default(1)
   step AdoptionStep @default(CONFIRMATION)
 
   adopterConfirmedAt DateTime?
@@ -272,6 +273,11 @@ enum MeetingProposalStatus {
   REJECTED
 }
 
+enum MeetingProposalType {
+  INITIAL
+  RESCHEDULE
+}
+
 model MeetingProposal {
   id                Int @id @default(autoincrement())
   adoptionProcessId Int
@@ -280,6 +286,8 @@ model MeetingProposal {
   meetingAt DateTime
   addressId Int?
 
+  round Int @default(1) 
+  type   MeetingProposalType   @default(INITIAL)
   status MeetingProposalStatus @default(PENDING)
 
   respondedById Int?

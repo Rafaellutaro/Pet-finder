@@ -4,7 +4,7 @@ import {verifyJWT} from '../middleware/auth.middleware.ts'
 
 const userRoute = Router();
 
-userRoute.get("/", getAllUsers); // public
+// userRoute.get("/", getAllUsers); // public
 userRoute.post("/insert", insertUser); // public
 userRoute.get("/getIdPublic", getUserByIdPublic); // public
 userRoute.get("/getId", verifyJWT,getUserById); // private
