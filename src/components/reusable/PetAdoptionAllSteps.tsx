@@ -1,4 +1,4 @@
-import type { adoptionInterface, allProposesInterface } from "../../Interfaces/adoptionInterface"
+import type { adoptionAddress, adoptionInterface, allProposesInterface } from "../../Interfaces/adoptionInterface"
 import { FaHeart } from "react-icons/fa";
 import type { UserData } from "../../Interfaces/userInterface";
 import { useEffect, useState, type ReactNode } from "react";
@@ -365,8 +365,6 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
 
       if (!response) return
 
-      console.log(response)
-
       setAllData((prev: any) => ({
         ...prev,
         getInfo: {
@@ -631,26 +629,53 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
 }
 
 type Step3Props = {
+  allData: adoptionInterface | null
+  user: UserData | null
+  token: string | null
+  id: string | undefined
+  verifyToken: () => Promise<void>
   rescheduleComponent: ReactNode;
 };
 
-export function PetAdoptionStep3({ rescheduleComponent }: Step3Props) {
+export function PetAdoptionStep3({ allData, user, token, id, verifyToken, rescheduleComponent }: Step3Props) {
   const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
+  const [address, setAddress] = useState<adoptionAddress | null>(null)
 
   const openReschedule = () => setIsRescheduleOpen(true);
   const closeReschedule = () => setIsRescheduleOpen(false);
+
+  const getSucessAddressInitial = async() => {
+    const response = await resendApiPrivate({
+      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${id}/getInitial/sucessAddress`, 
+      options: {method: "GET"}, 
+      token: String(token), 
+      verifyToken: verifyToken}
+    )
+
+    console.log(response)
+    if (!response) return
+
+    setAddress(response)
+  }
+
+  useEffect(() => {
+    if (!token) return 
+
+    getSucessAddressInitial()
+  }, [])
 
   // Close on ESC
   useEffect(() => {
     if (!isRescheduleOpen) return;
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeReschedule();
+      if (e.key == "Escape") closeReschedule();
     };
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [isRescheduleOpen]);
+
 
   return (
     <section className="petAdoption3-mainCard">
@@ -668,7 +693,7 @@ export function PetAdoptionStep3({ rescheduleComponent }: Step3Props) {
             <div className="petAdoption3-petFrame">
               <img
                 className="petAdoption3-petImg"
-                src="https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=800&auto=format&fit=crop"
+                src={allData?.getPetInfo?.imgs[0]?.url}
                 alt="Pet"
               />
             </div>
@@ -677,11 +702,11 @@ export function PetAdoptionStep3({ rescheduleComponent }: Step3Props) {
               <span className="petAdoption3-petChipIcon" aria-hidden="true">
                 ✦
               </span>
-              <span className="petAdoption3-petName">Max</span>
+              <span className="petAdoption3-petName">{allData?.getPetInfo?.name}</span>
             </div>
           </div>
 
-          <span className="petAdoption3-petData">Golden Retriever • 3 anos</span>
+          <span className="petAdoption3-petData">{allData?.getPetInfo.breed} • {allData?.getPetInfo.age} anos</span>
         </div>
 
         {/* MEETING DETAILS */}
@@ -711,7 +736,7 @@ export function PetAdoptionStep3({ rescheduleComponent }: Step3Props) {
               📌
             </span>
             <span className="petAdoption3-meetingText">
-              Rua das Flores, 123 — São Paulo, SP
+              {`${address?.street}, ${address?.neighborhood}, ${address?.city}-${address?.state}`}
             </span>
           </div>
 
@@ -719,7 +744,12 @@ export function PetAdoptionStep3({ rescheduleComponent }: Step3Props) {
             <span className="petAdoption3-meetingIcon" aria-hidden="true">
               📅
             </span>
-            <span className="petAdoption3-meetingText">12/12/2025 • 14:30</span>
+            <span className="petAdoption3-meetingText">{new Date(String(address?.date)).toLocaleDateString("pt-BR", {
+              dateStyle: "short"
+            })} • {new Date(String(address?.date)).toLocaleTimeString("pt-BR", {
+              hour: "2-digit",
+              minute: "2-digit"
+            })}</span>
           </div>
         </div>
 
@@ -727,12 +757,19 @@ export function PetAdoptionStep3({ rescheduleComponent }: Step3Props) {
         <div className="petAdoption3-owners">
           <div className="petAdoption3-ownerCard petAdoption3-ownerCard--adopter">
             <div className="petAdoption3-ownerTop">
-              <div className="petAdoption3-ownerAvatar" aria-hidden="true">
-                👤
+              <div className="petAdoption3-ownerAvatar">
+                {allData?.maskedAdopterInfo?.profileImg ? (
+                  <img
+                    className="petAdoption3-ownerAvatar-img"
+                    src={allData?.maskedAdopterInfo?.profileImg}
+                  />
+                ) : (
+                  <span className="petAdoption3-ownerAvatar-fallback">👤</span>
+                )}
               </div>
 
               <div className="petAdoption3-ownerMeta">
-                <span className="petAdoption3-ownerName">Sarah Johnson</span>
+                <span className="petAdoption3-ownerName">{`${allData?.maskedAdopterInfo.name} ${allData?.maskedAdopterInfo.lastName}`}</span>
                 <span className="petAdoption3-ownerRole">Adotante</span>
               </div>
             </div>
@@ -742,12 +779,19 @@ export function PetAdoptionStep3({ rescheduleComponent }: Step3Props) {
 
           <div className="petAdoption3-ownerCard petAdoption3-ownerCard--owner">
             <div className="petAdoption3-ownerTop">
-              <div className="petAdoption3-ownerAvatar" aria-hidden="true">
-                👤
+              <div className="petAdoption3-ownerAvatar">
+                {allData?.maskedAdopterInfo?.profileImg ? (
+                  <img
+                    className="petAdoption3-ownerAvatar-img"
+                    src={allData?.maskedOwnerInfo?.profileImg}
+                  />
+                ) : (
+                  <span className="petAdoption3-ownerAvatar-fallback">👤</span>
+                )}
               </div>
 
               <div className="petAdoption3-ownerMeta">
-                <span className="petAdoption3-ownerName">Michael Chen</span>
+                <span className="petAdoption3-ownerName">{`${allData?.maskedOwnerInfo.name} ${allData?.maskedOwnerInfo.lastName}`}</span>
                 <span className="petAdoption3-ownerRole">Dono Atual</span>
               </div>
             </div>
@@ -759,14 +803,18 @@ export function PetAdoptionStep3({ rescheduleComponent }: Step3Props) {
         {/* CONFIRMATION */}
         <div className="petAdoption3-confirmation">
           <span className="petAdoption3-confirmationHint">
-            Por favor, confirme que você recebeu Max de Michael Chen no local combinado.
+            {user?.id == allData?.maskedAdopterInfo.id ? (
+              `Por favor, confirme que você recebeu ${allData?.getPetInfo.name} de ${allData?.maskedOwnerInfo.name} ${allData?.maskedOwnerInfo.lastName} no local combinado.`
+            ) : `Por favor, confirme que você entregou ${allData?.getPetInfo.name} para ${allData?.maskedAdopterInfo.name} ${allData?.maskedAdopterInfo.lastName} no local combinado.`}
           </span>
 
           <button type="button" className="petAdoption3-confirmBtn">
             <span className="petAdoption3-confirmBtnIcon" aria-hidden="true">
               ✓
             </span>
-            Confirmar que Recebi o Pet
+            {user?.id == allData?.maskedAdopterInfo.id ? (
+              "Confirmar que Recebi o Pet"
+            ): "Confirmar que Entreguei o Pet"}
           </button>
 
           <span className="petAdoption3-confirmationNote">
@@ -780,9 +828,6 @@ export function PetAdoptionStep3({ rescheduleComponent }: Step3Props) {
         <div
           className="petAdoption3-modalOverlay"
           role="presentation"
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget) closeReschedule();
-          }}
         >
           <div className="petAdoption3-modal" role="dialog" aria-modal="true">
             <div className="petAdoption3-modalHeader">

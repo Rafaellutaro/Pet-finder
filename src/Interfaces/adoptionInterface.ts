@@ -23,7 +23,8 @@ export interface adoptionInterface {
         email: string,
         name: string,
         lastName: string,
-        phone: string
+        phone: string,
+        profileImg: string
     },
     maskedOwnerInfo: {
         addresses: {
@@ -34,7 +35,8 @@ export interface adoptionInterface {
         email: string,
         name: string,
         lastName: string,
-        phone: string
+        phone: string,
+        profileImg: string
     },
 }
 
@@ -59,4 +61,15 @@ export interface allProposesInterface {
         street: string,
         userId: number
     }
+}
+
+export interface adoptionAddress {
+    id: number,
+    userId: number,
+    cep: string,
+    street: string,
+    city: string,
+    state: string,
+    neighborhood: string,
+    date: string
 }

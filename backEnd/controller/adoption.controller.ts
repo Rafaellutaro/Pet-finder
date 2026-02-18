@@ -35,9 +35,10 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
                     lastName: true,
                     email: true,
                     phone: true,
+                    profileImg: true,
                     addresses: {
                         select: { state: true, city: true }
-                    }
+                    },
                 }
             })
 
@@ -49,6 +50,7 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
                     lastName: true,
                     email: true,
                     phone: true,
+                    profileImg: true,
                     addresses: {
                         select: { state: true, city: true }
                     }
@@ -65,6 +67,7 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
                     lastName: getAdopterData?.lastName || "",
                     email: maskEmail(String(getAdopterData?.email)),
                     phone: maskPhone(String(getAdopterData?.phone)),
+                    profileImg: getAdopterData?.profileImg || "",
                     addresses: getAdopterData?.addresses || []
                 }
             }
@@ -76,6 +79,7 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
                     lastName: getOwnerData?.lastName || "",
                     email: maskEmail(String(getOwnerData?.email)),
                     phone: maskPhone(String(getOwnerData?.phone)),
+                    profileImg: getOwnerData?.profileImg || "",
                     addresses: getOwnerData?.addresses || []
                 }
             }
@@ -171,8 +175,6 @@ export const meetingProposalInitial = async (req: AuthRequest, res: Response) =>
     const { id } = req.params
     const payload = req.body
 
-    console.log("payload", payload)
-
     try {
         if (!isUserAllowedInAdoptionProcess(Number(userId), prisma)) return res.status(403).json({ message: "you' not allowed here" })
 
@@ -236,7 +238,8 @@ export const getAllProposesInitial = async (req: AuthRequest, res: Response) => 
 
         const getAllProposesInitial = await prisma.meetingProposal.findMany({
             where: {
-                adoptionProcessId: Number(id)
+                adoptionProcessId: Number(id),
+                type: "INITIAL"
             },
             include: { address: true }
         })
@@ -257,7 +260,8 @@ export const setProposeToReject = async (req: AuthRequest, res: Response) => {
 
         const setAsRejected = await prisma.meetingProposal.update({
             where: {
-                id: Number(id)
+                id: Number(id),
+                type: "INITIAL"
             },
             data: {
                 status: "REJECTED"
@@ -284,7 +288,8 @@ export const setProposeToAccepted = async (req: AuthRequest, res: Response) => {
         const result = await prisma.$transaction(async (p) => {
             const getPropose = await p.meetingProposal.findUnique({
                 where: {
-                    id: proposeId
+                    id: proposeId,
+                    type: "INITIAL"
                 }
             })
 
@@ -292,10 +297,13 @@ export const setProposeToAccepted = async (req: AuthRequest, res: Response) => {
 
             const setAsAccepted = await p.meetingProposal.update({
                 where: {
-                    id: proposeId
+                    id: proposeId,
+                    type: "INITIAL"
                 },
                 data: {
-                    status: "ACCEPTED"
+                    status: "ACCEPTED",
+                    respondedBy: userId,
+                    respondedAt: new Date
                 }
             })
 
@@ -319,5 +327,38 @@ export const setProposeToAccepted = async (req: AuthRequest, res: Response) => {
     } catch (e) {
         console.log(e)
         return res.status(500).json({ message: "unable to set propose as rejected" })
+    }
+}
+
+export const getSucessAddressInitial = async (req:AuthRequest, res: Response) => {
+    const userId = req.user.userId
+    const adoptionProcessId = Number(req.params.id)
+
+    try {
+        if (!isUserAllowedInAdoptionProcess(Number(userId), prisma)) return res.status(404).json({ message: "you' not allowed here" })
+
+        const getSucess = await prisma.meetingProposal.findFirst({
+            where: {adoptionProcessId: adoptionProcessId, type: "INITIAL", status: "ACCEPTED"},
+
+        })
+
+        if (!getSucess) return res.status(404).json({message: "unable to find propose"})
+
+        const getSucessAddress = await prisma.address.findFirst({
+            where: {id: Number(getSucess.addressId)},
+
+        })
+
+        if (!getSucessAddress) return res.status(404).json({message: "unable to find sucess address"})
+
+        const result = {
+            ...getSucessAddress,
+            date: getSucess.meetingAt
+        }
+
+        res.status(200).json({data: result})
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({ message: "unable to get initial sucess address" })
     }
 }

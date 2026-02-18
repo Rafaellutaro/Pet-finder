@@ -167,7 +167,13 @@ function PetAdoptionSteps() {
       )}
 
       {allData.getInfo.step == "MEETING_CONFIRMED" && (
-        <PetAdoptionStep3 rescheduleComponent={<PetAdoptionStep2
+        <PetAdoptionStep3 
+        allData={allData}
+        user={user}
+        token={token}
+        verifyToken={verifyToken}
+        id={id}
+        rescheduleComponent={<PetAdoptionStep2
           allData={allData}
           setAllData={setAllData}
           user={user}
