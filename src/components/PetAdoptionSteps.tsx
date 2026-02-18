@@ -23,42 +23,43 @@ function PetAdoptionSteps() {
   }, [addressMode]);
 
   const onSubmit = async (data: PetAdoption2) => {
-    console.log("batata", data)
+    if (allData?.getInfo?.step == "MEETING") {
+      let address = null
 
-    let address = null
-
-    if (!data.addressId) {
-      address = {
-        cep: data.cep,
-        street: data.street,
-        state: data.region,
-        city: data.city,
-        neighborhood: data.neighborhood
+      if (!data.addressId) {
+        address = {
+          cep: data.cep,
+          street: data.street,
+          state: data.region,
+          city: data.city,
+          neighborhood: data.neighborhood
+        }
+      } else {
+        address = data.addressId
       }
-    } else {
-      address = data.addressId
+
+      const payload = {
+        address: address,
+        meetDate: data.meetDate,
+        meetTime: data.meetTime
+      }
+
+      const response = await resendApiPrivate({
+        apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${id}/initial`,
+        options: { method: "POST", body: JSON.stringify(payload) },
+        token: String(token),
+        verifyToken: verifyToken
+      })
+
+      if (!response) return
+
+      console.log(response)
+
+      setAllProposes((prev: any) => ([
+        ...prev,
+        response
+      ]))
     }
-
-    const payload = {
-      address: address,
-      meetDate: data.meetDate,
-      meetTime: data.meetTime
-    }
-
-    const response = await resendApiPrivate({
-      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${id}/initial`, 
-      options: {method: "POST", body: JSON.stringify(payload)}, 
-      token: String(token), 
-      verifyToken: verifyToken})
-    
-    if(!response) return
-
-    console.log(response)
-
-    setAllProposes((prev: any) => ([
-      ...prev,
-      response
-    ]))
   }
 
   const {
@@ -145,6 +146,7 @@ function PetAdoptionSteps() {
       {allData.getInfo.step == "MEETING" && (
         <PetAdoptionStep2
           allData={allData}
+          setAllData={setAllData}
           user={user}
           token={token}
           verifyToken={verifyToken}
@@ -167,6 +169,7 @@ function PetAdoptionSteps() {
       {allData.getInfo.step == "MEETING_CONFIRMED" && (
         <PetAdoptionStep3 rescheduleComponent={<PetAdoptionStep2
           allData={allData}
+          setAllData={setAllData}
           user={user}
           token={token}
           verifyToken={verifyToken}

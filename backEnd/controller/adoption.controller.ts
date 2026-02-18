@@ -145,7 +145,7 @@ export const confirmAdoption = async (req: AuthRequest, res: Response) => {
                 })
             }
 
-            if (setAsConfirmed?.adopterConfirmedAt && setAsConfirmed.ownerConfirmedAt){
+            if (setAsConfirmed?.adopterConfirmedAt && setAsConfirmed.ownerConfirmedAt) {
                 setAdoptionStatus = await f.adoptionProcess.update({
                     where: {
                         id: Number(id)
@@ -156,17 +156,17 @@ export const confirmAdoption = async (req: AuthRequest, res: Response) => {
                 })
             }
 
-            return {setAsConfirmed, setAdoptionStatus}
+            return { setAsConfirmed, setAdoptionStatus }
         })
 
-        res.status(200).json({data: result})
+        res.status(200).json({ data: result })
     } catch (e) {
         console.log(e)
         return res.status(500).json({ message: "unable to confirm adoption process" })
     }
 }
 
-export const meetingProposalInitial = async(req: AuthRequest, res: Response) => {
+export const meetingProposalInitial = async (req: AuthRequest, res: Response) => {
     const userId = req.user.userId
     const { id } = req.params
     const payload = req.body
@@ -174,7 +174,7 @@ export const meetingProposalInitial = async(req: AuthRequest, res: Response) => 
     console.log("payload", payload)
 
     try {
-        if (!isUserAllowedInAdoptionProcess(Number(userId), prisma)) return res.status(403).json({message: "you' not allowed here"})
+        if (!isUserAllowedInAdoptionProcess(Number(userId), prisma)) return res.status(403).json({ message: "you' not allowed here" })
 
         let address = Number(payload.address)
         const date = parseBRDateTime(payload.meetDate, payload.meetTime)
@@ -183,7 +183,7 @@ export const meetingProposalInitial = async(req: AuthRequest, res: Response) => 
             return res.status(400).json({ message: "Invalid meeting date or time" })
         }
 
-        if (!address){
+        if (!address) {
             const addressResponse = await prisma.address.create({
                 data: {
                     userId: Number(userId),
@@ -198,7 +198,7 @@ export const meetingProposalInitial = async(req: AuthRequest, res: Response) => 
             address = addressResponse.id
         }
 
-        if (!address) return res.status(400).json({message: "Invalid Address"})
+        if (!address) return res.status(400).json({ message: "Invalid Address" })
 
         const initialPropose = await prisma.meetingProposal.create({
             data: {
@@ -210,7 +210,7 @@ export const meetingProposalInitial = async(req: AuthRequest, res: Response) => 
         })
 
         const getAddress = await prisma.address.findFirst({
-            where:{
+            where: {
                 id: Number(initialPropose.addressId)
             }
         })
@@ -220,7 +220,7 @@ export const meetingProposalInitial = async(req: AuthRequest, res: Response) => 
             address: getAddress
         }
 
-        return res.status(200).json({data: result})
+        return res.status(200).json({ data: result })
     } catch (e) {
         console.log(e)
         return res.status(500).json({ message: "unable to send your initial proposal" })
@@ -229,21 +229,95 @@ export const meetingProposalInitial = async(req: AuthRequest, res: Response) => 
 
 export const getAllProposesInitial = async (req: AuthRequest, res: Response) => {
     const userId = req.user.userId
-    const {id} = req.params
+    const { id } = req.params
 
     try {
-        if (!isUserAllowedInAdoptionProcess(Number(userId), prisma)) return res.status(403).json({message: "you' not allowed here"})
+        if (!isUserAllowedInAdoptionProcess(Number(userId), prisma)) return res.status(403).json({ message: "you' not allowed here" })
 
         const getAllProposesInitial = await prisma.meetingProposal.findMany({
             where: {
                 adoptionProcessId: Number(id)
             },
-            include: {address: true}
+            include: { address: true }
         })
 
-        return res.status(200).json({data: getAllProposesInitial})
+        return res.status(200).json({ data: getAllProposesInitial })
     } catch (e) {
         console.log(e)
         return res.status(500).json({ message: "unable to get all proposes intial" })
+    }
+}
+
+export const setProposeToReject = async (req: AuthRequest, res: Response) => {
+    const userId = req.user.userId
+    const { id } = req.params
+
+    try {
+        if (!isUserAllowedInAdoptionProcess(Number(userId), prisma)) return res.status(403).json({ message: "you' not allowed here" })
+
+        const setAsRejected = await prisma.meetingProposal.update({
+            where: {
+                id: Number(id)
+            },
+            data: {
+                status: "REJECTED"
+            }
+        })
+
+        if (!setAsRejected) return res.status(404).json({ message: "couldn't find the propose" })
+
+        res.status(200).json({ data: setAsRejected })
+
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({ message: "unable to set propose as rejected" })
+    }
+}
+
+export const setProposeToAccepted = async (req: AuthRequest, res: Response) => {
+    const userId = req.user.userId
+    const proposeId = Number(req.params.id)
+
+    try {
+        if (!isUserAllowedInAdoptionProcess(Number(userId), prisma)) return res.status(403).json({ message: "you' not allowed here" })
+
+        const result = await prisma.$transaction(async (p) => {
+            const getPropose = await p.meetingProposal.findUnique({
+                where: {
+                    id: proposeId
+                }
+            })
+
+            if (!getPropose) return res.status(404).json({ message: "couldn't find the propose" })
+
+            const setAsAccepted = await p.meetingProposal.update({
+                where: {
+                    id: proposeId
+                },
+                data: {
+                    status: "ACCEPTED"
+                }
+            })
+
+            if (!setAsAccepted) return res.status(404).json({ message: "couldn't set the propose" })
+            
+            const nextStep = await p.adoptionProcess.update({
+                where: {
+                    id: getPropose.adoptionProcessId
+                },
+                data: {
+                    step: "MEETING_CONFIRMED"
+                }
+            })
+
+            if (!nextStep) return res.status(404).json({ message: "couldn't set the nextStep" })
+
+            return {setAsAccepted, nextStep}
+        })
+
+        res.status(200).json({data: result})
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({ message: "unable to set propose as rejected" })
     }
 }

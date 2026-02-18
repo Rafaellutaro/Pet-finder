@@ -311,6 +311,7 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id }: petA
 }
 
 type petAdoptionStep2Type = {
+  setAllData: React.Dispatch<React.SetStateAction<adoptionInterface | null>>
   allData: adoptionInterface | null
   user: UserData | null
   token: string | null,
@@ -330,11 +331,51 @@ type petAdoptionStep2Type = {
   allProposes: allProposesInterface[]
 }
 
-export function PetAdoptionStep2({ allData, user, token, verifyToken, id, register, handleSubmit, watch, setValue, isSubmiting, setAddressMode, addressMode, onSubmit, errors, control, allProposes, setAllProposes }: petAdoptionStep2Type) {
+export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken, id, register, handleSubmit, watch, setValue, isSubmiting, setAddressMode, addressMode, onSubmit, errors, control, allProposes, setAllProposes }: petAdoptionStep2Type) {
   const cep = watch("cep");
   useEffect(() => {
     cepSearch(setValue, String(cep));
   }, [cep]);
+
+  const setProposeAsReject = async (proposeId: number) => {
+    if (allData?.getInfo?.step == "MEETING") {
+      const response = await resendApiPrivate({
+        apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${proposeId}/setRejectInitial`,
+        options: { method: "PATCH" },
+        token: String(token),
+        verifyToken: verifyToken
+      })
+
+      if (!response) return
+
+      setAllProposes(prev =>
+        prev.map(p => (p.id == response.id ? { ...p, ...response } : p))
+      );
+    }
+  }
+
+  const setProposeAsAccept = async (proposeId: number) => {
+    if (allData?.getInfo?.step == "MEETING") {
+      const response = await resendApiPrivate({
+        apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${proposeId}/setAcceptInitial`,
+        options: { method: "PATCH" },
+        token: String(token),
+        verifyToken: verifyToken
+      })
+
+      if (!response) return
+
+      console.log(response)
+
+      setAllData((prev: any) => ({
+        ...prev,
+        getInfo: {
+          ...prev?.getInfo,
+          step: response.nextStep.step
+        }
+      }))
+    }
+  }
 
   const getAllProposes = async () => {
     const response = await resendApiPrivate({
@@ -512,7 +553,7 @@ export function PetAdoptionStep2({ allData, user, token, verifyToken, id, regist
           </div>
 
           <div className="pet-adoption2-right-container-all-proposals">
-            
+
             {getAmount <= 0 && (
               <div className="pet-adoption2-empty">
                 <div className="pet-adoption2-empty-icon" aria-hidden="true">
@@ -565,12 +606,14 @@ export function PetAdoptionStep2({ allData, user, token, verifyToken, id, regist
                         <button
                           type="button"
                           className="pet-adoption2-proposal-btn pet-adoption2-proposal-btn--ghost"
+                          onClick={() => setProposeAsReject(t.id)}
                         >
                           Rejeitar
                         </button>
                         <button
                           type="button"
                           className="pet-adoption2-proposal-btn pet-adoption2-proposal-btn--primary"
+                          onClick={() => setProposeAsAccept(t.id)}
                         >
                           Aceitar
                         </button>
