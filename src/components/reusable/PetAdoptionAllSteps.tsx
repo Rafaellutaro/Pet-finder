@@ -1,4 +1,4 @@
-import type { adoptionInterface } from "../../Interfaces/adoptionInterface"
+import type { adoptionInterface, allProposesInterface } from "../../Interfaces/adoptionInterface"
 import { FaHeart } from "react-icons/fa";
 import type { UserData } from "../../Interfaces/userInterface";
 import { useEffect, useState, type ReactNode } from "react";
@@ -25,7 +25,7 @@ type headerType = {
   desc: string
 }
 
-function PetAdoptionHeader({step, title, sectionTitle, desc}: headerType) {
+function PetAdoptionHeader({ step, title, sectionTitle, desc }: headerType) {
   return (
     <div className="pet-adoption-card-top">
       <div className="pet-adoption-pill">
@@ -83,11 +83,11 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id }: petA
   return (
     <main className="pet-adoption-container">
       <section className="pet-adoption-card">
-        <PetAdoptionHeader 
-        step={"1"} 
-        title={"Confirmação & Compromissos"} 
-        sectionTitle={"Revise os Detalhes da Adoção"} 
-        desc={"Por favor revise todos os detalhes sobre a adoção com calma"}
+        <PetAdoptionHeader
+          step={"1"}
+          title={"Confirmação & Compromissos"}
+          sectionTitle={"Revise os Detalhes da Adoção"}
+          desc={"Por favor revise todos os detalhes sobre a adoção com calma"}
         />
 
         {/* Pet Information */}
@@ -326,10 +326,11 @@ type petAdoptionStep2Type = {
   setAddressMode: React.Dispatch<React.SetStateAction<"SAVED" | "CUSTOM">>
   addressMode: "SAVED" | "CUSTOM"
   onSubmit: (data: any) => void
+  setAllProposes: React.Dispatch<React.SetStateAction<allProposesInterface[]>>,
+  allProposes: allProposesInterface[]
 }
 
-export function PetAdoptionStep2({ allData, user, token, verifyToken, id, register, handleSubmit, watch, setValue, isSubmiting, setAddressMode, addressMode, onSubmit, errors, control }: petAdoptionStep2Type) {
-
+export function PetAdoptionStep2({ allData, user, token, verifyToken, id, register, handleSubmit, watch, setValue, isSubmiting, setAddressMode, addressMode, onSubmit, errors, control, allProposes, setAllProposes }: petAdoptionStep2Type) {
   const cep = watch("cep");
   useEffect(() => {
     cepSearch(setValue, String(cep));
@@ -337,27 +338,34 @@ export function PetAdoptionStep2({ allData, user, token, verifyToken, id, regist
 
   const getAllProposes = async () => {
     const response = await resendApiPrivate({
-      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/getInitial`, 
-      options: {method: "GET"}, 
-      token: String(token), 
-      verifyToken: verifyToken})
+      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${id}/getInitial`,
+      options: { method: "GET" },
+      token: String(token),
+      verifyToken: verifyToken
+    })
 
-    console.log("all proposes",response)
+    if (!response) return
+
+    setAllProposes(response)
   }
 
   useEffect(() => {
-    
+    if (allData?.getInfo.step == "MEETING") {
+      getAllProposes()
+    }
   }, [])
+
+  const getAmount = allProposes?.length
 
   return (
     <section className="pet-adoption2-main">
 
       {allData?.getInfo.step == "MEETING" && (
-        <PetAdoptionHeader 
-        step={"2"} 
-        title={"Agendar Encontro"} 
-        sectionTitle={"Organize um Encontro"} 
-        desc={"Proponha um local e horário para se encontrarem. Ambas as partes precisam concordar para prosseguir."}
+        <PetAdoptionHeader
+          step={"2"}
+          title={"Agendar Encontro"}
+          sectionTitle={"Organize um Encontro"}
+          desc={"Proponha um local e horário para se encontrarem. Ambas as partes precisam concordar para prosseguir."}
         />
       )}
 
@@ -500,53 +508,78 @@ export function PetAdoptionStep2({ allData, user, token, verifyToken, id, regist
         <section className="pet-adoption2-right-container">
           <div className="pet-adoption2-right-top">
             <h2 className="pet-adoption2-right-title">Propostas de Encontro</h2>
-            <span className="pet-adoption2-right-count">0 propostas</span>
+            <span className="pet-adoption2-right-count">{getAmount} propostas</span>
           </div>
 
           <div className="pet-adoption2-right-container-all-proposals">
-            {/* Empty State */}
-            <div className="pet-adoption2-empty">
-              <div className="pet-adoption2-empty-icon" aria-hidden="true">
-                📍
-              </div>
-              <p className="pet-adoption2-empty-title">Ainda não há propostas</p>
-              <p className="pet-adoption2-empty-text">
-                Crie sua primeira proposta de encontro ao lado esquerdo.
-              </p>
-            </div>
-
-            {/* Example proposal card to test UI */}
-            {/* <article className="pet-adoption2-proposal-card">
-              <div className="pet-adoption2-proposal-head">
-                <p className="pet-adoption2-proposal-address">Rua Exemplo, 123 - Centro</p>
-
-                <span className="pet-adoption2-proposal-badge pet-adoption2-proposal-badge--pending">
-                  Pending
-                </span>
-              </div>
-
-              <div className="pet-adoption2-proposal-meta">
-                <span>📅 15/02/2026</span>
-                <span>🕒 14:00</span>
-              </div>
-
-              <div className="pet-adoption2-proposal-footer">
-                <div className="pet-adoption2-proposal-actions">
-                  <button
-                    type="button"
-                    className="pet-adoption2-proposal-btn pet-adoption2-proposal-btn--ghost"
-                  >
-                    Reject
-                  </button>
-                  <button
-                    type="button"
-                    className="pet-adoption2-proposal-btn pet-adoption2-proposal-btn--primary"
-                  >
-                    Accept
-                  </button>
+            
+            {getAmount <= 0 && (
+              <div className="pet-adoption2-empty">
+                <div className="pet-adoption2-empty-icon" aria-hidden="true">
+                  📍
                 </div>
+                <p className="pet-adoption2-empty-title">Ainda não há propostas</p>
+                <p className="pet-adoption2-empty-text">
+                  Crie sua primeira proposta de encontro ao lado esquerdo.
+                </p>
               </div>
-            </article> */}
+            )}
+
+            {allProposes.map((t) => {
+              const completeAddress = `${t?.address?.street}, ${t?.address?.neighborhood}, ${t?.address?.city}-${t?.address?.state}`
+
+              const formattedDate = new Date(t?.meetingAt).toLocaleDateString("pt-BR", {
+                dateStyle: "short"
+              })
+
+              const formattedTime = new Date(t.meetingAt).toLocaleTimeString("pt-BR", {
+                hour: "2-digit",
+                minute: "2-digit",
+                timeZone: "America/Sao_Paulo"
+              })
+
+              const languageMap: Record<string, string> = {
+                PENDING: "Pendente",
+                ACCEPTED: "Aceita",
+                REJECTED: "Rejeitada"
+              }
+
+              return (
+                <article className="pet-adoption2-proposal-card" key={t.id}>
+                  <div className="pet-adoption2-proposal-head">
+                    <p className="pet-adoption2-proposal-address">{completeAddress}</p>
+
+                    <span className="pet-adoption2-proposal-badge pet-adoption2-proposal-badge--pending">
+                      {languageMap[t.status]}
+                    </span>
+                  </div>
+
+                  <div className="pet-adoption2-proposal-meta">
+                    <span>📅 {formattedDate}</span>
+                    <span>🕒 {formattedTime}</span>
+                  </div>
+
+                  {user?.id !== t.createdById && t.status == "PENDING" ? (
+                    <div className="pet-adoption2-proposal-footer">
+                      <div className="pet-adoption2-proposal-actions">
+                        <button
+                          type="button"
+                          className="pet-adoption2-proposal-btn pet-adoption2-proposal-btn--ghost"
+                        >
+                          Rejeitar
+                        </button>
+                        <button
+                          type="button"
+                          className="pet-adoption2-proposal-btn pet-adoption2-proposal-btn--primary"
+                        >
+                          Aceitar
+                        </button>
+                      </div>
+                    </div>
+                  ) : ""}
+                </article>
+              )
+            })}
           </div>
         </section>
       </div>
@@ -558,7 +591,7 @@ type Step3Props = {
   rescheduleComponent: ReactNode;
 };
 
-export function PetAdoptionStep3({ rescheduleComponent }:Step3Props) {
+export function PetAdoptionStep3({ rescheduleComponent }: Step3Props) {
   const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
 
   const openReschedule = () => setIsRescheduleOpen(true);

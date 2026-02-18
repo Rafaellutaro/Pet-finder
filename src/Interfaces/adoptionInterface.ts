@@ -36,5 +36,27 @@ export interface adoptionInterface {
         lastName: string,
         phone: string
     },
+}
 
+export interface allProposesInterface {
+    id: number,
+    addressId: number,
+    adoptionProcessId: number,
+    round: number,
+    createdById: number,
+    createdAt: string,
+    meetingAt: string,
+    respondedAt: string,
+    respondedById: number,
+    status: string,
+    type: string,
+    address: {
+        id: number,
+        cep: string,
+        city: string,
+        neighborhood: string,
+        state: string,
+        street: string,
+        userId: number
+    }
 }

@@ -2,7 +2,7 @@ import type { Response } from "express";
 import prisma from '../../backEnd/client/PrismaClient.ts'
 import type { AuthRequest } from "../middleware/auth.middleware.ts";
 import { io } from "../index.ts";
-import { maskEmail, maskPhone, parseBRDateTime } from "../helper.ts";
+import { isUserAllowedInAdoptionProcess, maskEmail, maskPhone, parseBRDateTime } from "../helper.ts";
 
 export const getDataFromId = async (req: AuthRequest, res: Response) => {
     const userId = req.user.userId
@@ -174,6 +174,7 @@ export const meetingProposalInitial = async(req: AuthRequest, res: Response) => 
     console.log("payload", payload)
 
     try {
+        if (!isUserAllowedInAdoptionProcess(Number(userId), prisma)) return res.status(403).json({message: "you' not allowed here"})
 
         let address = Number(payload.address)
         const date = parseBRDateTime(payload.meetDate, payload.meetTime)
@@ -205,12 +206,44 @@ export const meetingProposalInitial = async(req: AuthRequest, res: Response) => 
                 createdById: Number(userId),
                 addressId: address,
                 meetingAt: date
-
             }
         })
-        return res.status(200).json({data: initialPropose})
+
+        const getAddress = await prisma.address.findFirst({
+            where:{
+                id: Number(initialPropose.addressId)
+            }
+        })
+
+        const result = {
+            ...initialPropose,
+            address: getAddress
+        }
+
+        return res.status(200).json({data: result})
     } catch (e) {
         console.log(e)
         return res.status(500).json({ message: "unable to send your initial proposal" })
+    }
+}
+
+export const getAllProposesInitial = async (req: AuthRequest, res: Response) => {
+    const userId = req.user.userId
+    const {id} = req.params
+
+    try {
+        if (!isUserAllowedInAdoptionProcess(Number(userId), prisma)) return res.status(403).json({message: "you' not allowed here"})
+
+        const getAllProposesInitial = await prisma.meetingProposal.findMany({
+            where: {
+                adoptionProcessId: Number(id)
+            },
+            include: {address: true}
+        })
+
+        return res.status(200).json({data: getAllProposesInitial})
+    } catch (e) {
+        console.log(e)
+        return res.status(500).json({ message: "unable to get all proposes intial" })
     }
 }

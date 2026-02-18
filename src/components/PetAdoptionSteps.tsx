@@ -4,7 +4,7 @@ import { PetAdoptionStep1, PetAdoptionStep2, PetAdoptionStep3 } from "./reusable
 import { useEffect, useMemo, useState } from "react";
 import resendApiPrivate from "./reusable/resendApi";
 import { useUser } from "../Interfaces/GlobalUser";
-import type { adoptionInterface } from "../Interfaces/adoptionInterface";
+import type { adoptionInterface, allProposesInterface } from "../Interfaces/adoptionInterface";
 import Loader from "./reusable/Loader";
 import { petAdoption2Saved, PetAdoptionStep2Schema, type PetAdoption2 } from "../Interfaces/zodSchema";
 import { useForm } from "react-hook-form";
@@ -15,6 +15,7 @@ function PetAdoptionSteps() {
   const { token, verifyToken, user } = useUser()
   const [addressMode, setAddressMode] = useState<"SAVED" | "CUSTOM">("SAVED");
   const [allData, setAllData] = useState<adoptionInterface | null>(null)
+  const [allProposes, setAllProposes] = useState<allProposesInterface[]>([])
 
   const resolver = useMemo(() => {
     if (addressMode == "SAVED") return zodResolver(petAdoption2Saved);
@@ -50,7 +51,14 @@ function PetAdoptionSteps() {
       token: String(token), 
       verifyToken: verifyToken})
     
-    console.log("response here", response)
+    if(!response) return
+
+    console.log(response)
+
+    setAllProposes((prev: any) => ([
+      ...prev,
+      response
+    ]))
   }
 
   const {
@@ -151,6 +159,8 @@ function PetAdoptionSteps() {
           addressMode={addressMode}
           onSubmit={onSubmit}
           errors={errors}
+          allProposes={allProposes}
+          setAllProposes={setAllProposes}
         />
       )}
 
@@ -171,6 +181,8 @@ function PetAdoptionSteps() {
           addressMode={addressMode}
           onSubmit={onSubmit}
           errors={errors}
+          allProposes={allProposes}
+          setAllProposes={setAllProposes}
         />}
         />
       )}

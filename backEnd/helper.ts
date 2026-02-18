@@ -19,6 +19,17 @@ export async function createNotification({ userId, type, title, body, link }: no
     }
 }
 
+export async function isUserAllowedInAdoptionProcess(userId: number, prisma: any) {
+    const isUserAllowed = await prisma.adoptionProcess.findFirst({
+            where: {
+                OR: [{ ownerId: userId }, { adopterId: userId }]
+            },
+            select: {id: true}
+        })
+    
+    return isUserAllowed
+}
+
 export async function verifyUserInConversation(id: number, prisma: any) {
     try {
         const verify = await prisma.conversation.findUnique({
@@ -56,7 +67,7 @@ export function parseBRDateTime(dateStr: string, timeStr: string): Date | null {
   if (hh < 0 || hh > 23) return null;
   if (min < 0 || min > 59) return null;
 
-  const d = new Date(Date.UTC(yyyy, mm - 1, dd, hh, min, 0, 0));
+  const d = new Date(yyyy, mm - 1, dd, hh, min, 0, 0);
 
   if (
     d.getUTCFullYear() !== yyyy ||
