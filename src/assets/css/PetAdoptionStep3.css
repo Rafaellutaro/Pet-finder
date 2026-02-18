@@ -473,6 +473,27 @@
   width: 100%;
 }
 
+.petAdoption3-confirmationDone {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border-radius: 14px;
+
+  background: #f0fdf4; /* soft green background */
+  border: 1px solid #bbf7d0;
+
+  color: #166534;
+  font-size: 14px;
+  font-weight: 500;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  animation: fadeInConfirm 0.25s ease-out;
+
+  box-shadow: 0 4px 12px rgba(22, 101, 52, 0.08);
+}
+
 /* =========================================================
    ✅ FIXES: Neutralize Step 2 "page layout" inside modal
    (only applies when Step2 is rendered in the slot)

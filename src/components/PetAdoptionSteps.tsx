@@ -169,6 +169,7 @@ function PetAdoptionSteps() {
       {allData.getInfo.step == "MEETING_CONFIRMED" && (
         <PetAdoptionStep3 
         allData={allData}
+        setAllData={setAllData}
         user={user}
         token={token}
         verifyToken={verifyToken}

@@ -73,3 +73,13 @@ export interface adoptionAddress {
     neighborhood: string,
     date: string
 }
+
+export interface confirmations {
+    id: number,
+    adoptionProcessId: number,
+    adopterConfirmedAt: string,
+    createdAt: string,
+    finalizedAt: string,
+    ownerConfirmedAt: string,
+    updatedAt: string
+}

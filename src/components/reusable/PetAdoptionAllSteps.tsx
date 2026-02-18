@@ -1,4 +1,4 @@
-import type { adoptionAddress, adoptionInterface, allProposesInterface } from "../../Interfaces/adoptionInterface"
+import type { adoptionAddress, adoptionInterface, allProposesInterface, confirmations } from "../../Interfaces/adoptionInterface"
 import { FaHeart } from "react-icons/fa";
 import type { UserData } from "../../Interfaces/userInterface";
 import { useEffect, useState, type ReactNode } from "react";
@@ -6,9 +6,14 @@ import resendApiPrivate from "./resendApi";
 import "../../assets/css/petAdoptionStep2.css"
 import "../../assets/css/petAdoptionStep3.css"
 import { Controller, type Control, type FieldErrors, type UseFormHandleSubmit, type UseFormRegister, type UseFormSetValue, type UseFormWatch } from "react-hook-form";
-import type { PetAdoption2, PetAdoptionStep2Schema } from "../../Interfaces/zodSchema";
+import type { PetAdoption2} from "../../Interfaces/zodSchema";
 import { cepSearch } from "../functions/userFunctions";
 import { PatternFormat } from "react-number-format";
+import { IoLocationOutline } from "react-icons/io5";
+import { FaStreetView } from "react-icons/fa";
+import { CiCalendarDate } from "react-icons/ci";
+import { FaRedo } from "react-icons/fa";
+import { FcOk } from "react-icons/fc";
 
 type petAdoptionStep1Type = {
   allData: adoptionInterface | null
@@ -630,6 +635,7 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
 
 type Step3Props = {
   allData: adoptionInterface | null
+  setAllData: React.Dispatch<React.SetStateAction<adoptionInterface | null>>
   user: UserData | null
   token: string | null
   id: string | undefined
@@ -637,19 +643,21 @@ type Step3Props = {
   rescheduleComponent: ReactNode;
 };
 
-export function PetAdoptionStep3({ allData, user, token, id, verifyToken, rescheduleComponent }: Step3Props) {
+export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyToken, rescheduleComponent }: Step3Props) {
   const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
   const [address, setAddress] = useState<adoptionAddress | null>(null)
+  const [userConfirmed, setUserConfirmed] = useState<confirmations | null>(null)
 
   const openReschedule = () => setIsRescheduleOpen(true);
   const closeReschedule = () => setIsRescheduleOpen(false);
 
-  const getSucessAddressInitial = async() => {
+  const getSucessAddressInitial = async () => {
     const response = await resendApiPrivate({
-      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${id}/getInitial/sucessAddress`, 
-      options: {method: "GET"}, 
-      token: String(token), 
-      verifyToken: verifyToken}
+      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${id}/getInitial/sucessAddress`,
+      options: { method: "GET" },
+      token: String(token),
+      verifyToken: verifyToken
+    }
     )
 
     console.log(response)
@@ -658,10 +666,45 @@ export function PetAdoptionStep3({ allData, user, token, id, verifyToken, resche
     setAddress(response)
   }
 
+  const setAsConfirmed = async () => {
+    const response = await resendApiPrivate({
+      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${id}/setAsConfirmed`,
+      options: { method: "PATCH" },
+      token: String(token),
+      verifyToken: verifyToken
+    }
+    )
+
+    if (!response) return
+
+    if (response.step){
+      setAllData((prev: any) => ({
+      ...prev,
+      getInfo: {
+        ...prev?.getInfo,
+        step: response.step
+      }
+    }))
+    }
+  }
+
+  const getConfirmations = async () => {
+    const response = await resendApiPrivate({
+      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${id}/getConfirmations`, 
+      options: {method: "GET"}, 
+      token: String(token), 
+      verifyToken: verifyToken}
+    )
+
+    if (!response) return
+    setUserConfirmed(response)
+  }
+
   useEffect(() => {
-    if (!token) return 
+    if (!token) return
 
     getSucessAddressInitial()
+    getConfirmations()
   }, [])
 
   // Close on ESC
@@ -714,7 +757,7 @@ export function PetAdoptionStep3({ allData, user, token, id, verifyToken, resche
           <div className="petAdoption3-meetingTopRow">
             <div className="petAdoption3-meetingHead">
               <span className="petAdoption3-meetingHeadDot" aria-hidden="true">
-                📍
+                <FaStreetView/>
               </span>
               <h3 className="petAdoption3-meetingTitle">Detalhes do Encontro</h3>
             </div>
@@ -725,7 +768,7 @@ export function PetAdoptionStep3({ allData, user, token, id, verifyToken, resche
               onClick={openReschedule}
             >
               <span className="petAdoption3-meetingActionIcon" aria-hidden="true">
-                ↺
+                <FaRedo/>
               </span>
               Reagendar
             </button>
@@ -733,7 +776,7 @@ export function PetAdoptionStep3({ allData, user, token, id, verifyToken, resche
 
           <div className="petAdoption3-meetingRow">
             <span className="petAdoption3-meetingIcon" aria-hidden="true">
-              📌
+              <IoLocationOutline/>
             </span>
             <span className="petAdoption3-meetingText">
               {`${address?.street}, ${address?.neighborhood}, ${address?.city}-${address?.state}`}
@@ -742,7 +785,7 @@ export function PetAdoptionStep3({ allData, user, token, id, verifyToken, resche
 
           <div className="petAdoption3-meetingRow">
             <span className="petAdoption3-meetingIcon" aria-hidden="true">
-              📅
+              <CiCalendarDate/>
             </span>
             <span className="petAdoption3-meetingText">{new Date(String(address?.date)).toLocaleDateString("pt-BR", {
               dateStyle: "short"
@@ -774,7 +817,9 @@ export function PetAdoptionStep3({ allData, user, token, id, verifyToken, resche
               </div>
             </div>
 
-            <span className="petAdoption3-ownerStatus">Aguardando confirmação...</span>
+            <span className="petAdoption3-ownerStatus">{userConfirmed?.adopterConfirmedAt ? (
+              "Confirmado"
+            ): "Aguardando confirmação..."}</span>
           </div>
 
           <div className="petAdoption3-ownerCard petAdoption3-ownerCard--owner">
@@ -796,31 +841,39 @@ export function PetAdoptionStep3({ allData, user, token, id, verifyToken, resche
               </div>
             </div>
 
-            <span className="petAdoption3-ownerStatus">Aguardando confirmação...</span>
+            <span className="petAdoption3-ownerStatus">{userConfirmed?.ownerConfirmedAt ? (
+              "Confirmado"
+            ): "Aguardando confirmação..."}</span>
           </div>
         </div>
 
         {/* CONFIRMATION */}
-        <div className="petAdoption3-confirmation">
+        {user?.id == allData?.maskedAdopterInfo.id && userConfirmed?.adopterConfirmedAt ? (
+          <div className="petAdoption3-confirmationDone"> <FcOk/> Você já confirmou. Aguardando a confirmação da outra pessoa. </div>
+        ): user?.id == allData?.maskedOwnerInfo.id && userConfirmed?.ownerConfirmedAt ? (
+          <div className="petAdoption3-confirmationDone"> <FcOk/> Você já confirmou. Aguardando a confirmação da outra pessoa. </div>
+        ): (
+          <div className="petAdoption3-confirmation">
           <span className="petAdoption3-confirmationHint">
             {user?.id == allData?.maskedAdopterInfo.id ? (
               `Por favor, confirme que você recebeu ${allData?.getPetInfo.name} de ${allData?.maskedOwnerInfo.name} ${allData?.maskedOwnerInfo.lastName} no local combinado.`
             ) : `Por favor, confirme que você entregou ${allData?.getPetInfo.name} para ${allData?.maskedAdopterInfo.name} ${allData?.maskedAdopterInfo.lastName} no local combinado.`}
           </span>
 
-          <button type="button" className="petAdoption3-confirmBtn">
+          <button type="button" className="petAdoption3-confirmBtn" onClick={() => setAsConfirmed()}>
             <span className="petAdoption3-confirmBtnIcon" aria-hidden="true">
               ✓
             </span>
             {user?.id == allData?.maskedAdopterInfo.id ? (
               "Confirmar que Recebi o Pet"
-            ): "Confirmar que Entreguei o Pet"}
+            ) : "Confirmar que Entreguei o Pet"}
           </button>
 
           <span className="petAdoption3-confirmationNote">
             A confirmação finaliza esta etapa e libera a conclusão da adoção.
           </span>
         </div>
+        )}
       </div>
 
       {/* MODAL */}

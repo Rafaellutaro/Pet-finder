@@ -265,6 +265,7 @@ model AdoptionProcess {
 
   conversation     Conversation      @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   meetingProposals MeetingProposal[]
+  meetingConfirmation MeetingConfirmation?
 }
 
 enum MeetingProposalStatus {
@@ -304,6 +305,22 @@ model MeetingProposal {
   @@index([createdById])
   @@index([status])
   @@index([addressId])
+}
+
+model MeetingConfirmation {
+  id               Int @id @default(autoincrement())
+  adoptionProcessId Int @unique
+
+  adopterConfirmedAt DateTime?
+  ownerConfirmedAt   DateTime?
+  finalizedAt        DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  adoptionProcess AdoptionProcess @relation(fields: [adoptionProcessId], references: [id], onDelete: Cascade)
+
+  @@index([finalizedAt])
 }
 
 model PetsAdopted {
