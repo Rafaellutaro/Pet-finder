@@ -473,7 +473,8 @@ export const setProposeToAccepted = async (req: AuthRequest, res: Response) => {
                         status: "ACCEPTED",
                         respondedById: Number(userId),
                         respondedAt: new Date(),
-                        round: nextRound
+                        round: nextRound,
+                        
                     }
                 })
 
@@ -484,14 +485,24 @@ export const setProposeToAccepted = async (req: AuthRequest, res: Response) => {
                         id: getPropose.adoptionProcessId
                     },
                     data: {
-                        step: "MEETING_CONFIRMED",
                         meetingRound: nextRound
                     }
                 })
 
                 if (!nextStep) return res.status(404).json({ message: "couldn't set the nextStep" })
 
-                return { setAsAccepted, nextStep }
+                const getAddress = await prisma.address.findFirst({
+                    where: {
+                        id: Number(setAsAccepted.addressId)
+                    }
+                })
+
+                const addressAndDate = {
+                    ...getAddress,
+                    date: setAsAccepted.meetingAt
+                }
+
+                return { setAsAccepted, nextStep, addressAndDate }
             }
         })
 
@@ -521,7 +532,7 @@ export const getSucessAddressInitial = async (req: AuthRequest, res: Response) =
 
         if (getAdoptionProcess?.meetingRound! <= 2) {
             const getSucess = await prisma.meetingProposal.findFirst({
-                where: { adoptionProcessId: adoptionProcessId, type: "INITIAL", status: "ACCEPTED" },
+                where: { adoptionProcessId: adoptionProcessId, type: "INITIAL", status: "ACCEPTED", round: 1 },
 
             })
 

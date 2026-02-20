@@ -335,9 +335,10 @@ type petAdoptionStep2Type = {
   setAllProposes: React.Dispatch<React.SetStateAction<allProposesInterface[]>>,
   allProposes: allProposesInterface[]
   setIsRescheduleOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setAddress: React.Dispatch<React.SetStateAction<adoptionAddress | null>>
 }
 
-export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken, id, register, handleSubmit, watch, setValue, isSubmiting, setAddressMode, addressMode, onSubmit, errors, control, allProposes, setAllProposes, setIsRescheduleOpen }: petAdoptionStep2Type) {
+export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken, id, register, handleSubmit, watch, setValue, isSubmiting, setAddressMode, addressMode, onSubmit, errors, control, allProposes, setAllProposes, setIsRescheduleOpen, setAddress }: petAdoptionStep2Type) {
   const cep = watch("cep");
   useEffect(() => {
     cepSearch(setValue, String(cep));
@@ -377,6 +378,7 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
       }))
 
       if (allData?.getInfo.step == "MEETING_CONFIRMED"){
+        setAddress(response.addressAndDate)
         setIsRescheduleOpen(false)
       }
   }
@@ -642,10 +644,11 @@ type Step3Props = {
   id: string | undefined
   verifyToken: () => Promise<void>
   rescheduleComponent: ReactNode;
+  setAddress: React.Dispatch<React.SetStateAction<adoptionAddress | null>>
+  address: adoptionAddress | null
 };
 
-export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyToken, rescheduleComponent, isRescheduleOpen, setIsRescheduleOpen }: Step3Props) {
-  const [address, setAddress] = useState<adoptionAddress | null>(null)
+export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyToken, rescheduleComponent, isRescheduleOpen, setIsRescheduleOpen, setAddress, address }: Step3Props) {
   const [userConfirmed, setUserConfirmed] = useState<confirmations | null>(null)
 
   const openReschedule = () => setIsRescheduleOpen(true);
@@ -676,6 +679,20 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
     )
 
     if (!response) return
+
+    if (user?.id == allData?.maskedAdopterInfo.id){
+      setUserConfirmed((prev: any) => ({
+        ...prev,
+        adopterConfirmedAt: response.adopterConfirmedAt
+      }))
+    }
+
+    if (user?.id == allData?.maskedOwnerInfo.id){
+      setUserConfirmed((prev: any) => ({
+        ...prev,
+        ownerConfirmedAt: response.ownerConfirmedAt
+      }))
+    }
 
     if (response.step){
       setAllData((prev: any) => ({
@@ -762,7 +779,11 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
               <h3 className="petAdoption3-meetingTitle">Detalhes do Encontro</h3>
             </div>
 
-            <button
+            {userConfirmed?.adopterConfirmedAt ? (
+              ""
+            ): userConfirmed?.ownerConfirmedAt ? (
+              ""
+            ): <button
               type="button"
               className="petAdoption3-meetingActionBtn"
               onClick={openReschedule}
@@ -771,7 +792,7 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
                 <FaRedo/>
               </span>
               Reagendar
-            </button>
+            </button>}
           </div>
 
           <div className="petAdoption3-meetingRow">

@@ -4,7 +4,7 @@ import { PetAdoptionStep1, PetAdoptionStep2, PetAdoptionStep3 } from "./reusable
 import { useEffect, useMemo, useState } from "react";
 import resendApiPrivate from "./reusable/resendApi";
 import { useUser } from "../Interfaces/GlobalUser";
-import type { adoptionInterface, allProposesInterface } from "../Interfaces/adoptionInterface";
+import type { adoptionAddress, adoptionInterface, allProposesInterface } from "../Interfaces/adoptionInterface";
 import Loader from "./reusable/Loader";
 import { petAdoption2Saved, PetAdoptionStep2Schema, type PetAdoption2 } from "../Interfaces/zodSchema";
 import { useForm } from "react-hook-form";
@@ -14,6 +14,7 @@ function PetAdoptionSteps() {
   const { id } = useParams()
   const { token, verifyToken, user } = useUser()
   const [addressMode, setAddressMode] = useState<"SAVED" | "CUSTOM">("SAVED");
+  const [address, setAddress] = useState<adoptionAddress | null>(null)
   const [allData, setAllData] = useState<adoptionInterface | null>(null)
   const [allProposes, setAllProposes] = useState<allProposesInterface[]>([])
   const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
@@ -163,6 +164,7 @@ function PetAdoptionSteps() {
           allProposes={allProposes}
           setAllProposes={setAllProposes}
           setIsRescheduleOpen={setIsRescheduleOpen}
+          setAddress={setAddress}
         />
       )}
 
@@ -174,6 +176,8 @@ function PetAdoptionSteps() {
           token={token}
           verifyToken={verifyToken}
           id={id}
+          setAddress={setAddress}
+          address={address}
           isRescheduleOpen={isRescheduleOpen}
           setIsRescheduleOpen={setIsRescheduleOpen}
           rescheduleComponent={<PetAdoptionStep2
@@ -196,6 +200,7 @@ function PetAdoptionSteps() {
             allProposes={allProposes}
             setAllProposes={setAllProposes}
             setIsRescheduleOpen={setIsRescheduleOpen}
+            setAddress={setAddress}
           />}
         />
       )}
