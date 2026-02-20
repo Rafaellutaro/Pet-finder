@@ -334,16 +334,16 @@ type petAdoptionStep2Type = {
   onSubmit: (data: any) => void
   setAllProposes: React.Dispatch<React.SetStateAction<allProposesInterface[]>>,
   allProposes: allProposesInterface[]
+  setIsRescheduleOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken, id, register, handleSubmit, watch, setValue, isSubmiting, setAddressMode, addressMode, onSubmit, errors, control, allProposes, setAllProposes }: petAdoptionStep2Type) {
+export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken, id, register, handleSubmit, watch, setValue, isSubmiting, setAddressMode, addressMode, onSubmit, errors, control, allProposes, setAllProposes, setIsRescheduleOpen }: petAdoptionStep2Type) {
   const cep = watch("cep");
   useEffect(() => {
     cepSearch(setValue, String(cep));
   }, [cep]);
 
   const setProposeAsReject = async (proposeId: number) => {
-    if (allData?.getInfo?.step == "MEETING") {
       const response = await resendApiPrivate({
         apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${proposeId}/setRejectInitial`,
         options: { method: "PATCH" },
@@ -356,11 +356,9 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
       setAllProposes(prev =>
         prev.map(p => (p.id == response.id ? { ...p, ...response } : p))
       );
-    }
   }
 
   const setProposeAsAccept = async (proposeId: number) => {
-    if (allData?.getInfo?.step == "MEETING") {
       const response = await resendApiPrivate({
         apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${proposeId}/setAcceptInitial`,
         options: { method: "PATCH" },
@@ -377,7 +375,10 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
           step: response.nextStep.step
         }
       }))
-    }
+
+      if (allData?.getInfo.step == "MEETING_CONFIRMED"){
+        setIsRescheduleOpen(false)
+      }
   }
 
   const getAllProposes = async () => {
@@ -394,9 +395,7 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
   }
 
   useEffect(() => {
-    if (allData?.getInfo.step == "MEETING") {
       getAllProposes()
-    }
   }, [])
 
   const getAmount = allProposes?.length
@@ -636,6 +635,8 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
 type Step3Props = {
   allData: adoptionInterface | null
   setAllData: React.Dispatch<React.SetStateAction<adoptionInterface | null>>
+  setIsRescheduleOpen: React.Dispatch<React.SetStateAction<boolean>>
+  isRescheduleOpen: boolean
   user: UserData | null
   token: string | null
   id: string | undefined
@@ -643,8 +644,7 @@ type Step3Props = {
   rescheduleComponent: ReactNode;
 };
 
-export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyToken, rescheduleComponent }: Step3Props) {
-  const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
+export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyToken, rescheduleComponent, isRescheduleOpen, setIsRescheduleOpen }: Step3Props) {
   const [address, setAddress] = useState<adoptionAddress | null>(null)
   const [userConfirmed, setUserConfirmed] = useState<confirmations | null>(null)
 

@@ -172,7 +172,7 @@ export const confirmAdoption = async (req: AuthRequest, res: Response) => {
 
 export const meetingProposalInitial = async (req: AuthRequest, res: Response) => {
     const userId = req.user.userId
-    const { id } = req.params
+    const adoptionProcessId = Number(req.params.id)
     const payload = req.body
 
     try {
@@ -202,27 +202,69 @@ export const meetingProposalInitial = async (req: AuthRequest, res: Response) =>
 
         if (!address) return res.status(400).json({ message: "Invalid Address" })
 
-        const initialPropose = await prisma.meetingProposal.create({
-            data: {
-                adoptionProcessId: Number(id),
-                createdById: Number(userId),
-                addressId: address,
-                meetingAt: date
-            }
-        })
-
-        const getAddress = await prisma.address.findFirst({
+        const getAdoptionProcess = await prisma.adoptionProcess.findFirst({
             where: {
-                id: Number(initialPropose.addressId)
+                id: adoptionProcessId
+            },
+            select: {
+                meetingRound: true,
+                step: true
             }
         })
 
-        const result = {
-            ...initialPropose,
-            address: getAddress
+        if (getAdoptionProcess?.step == "MEETING") {
+            const initialPropose = await prisma.meetingProposal.create({
+                data: {
+                    adoptionProcessId: adoptionProcessId,
+                    createdById: Number(userId),
+                    addressId: address,
+                    meetingAt: date,
+                }
+            })
+
+            const getAddress = await prisma.address.findFirst({
+                where: {
+                    id: Number(initialPropose.addressId)
+                }
+            })
+
+            const result = {
+                ...initialPropose,
+                address: getAddress
+            }
+
+            return res.status(200).json({ data: result })
         }
 
-        return res.status(200).json({ data: result })
+        if (getAdoptionProcess?.step == "MEETING_CONFIRMED") {
+            const currentRound = getAdoptionProcess.meetingRound
+
+            const propose = await prisma.meetingProposal.create({
+                data: {
+                    adoptionProcessId: adoptionProcessId,
+                    createdById: Number(userId),
+                    addressId: address,
+                    meetingAt: date,
+                    type: "RESCHEDULE",
+                    round: currentRound
+                }
+            })
+
+            if (!propose) return res.status(404).json({ message: "adoption process couldn't be found" })
+
+            const getAddress = await prisma.address.findFirst({
+                where: {
+                    id: Number(propose.addressId)
+                }
+            })
+
+            const result = {
+                ...propose,
+                address: getAddress
+            }
+
+            return res.status(200).json({ data: result })
+        }
     } catch (e) {
         console.log(e)
         return res.status(500).json({ message: "unable to send your initial proposal" })
@@ -231,20 +273,51 @@ export const meetingProposalInitial = async (req: AuthRequest, res: Response) =>
 
 export const getAllProposesInitial = async (req: AuthRequest, res: Response) => {
     const userId = req.user.userId
-    const { id } = req.params
+    const adoptionProcessId = Number(req.params.id)
 
     try {
         if (!isUserAllowedInAdoptionProcess(Number(userId), prisma)) return res.status(403).json({ message: "you' not allowed here" })
 
-        const getAllProposesInitial = await prisma.meetingProposal.findMany({
+        const getAdoptionProcess = await prisma.adoptionProcess.findFirst({
             where: {
-                adoptionProcessId: Number(id),
-                type: "INITIAL"
+                id: adoptionProcessId
             },
-            include: { address: true }
+            select: {
+                meetingRound: true,
+                step: true
+            }
         })
 
-        return res.status(200).json({ data: getAllProposesInitial })
+        if (getAdoptionProcess?.step == "MEETING") {
+            const getAllProposesInitial = await prisma.meetingProposal.findMany({
+                where: {
+                    adoptionProcessId: adoptionProcessId,
+                    type: "INITIAL",
+                    round: 1
+                },
+                include: { address: true }
+            })
+
+            return res.status(200).json({ data: getAllProposesInitial })
+        }
+
+        if (getAdoptionProcess?.step == "MEETING_CONFIRMED") {
+            const getCurrentRound = getAdoptionProcess.meetingRound
+
+            const getAllProposes = await prisma.meetingProposal.findMany({
+                where: {
+                    adoptionProcessId: adoptionProcessId,
+                    type: "RESCHEDULE",
+                    round: getCurrentRound,
+                    OR: [{status: "REJECTED"}, {status: "PENDING"}]
+                },
+                orderBy: { createdAt: "desc" },
+                include: { address: true }
+
+            })
+
+            return res.status(200).json({ data: getAllProposes })
+        }
     } catch (e) {
         console.log(e)
         return res.status(500).json({ message: "unable to get all proposes intial" })
@@ -253,24 +326,61 @@ export const getAllProposesInitial = async (req: AuthRequest, res: Response) => 
 
 export const setProposeToReject = async (req: AuthRequest, res: Response) => {
     const userId = req.user.userId
-    const { id } = req.params
+    const proposeId = Number(req.params.id)
 
     try {
         if (!isUserAllowedInAdoptionProcess(Number(userId), prisma)) return res.status(403).json({ message: "you' not allowed here" })
 
-        const setAsRejected = await prisma.meetingProposal.update({
+        const getMeetingProposal = await prisma.meetingProposal.findUnique({
+            where: { id: proposeId },
+            select: { adoptionProcessId: true }
+        })
+
+        const getAdoptionProcess = await prisma.adoptionProcess.findFirst({
             where: {
-                id: Number(id),
-                type: "INITIAL"
+                id: getMeetingProposal?.adoptionProcessId
             },
-            data: {
-                status: "REJECTED"
+            select: {
+                meetingRound: true,
+                step: true
             }
         })
 
-        if (!setAsRejected) return res.status(404).json({ message: "couldn't find the propose" })
+        if (getAdoptionProcess?.step == "MEETING") {
+            const setAsRejected = await prisma.meetingProposal.update({
+                where: {
+                    id: proposeId,
+                    type: "INITIAL",
+                    round: 1
+                },
+                data: {
+                    status: "REJECTED"
+                }
+            })
 
-        res.status(200).json({ data: setAsRejected })
+            if (!setAsRejected) return res.status(404).json({ message: "couldn't find the propose" })
+
+            return res.status(200).json({ data: setAsRejected })
+        }
+
+        if (getAdoptionProcess?.step == "MEETING_CONFIRMED") {
+            const getCurrentRound = getAdoptionProcess.meetingRound
+
+            const setAsRejected = await prisma.meetingProposal.update({
+                where: {
+                    id: proposeId,
+                    type: "RESCHEDULE",
+                    round: getCurrentRound
+                },
+                data: {
+                    status: "REJECTED"
+                }
+            })
+
+            if (!setAsRejected) return res.status(404).json({ message: "couldn't find the propose" })
+
+            return res.status(200).json({ data: setAsRejected })
+        }
 
     } catch (e) {
         console.log(e)
@@ -286,41 +396,103 @@ export const setProposeToAccepted = async (req: AuthRequest, res: Response) => {
         if (!isUserAllowedInAdoptionProcess(Number(userId), prisma)) return res.status(403).json({ message: "you' not allowed here" })
 
         const result = await prisma.$transaction(async (p) => {
-            const getPropose = await p.meetingProposal.findUnique({
-                where: {
-                    id: proposeId,
-                    type: "INITIAL"
-                }
+            const getMeetingProposal = await prisma.meetingProposal.findUnique({
+                where: { id: proposeId },
+                select: { adoptionProcessId: true }
             })
 
-            if (!getPropose) return res.status(404).json({ message: "couldn't find the propose" })
-
-            const setAsAccepted = await p.meetingProposal.update({
+            const getAdoptionProcess = await p.adoptionProcess.findFirst({
                 where: {
-                    id: proposeId,
-                    type: "INITIAL"
+                    id: getMeetingProposal?.adoptionProcessId
                 },
-                data: {
-                    status: "ACCEPTED",
-                    respondedBy: userId,
-                    respondedAt: new Date()
+                select: {
+                    meetingRound: true,
+                    step: true
                 }
             })
 
-            if (!setAsAccepted) return res.status(404).json({ message: "couldn't set the propose" })
+            if (getAdoptionProcess?.step == "MEETING") {
+                const getPropose = await p.meetingProposal.findUnique({
+                    where: {
+                        id: proposeId,
+                        type: "INITIAL"
+                    }
+                })
 
-            const nextStep = await p.adoptionProcess.update({
-                where: {
-                    id: getPropose.adoptionProcessId
-                },
-                data: {
-                    step: "MEETING_CONFIRMED"
-                }
-            })
+                if (!getPropose) return res.status(404).json({ message: "couldn't find the propose" })
 
-            if (!nextStep) return res.status(404).json({ message: "couldn't set the nextStep" })
+                const setAsAccepted = await p.meetingProposal.update({
+                    where: {
+                        id: proposeId,
+                        type: "INITIAL"
+                    },
+                    data: {
+                        status: "ACCEPTED",
+                        respondedById: Number(userId),
+                        respondedAt: new Date()
+                    }
+                })
 
-            return { setAsAccepted, nextStep }
+                if (!setAsAccepted) return res.status(404).json({ message: "couldn't set the propose" })
+
+                const nextStep = await p.adoptionProcess.update({
+                    where: {
+                        id: getPropose.adoptionProcessId
+                    },
+                    data: {
+                        step: "MEETING_CONFIRMED"
+                    }
+                })
+
+                if (!nextStep) return res.status(404).json({ message: "couldn't set the nextStep" })
+
+                return { setAsAccepted, nextStep }
+            }
+
+            if (getAdoptionProcess?.step == "MEETING_CONFIRMED") {
+                const currentRound = getAdoptionProcess.meetingRound
+                const nextRound = getAdoptionProcess.meetingRound + 1
+
+                const getPropose = await p.meetingProposal.findUnique({
+                    where: {
+                        id: proposeId,
+                        type: "RESCHEDULE",
+                        round: currentRound
+                    }
+                })
+
+                if (!getPropose) return res.status(404).json({ message: "couldn't find the propose" })
+
+                const setAsAccepted = await p.meetingProposal.update({
+                    where: {
+                        id: proposeId,
+                        type: "RESCHEDULE",
+                        round: currentRound
+                    },
+                    data: {
+                        status: "ACCEPTED",
+                        respondedById: Number(userId),
+                        respondedAt: new Date(),
+                        round: nextRound
+                    }
+                })
+
+                if (!setAsAccepted) return res.status(404).json({ message: "couldn't set the propose" })
+
+                const nextStep = await p.adoptionProcess.update({
+                    where: {
+                        id: getPropose.adoptionProcessId
+                    },
+                    data: {
+                        step: "MEETING_CONFIRMED",
+                        meetingRound: nextRound
+                    }
+                })
+
+                if (!nextStep) return res.status(404).json({ message: "couldn't set the nextStep" })
+
+                return { setAsAccepted, nextStep }
+            }
         })
 
         res.status(200).json({ data: result })
@@ -337,26 +509,64 @@ export const getSucessAddressInitial = async (req: AuthRequest, res: Response) =
     try {
         if (!isUserAllowedInAdoptionProcess(Number(userId), prisma)) return res.status(404).json({ message: "you' not allowed here" })
 
-        const getSucess = await prisma.meetingProposal.findFirst({
-            where: { adoptionProcessId: adoptionProcessId, type: "INITIAL", status: "ACCEPTED" },
-
+        const getAdoptionProcess = await prisma.adoptionProcess.findFirst({
+            where: {
+                id: adoptionProcessId
+            },
+            select: {
+                meetingRound: true,
+                step: true
+            }
         })
 
-        if (!getSucess) return res.status(404).json({ message: "unable to find propose" })
+        if (getAdoptionProcess?.meetingRound! <= 2) {
+            const getSucess = await prisma.meetingProposal.findFirst({
+                where: { adoptionProcessId: adoptionProcessId, type: "INITIAL", status: "ACCEPTED" },
 
-        const getSucessAddress = await prisma.address.findFirst({
-            where: { id: Number(getSucess.addressId) },
+            })
 
-        })
+            if (!getSucess) return res.status(404).json({ message: "unable to find propose" })
 
-        if (!getSucessAddress) return res.status(404).json({ message: "unable to find sucess address" })
+            const getSucessAddress = await prisma.address.findFirst({
+                where: { id: Number(getSucess.addressId) },
 
-        const result = {
-            ...getSucessAddress,
-            date: getSucess.meetingAt
+            })
+
+            if (!getSucessAddress) return res.status(404).json({ message: "unable to find sucess address" })
+
+            const result = {
+                ...getSucessAddress,
+                date: getSucess.meetingAt
+            }
+
+            return res.status(200).json({ data: result })
         }
 
-        res.status(200).json({ data: result })
+        if (getAdoptionProcess?.meetingRound! > 2){
+            const currentRound = getAdoptionProcess?.meetingRound
+
+            const getSucess = await prisma.meetingProposal.findFirst({
+                where: { adoptionProcessId: adoptionProcessId, type: "RESCHEDULE", status: "ACCEPTED", round: currentRound },
+                select: {addressId: true, meetingAt: true}
+
+            })
+
+            if (!getSucess) return res.status(404).json({ message: "unable to find propose" })
+
+            const getSucessAddress = await prisma.address.findFirst({
+                where: { id: Number(getSucess.addressId) },
+
+            })
+
+            if (!getSucessAddress) return res.status(404).json({ message: "unable to find sucess address" })
+
+            const result = {
+                ...getSucessAddress,
+                date: getSucess.meetingAt
+            }
+
+            return res.status(200).json({ data: result })
+        }
     } catch (e) {
         console.log(e)
         return res.status(500).json({ message: "unable to get initial sucess address" })
@@ -364,89 +574,89 @@ export const getSucessAddressInitial = async (req: AuthRequest, res: Response) =
 }
 
 export const setAsConfirmed = async (req: AuthRequest, res: Response) => {
-  const userId = Number(req.user.userId);
-  const adoptionProcessId = Number(req.params.id);
+    const userId = Number(req.user.userId);
+    const adoptionProcessId = Number(req.params.id);
 
-  try {
-    const result = await prisma.$transaction(async (p) => {
-      const ap = await p.adoptionProcess.findUnique({
-        where: { id: adoptionProcessId },
-        select: { adopterId: true, ownerId: true },
-      });
+    try {
+        const result = await prisma.$transaction(async (p) => {
+            const ap = await p.adoptionProcess.findUnique({
+                where: { id: adoptionProcessId },
+                select: { adopterId: true, ownerId: true },
+            });
 
-      if (!ap) return res.status(404).json({message: "you dont belong here"})
+            if (!ap) return res.status(404).json({ message: "you dont belong here" })
 
-      const isAdopter = userId == ap.adopterId;
-      const isOwner = userId == ap.ownerId;
+            const isAdopter = userId == ap.adopterId;
+            const isOwner = userId == ap.ownerId;
 
-      if (!isAdopter && !isOwner) return res.status(404).json({message: "you dont belong here"})
+            if (!isAdopter && !isOwner) return res.status(404).json({ message: "you dont belong here" })
 
-      const existing = await p.meetingConfirmation.findUnique({
-        where: { adoptionProcessId },
-      });
+            const existing = await p.meetingConfirmation.findUnique({
+                where: { adoptionProcessId },
+            });
 
-      let row;
+            let row;
 
-      if (!existing) {
-        row = await p.meetingConfirmation.create({
-          data: {
-            adoptionProcessId,
-            adopterConfirmedAt: isAdopter ? new Date() : undefined,
-            ownerConfirmedAt: isOwner ? new Date() : undefined,
-          },
-        });
-      } else {
-        row = await p.meetingConfirmation.update({
-          where: { adoptionProcessId },
-          data: {
-            adopterConfirmedAt: isAdopter ? new Date() : undefined,
-            ownerConfirmedAt: isOwner ? new Date() : undefined,
-          },
-        });
-      }
-
-      if (row.adopterConfirmedAt && row.ownerConfirmedAt) {
-        row = await p.meetingConfirmation.update({
-          where: { adoptionProcessId },
-          data: { finalizedAt: new Date() },
-        });
-
-        row = await p.adoptionProcess.update({
-            where: {id: adoptionProcessId},
-            data:{
-                step: "FINALIZE"
+            if (!existing) {
+                row = await p.meetingConfirmation.create({
+                    data: {
+                        adoptionProcessId,
+                        adopterConfirmedAt: isAdopter ? new Date() : undefined,
+                        ownerConfirmedAt: isOwner ? new Date() : undefined,
+                    },
+                });
+            } else {
+                row = await p.meetingConfirmation.update({
+                    where: { adoptionProcessId },
+                    data: {
+                        adopterConfirmedAt: isAdopter ? new Date() : undefined,
+                        ownerConfirmedAt: isOwner ? new Date() : undefined,
+                    },
+                });
             }
-        })
 
-      }
+            if (row.adopterConfirmedAt && row.ownerConfirmedAt) {
+                row = await p.meetingConfirmation.update({
+                    where: { adoptionProcessId },
+                    data: { finalizedAt: new Date() },
+                });
 
-      return row;
-    });
+                row = await p.adoptionProcess.update({
+                    where: { id: adoptionProcessId },
+                    data: {
+                        step: "FINALIZE"
+                    }
+                })
 
-    return res.status(200).json({ data: result });
-  } catch (e: any) {
-    console.log(e);
-    return res.status(500).json({message: "unable to set as confirmed" });
-  }
+            }
+
+            return row;
+        });
+
+        return res.status(200).json({ data: result });
+    } catch (e: any) {
+        console.log(e);
+        return res.status(500).json({ message: "unable to set as confirmed" });
+    }
 };
 
-export const getConfirmations = async(req:AuthRequest, res: Response) => {
+export const getConfirmations = async (req: AuthRequest, res: Response) => {
     const userId = req.user.userId
     const adoptionProcessId = Number(req.params.id);
 
     try {
         if (!isUserAllowedInAdoptionProcess(Number(userId), prisma)) return res.status(403).json({ message: "you' not allowed here" })
-        
+
         const confirmations = await prisma.meetingConfirmation.findUnique({
-            where: {adoptionProcessId: adoptionProcessId}
+            where: { adoptionProcessId: adoptionProcessId }
         })
 
-        if (!confirmations) return res.status(404).json({message: "confirmations coudn't be found"})
-        
-        res.status(200).json({data: confirmations})
+        if (!confirmations) return res.status(404).json({ message: "confirmations coudn't be found" })
+
+        res.status(200).json({ data: confirmations })
 
     } catch (e) {
         console.log(e)
-        return res.status(500).json({message: "unable to get confirmations" });
+        return res.status(500).json({ message: "unable to get confirmations" });
     }
 }

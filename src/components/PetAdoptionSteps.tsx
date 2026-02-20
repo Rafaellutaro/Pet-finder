@@ -16,6 +16,7 @@ function PetAdoptionSteps() {
   const [addressMode, setAddressMode] = useState<"SAVED" | "CUSTOM">("SAVED");
   const [allData, setAllData] = useState<adoptionInterface | null>(null)
   const [allProposes, setAllProposes] = useState<allProposesInterface[]>([])
+  const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
 
   const resolver = useMemo(() => {
     if (addressMode == "SAVED") return zodResolver(petAdoption2Saved);
@@ -23,43 +24,41 @@ function PetAdoptionSteps() {
   }, [addressMode]);
 
   const onSubmit = async (data: PetAdoption2) => {
-    if (allData?.getInfo?.step == "MEETING") {
-      let address = null
+    let address = null
 
-      if (!data.addressId) {
-        address = {
-          cep: data.cep,
-          street: data.street,
-          state: data.region,
-          city: data.city,
-          neighborhood: data.neighborhood
-        }
-      } else {
-        address = data.addressId
+    if (!data.addressId) {
+      address = {
+        cep: data.cep,
+        street: data.street,
+        state: data.region,
+        city: data.city,
+        neighborhood: data.neighborhood
       }
-
-      const payload = {
-        address: address,
-        meetDate: data.meetDate,
-        meetTime: data.meetTime
-      }
-
-      const response = await resendApiPrivate({
-        apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${id}/initial`,
-        options: { method: "POST", body: JSON.stringify(payload) },
-        token: String(token),
-        verifyToken: verifyToken
-      })
-
-      if (!response) return
-
-      console.log(response)
-
-      setAllProposes((prev: any) => ([
-        ...prev,
-        response
-      ]))
+    } else {
+      address = data.addressId
     }
+
+    const payload = {
+      address: address,
+      meetDate: data.meetDate,
+      meetTime: data.meetTime
+    }
+
+    const response = await resendApiPrivate({
+      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${id}/initial`,
+      options: { method: "POST", body: JSON.stringify(payload) },
+      token: String(token),
+      verifyToken: verifyToken
+    })
+
+    if (!response) return
+
+    console.log(response)
+
+    setAllProposes((prev: any) => ([
+      ...prev,
+      response
+    ]))
   }
 
   const {
@@ -163,37 +162,41 @@ function PetAdoptionSteps() {
           errors={errors}
           allProposes={allProposes}
           setAllProposes={setAllProposes}
+          setIsRescheduleOpen={setIsRescheduleOpen}
         />
       )}
 
       {allData.getInfo.step == "MEETING_CONFIRMED" && (
-        <PetAdoptionStep3 
-        allData={allData}
-        setAllData={setAllData}
-        user={user}
-        token={token}
-        verifyToken={verifyToken}
-        id={id}
-        rescheduleComponent={<PetAdoptionStep2
+        <PetAdoptionStep3
           allData={allData}
           setAllData={setAllData}
           user={user}
           token={token}
           verifyToken={verifyToken}
           id={id}
-          register={register}
-          handleSubmit={handleSubmit}
-          watch={watch}
-          setValue={setValue}
-          isSubmiting={isSubmitting}
-          control={control}
-          setAddressMode={setAddressMode}
-          addressMode={addressMode}
-          onSubmit={onSubmit}
-          errors={errors}
-          allProposes={allProposes}
-          setAllProposes={setAllProposes}
-        />}
+          isRescheduleOpen={isRescheduleOpen}
+          setIsRescheduleOpen={setIsRescheduleOpen}
+          rescheduleComponent={<PetAdoptionStep2
+            allData={allData}
+            setAllData={setAllData}
+            user={user}
+            token={token}
+            verifyToken={verifyToken}
+            id={id}
+            register={register}
+            handleSubmit={handleSubmit}
+            watch={watch}
+            setValue={setValue}
+            isSubmiting={isSubmitting}
+            control={control}
+            setAddressMode={setAddressMode}
+            addressMode={addressMode}
+            onSubmit={onSubmit}
+            errors={errors}
+            allProposes={allProposes}
+            setAllProposes={setAllProposes}
+            setIsRescheduleOpen={setIsRescheduleOpen}
+          />}
         />
       )}
     </div>
