@@ -1,0 +1,378 @@
+.petAdoption4-main-container {
+  width: 100%;
+  min-height: 100vh;
+  padding: 26px 18px 44px; /* ✅ less vertical padding */
+  background: radial-gradient(1200px 700px at 50% 0%, #fff1f6 0%, #fbf7ff 40%, #ffffff 100%);
+  color: #111827;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Main card (slightly tighter) */
+.petadoption4-pageCard {
+  width: min(980px, 100%);
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 22px;
+  border: 1px solid rgba(17, 24, 39, 0.06);
+  box-shadow: 0 20px 60px rgba(17, 24, 39, 0.12);
+  padding: 24px 22px 18px; /* ✅ less bottom padding */
+}
+
+/* HERO */
+.petAdoption4-header {
+  text-align: center;
+  padding: 6px 10px 12px; /* ✅ tighter */
+}
+
+.petadoption4-pulsating-heart {
+  display: flex;
+  justify-content: center;
+  margin: 4px 0 12px;
+}
+
+.petadoption4-heart-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff4d6d, #9b5cff);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
+  position: relative;
+  animation: petadoption4Pulse 1.7s ease-in-out infinite;
+}
+
+.petadoption4-heart-circle::after {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255, 77, 109, 0.22), rgba(155, 92, 255, 0));
+  filter: blur(6px);
+  z-index: -1;
+}
+
+.petadoption4-heart-icon {
+  font-size: 34px;
+  color: #fff;
+  transform: translateY(1px);
+}
+
+@keyframes petadoption4Pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+.petAdoption4-title {
+  margin: 0;
+  font-size: 44px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.petAdoption4-confettiIcon {
+  font-size: 20px;
+  transform: translateY(2px);
+}
+
+.petAdoption4-subtitle {
+  margin: 8px 0 6px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.petAdoption4-highlight {
+  color: #ff4d6d;
+}
+
+.petAdoption4-desc {
+  margin: 0 auto;
+  max-width: 680px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: rgba(17, 24, 39, 0.70);
+}
+
+/* SUMMARY (tighter gap below hero) */
+.petadoption4-addoption-summary {
+  margin-top: 14px; /* ✅ reduced */
+  border-radius: 18px;
+  padding: 18px;
+  background: linear-gradient(180deg, rgba(255, 77, 109, 0.07), rgba(155, 92, 255, 0.05));
+  border: 1px solid rgba(255, 77, 109, 0.14);
+  display: grid;
+  grid-template-columns: 330px 1fr;
+  gap: 18px;
+}
+
+/* LEFT */
+.petadoption4-left-panel {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(17, 24, 39, 0.06);
+  padding: 14px;
+}
+
+.petadoption4-pet-imgWrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.petadoption4-pet-img {
+  width: 248px;
+  height: 248px;
+  object-fit: cover;
+  border-radius: 20px;
+  border: 6px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 18px 40px rgba(17, 24, 39, 0.16);
+}
+
+.petadoption4-pet-chip {
+  position: absolute;
+  bottom: -14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 999px;
+  padding: 8px 14px;
+  box-shadow: 0 12px 26px rgba(17, 24, 39, 0.12);
+}
+
+.petadoption4-pet-chipIcon {
+  color: #ff4d6d;
+  font-weight: 900;
+}
+
+.petadoption4-pet-chipText {
+  font-weight: 900;
+}
+
+/* ✅ Less “weight” under image */
+.petadoption4-peopleRow {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr 38px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 2px;
+  border-top: 1px solid rgba(17, 24, 39, 0.06); /* ✅ subtle separation */
+}
+
+.petadoption4-personMini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.petadoption4-avatarMini {
+  width: 36px; /* ✅ smaller */
+  height: 36px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.10); /* ✅ softer */
+}
+
+.petadoption4-personMiniText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.petadoption4-personMiniName {
+  font-weight: 900;
+  font-size: 12.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.petadoption4-personMiniRole {
+  font-size: 11.5px;
+  color: rgba(17, 24, 39, 0.58);
+}
+
+.petadoption4-peopleLinkMini {
+  text-align: center;
+  font-weight: 900;
+  color: rgba(17, 24, 39, 0.28); /* ✅ lighter */
+}
+
+/* RIGHT */
+.petadoption4-right-panel {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(17, 24, 39, 0.06);
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.petadoption4-summaryHeader {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 2px;
+}
+
+.petadoption4-summaryIcon {
+  font-size: 18px;
+}
+
+.petadoption4-summaryTitle {
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+.petadoption4-details {
+  border-radius: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(17, 24, 39, 0.10);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.petadoption4-detailsWide {
+  width: 100%;
+}
+
+.petadoption4-detailsGrid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.petadoption4-detailsLabel {
+  display: block;
+  font-size: 12px;
+  color: rgba(17, 24, 39, 0.60);
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.petadoption4-detailsValue {
+  font-weight: 900;
+  font-size: 14px;
+}
+
+/* ✅ Thank-you softer (less competition) */
+.petadoption4-thankYou-message {
+  margin-top: 14px; /* ✅ tighter */
+  background: rgba(251, 191, 36, 0.08); /* ✅ softer tint */
+  border: 1px solid rgba(251, 191, 36, 0.18); /* ✅ softer border */
+  border-radius: 18px;
+  padding: 14px 14px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.petadoption4-thankIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(251, 191, 36, 0.14);
+  border: 1px solid rgba(251, 191, 36, 0.20);
+  font-size: 16px;
+  flex: 0 0 auto;
+  color: rgba(17, 24, 39, 0.70);
+}
+
+.petadoption4-thankText h3 {
+  margin: 2px 0 6px;
+  font-size: 15.5px;
+  font-weight: 900;
+}
+
+.petadoption4-thankText p {
+  margin: 0;
+  font-size: 12.8px;
+  line-height: 1.6;
+  color: rgba(17, 24, 39, 0.68);
+}
+
+/* BUTTONS */
+.petadoption4-buttons {
+  margin-top: 14px; /* ✅ tighter */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.petadoption4-btn {
+  height: 52px;
+  border-radius: 14px;
+  border: 0;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 14px;
+  box-shadow: 0 16px 40px rgba(17, 24, 39, 0.16);
+  transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+}
+
+.petadoption4-btn:active {
+  transform: translateY(1px);
+}
+
+.petadoption4-btnPrimary {
+  color: #fff;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+}
+
+.petadoption4-btnSecondary {
+  color: #fff;
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+}
+
+.petadoption4-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 46px rgba(17, 24, 39, 0.20);
+  filter: brightness(1.02);
+}
+
+/* ✅ Footer slightly tighter */
+.petadoption4-footer-message {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(17, 24, 39, 0.58);
+  padding: 4px 10px 0;
+}
+
+/* Responsive */
+@media (max-width: 920px) {
+  .petadoption4-addoption-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .petadoption4-detailsGrid2 {
+    grid-template-columns: 1fr;
+  }
+
+  .petadoption4-pet-img {
+    width: 240px;
+    height: 240px;
+  }
+}
+
+@media (max-width: 520px) {
+  .petAdoption4-title {
+    font-size: 34px;
+  }
+
+  .petadoption4-buttons {
+    grid-template-columns: 1fr;
+  }
+}

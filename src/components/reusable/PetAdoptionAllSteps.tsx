@@ -5,6 +5,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import resendApiPrivate from "./resendApi";
 import "../../assets/css/petAdoptionStep2.css"
 import "../../assets/css/petAdoptionStep3.css"
+import "../../assets/css/petAdoptionStep4.css"
 import { Controller, type Control, type FieldErrors, type UseFormHandleSubmit, type UseFormRegister, type UseFormSetValue, type UseFormWatch } from "react-hook-form";
 import type { PetAdoption2} from "../../Interfaces/zodSchema";
 import { cepSearch } from "../functions/userFunctions";
@@ -941,6 +942,153 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
           </div>
         </div>
       )}
+    </section>
+  );
+}
+
+export function PetAdoptionStep4(){
+      return (
+    <section className="petAdoption4-main-container">
+      <div className="petadoption4-pageCard">
+        {/* HERO */}
+        <header className="petAdoption4-header">
+          <div className="petadoption4-pulsating-heart" aria-hidden="true">
+            <div className="petadoption4-heart-circle">
+              <span className="petadoption4-heart-icon">❤</span>
+            </div>
+          </div>
+
+          <h2 className="petAdoption4-title">
+            <span className="petAdoption4-confettiIcon" aria-hidden="true">
+              🎉
+            </span>
+            Adoption Complete!
+          </h2>
+
+          <p className="petAdoption4-subtitle">
+            Welcome home, <span className="petAdoption4-highlight">Max</span>!
+          </p>
+
+          <p className="petAdoption4-desc">
+            Congratulations on completing the adoption process. Max has officially found a loving forever
+            home with Sarah Johnson!
+          </p>
+        </header>
+
+        {/* SUMMARY */}
+        <section className="petadoption4-addoption-summary">
+          <div className="petadoption4-left-panel">
+            <div className="petadoption4-pet-imgWrap">
+              <img
+                className="petadoption4-pet-img"
+                src="https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=1200&auto=format&fit=crop"
+                alt="Foto do pet"
+              />
+
+              <div className="petadoption4-pet-chip">
+                <span className="petadoption4-pet-chipIcon" aria-hidden="true">
+                  ✦
+                </span>
+                <span className="petadoption4-pet-chipText">Max</span>
+              </div>
+            </div>
+
+            {/* ✅ lighter / smaller avatars row */}
+            <div className="petadoption4-peopleRow">
+              <div className="petadoption4-personMini">
+                <img
+                  className="petadoption4-avatarMini"
+                  src="https://i.pravatar.cc/120?img=5"
+                  alt="Avatar do adotante"
+                />
+                <div className="petadoption4-personMiniText">
+                  <span className="petadoption4-personMiniName">Sarah J.</span>
+                  <span className="petadoption4-personMiniRole">Adotante</span>
+                </div>
+              </div>
+
+              <div className="petadoption4-peopleLinkMini" aria-hidden="true">
+                ↔
+              </div>
+
+              <div className="petadoption4-personMini">
+                <img
+                  className="petadoption4-avatarMini"
+                  src="https://i.pravatar.cc/120?img=12"
+                  alt="Avatar do dono atual"
+                />
+                <div className="petadoption4-personMiniText">
+                  <span className="petadoption4-personMiniName">Lucas L.</span>
+                  <span className="petadoption4-personMiniRole">Dono Atual</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="petadoption4-right-panel">
+            <div className="petadoption4-summaryHeader">
+              <span className="petadoption4-summaryIcon" aria-hidden="true">
+                📄
+              </span>
+              <span className="petadoption4-summaryTitle">Adoption Summary</span>
+            </div>
+
+            <div className="petadoption4-details petadoption4-detailsWide">
+              <span className="petadoption4-detailsLabel">Pet Details</span>
+              <span className="petadoption4-detailsValue">Golden Retriever • 3 years old</span>
+            </div>
+
+            <div className="petadoption4-detailsGrid2">
+              <div className="petadoption4-details">
+                <span className="petadoption4-detailsLabel">Adopted By</span>
+                <span className="petadoption4-detailsValue">Sarah Johnson</span>
+              </div>
+
+              <div className="petadoption4-details">
+                <span className="petadoption4-detailsLabel">Previous Owner</span>
+                <span className="petadoption4-detailsValue">Michael Chen</span>
+              </div>
+            </div>
+
+            <div className="petadoption4-details petadoption4-detailsWide">
+              <span className="petadoption4-detailsLabel">Adoption Date</span>
+              <span className="petadoption4-detailsValue">Friday, February 20, 2026</span>
+            </div>
+          </div>
+        </section>
+
+        {/* ✅ Softer thank-you so it doesn't compete */}
+        <section className="petadoption4-thankYou-message">
+          <div className="petadoption4-thankIcon" aria-hidden="true">
+            ♡
+          </div>
+          <div className="petadoption4-thankText">
+            <h3>Thank you for choosing adoption!</h3>
+            <p>
+              You’ve made a wonderful decision to give Max a loving home. We wish you both many happy years
+              together filled with joy, play, and unconditional love. Remember, adoption is just the beginning
+              of a beautiful friendship.
+            </p>
+          </div>
+        </section>
+
+        {/* BUTTONS */}
+        <div className="petadoption4-buttons">
+          <button className="petadoption4-btn petadoption4-btnPrimary" type="button">
+            ⬇ Download Adoption Certificate
+          </button>
+
+          <button className="petadoption4-btn petadoption4-btnSecondary" type="button">
+            🏠 Go to My Adoptions
+          </button>
+        </div>
+
+        {/* ✅ Footer tightened so card doesn't feel too tall */}
+        <div className="petadoption4-footer-message">
+          A copy of the adoption certificate has been sent to both parties. You can access your adoption
+          records anytime from your profile.
+        </div>
+      </div>
     </section>
   );
 }

@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import "../assets/css/PetAdoptionSteps.css"
-import { PetAdoptionStep1, PetAdoptionStep2, PetAdoptionStep3 } from "./reusable/PetAdoptionAllSteps";
+import { PetAdoptionStep1, PetAdoptionStep2, PetAdoptionStep3, PetAdoptionStep4 } from "./reusable/PetAdoptionAllSteps";
 import { useEffect, useMemo, useState } from "react";
 import resendApiPrivate from "./reusable/resendApi";
 import { useUser } from "../Interfaces/GlobalUser";
@@ -18,6 +18,7 @@ function PetAdoptionSteps() {
   const [allData, setAllData] = useState<adoptionInterface | null>(null)
   const [allProposes, setAllProposes] = useState<allProposesInterface[]>([])
   const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
+  const stepOrder = ["CONFIRMATION", "MEETING", "MEETING_CONFIRMED", "FINALIZE"];
 
   const resolver = useMemo(() => {
     if (addressMode == "SAVED") return zodResolver(petAdoption2Saved);
@@ -95,6 +96,7 @@ function PetAdoptionSteps() {
 
   if (!allData) return <Loader />
 
+  const currentIndex = stepOrder.indexOf(allData?.getInfo?.step);
 
   return (
     <div className="pet-adoption-page">
@@ -105,28 +107,28 @@ function PetAdoptionSteps() {
         </p>
 
         <div className="pet-adoption-stepper" aria-label="Adoption steps">
-          <div className={`pet-adoption-step ${allData.getInfo.step == "CONFIRMATION" ? "pet-adoption-step--active" : ""}`}>
+          <div className={`pet-adoption-step ${currentIndex > 0 ? "pet-adoption-step--done" : ""} ${currentIndex == 0 ? "pet-adoption-step--active" : ""}`}>
             <div className="pet-adoption-step-circle">1</div>
             <div className="pet-adoption-step-label">Confirmação</div>
           </div>
 
           <div className="pet-adoption-step-line" aria-hidden="true" />
 
-          <div className={`pet-adoption-step ${allData.getInfo.step == "MEETING" ? "pet-adoption-step--active" : ""}`}>
+          <div className={`pet-adoption-step ${currentIndex > 1 ? "pet-adoption-step--done" : ""} ${currentIndex == 1 ? "pet-adoption-step--active" : ""}`}>
             <div className="pet-adoption-step-circle">2</div>
             <div className="pet-adoption-step-label">Encontro</div>
           </div>
 
           <div className="pet-adoption-step-line" aria-hidden="true" />
 
-          <div className={`pet-adoption-step ${allData.getInfo.step == "MEETING_CONFIRMED" ? "pet-adoption-step--active" : ""}`}>
+          <div className={`pet-adoption-step ${currentIndex > 2 ? "pet-adoption-step--done" : ""} ${currentIndex == 2 ? "pet-adoption-step--active" : ""}`}>
             <div className="pet-adoption-step-circle">3</div>
             <div className="pet-adoption-step-label">Confirmar Encontro</div>
           </div>
 
           <div className="pet-adoption-step-line" aria-hidden="true" />
 
-          <div className={`pet-adoption-step ${allData.getInfo.step == "FINALIZE" ? "pet-adoption-step--active" : ""}`}>
+          <div className={`pet-adoption-step ${currentIndex > 3 ? "pet-adoption-step--done" : ""} ${currentIndex == 3 ? "pet-adoption-step--active" : ""}`}>
             <div className="pet-adoption-step-circle">4</div>
             <div className="pet-adoption-step-label">Finalizar</div>
           </div>
@@ -203,6 +205,10 @@ function PetAdoptionSteps() {
             setAddress={setAddress}
           />}
         />
+      )}
+
+      {allData.getInfo.step == "FINALIZE" && (
+        <PetAdoptionStep4/>
       )}
     </div>
   );

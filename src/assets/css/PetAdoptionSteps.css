@@ -56,15 +56,36 @@
   color: #6b7280;
 }
 
-.pet-adoption-step--active .pet-adoption-step-circle {
-  background: linear-gradient(90deg, #ff7a18, #ff2bb8);
-  color: #fff;
-  box-shadow: 0 10px 24px rgba(255, 64, 160, 0.25);
+/* DONE step circle */
+.pet-adoption-step--done .pet-adoption-step-circle {
+  background: linear-gradient(135deg, #ff4d6d, #9b5cff);
+  color: transparent;
+  position: relative;
+  opacity: 0.85; /* subtle difference from active */
+  box-shadow: 0 4px 12px rgba(255, 77, 109, 0.25);
 }
 
-.pet-adoption-step--active .pet-adoption-step-label {
-  color: #ff2bb8;
-  font-weight: 700;
+.pet-adoption-step--done .pet-adoption-step-circle::after {
+  content: "✓";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-weight: 900;
+  font-size: 14px;
+}
+
+/* ACTIVE step (slightly stronger glow so it stands out) */
+.pet-adoption-step--active .pet-adoption-step-circle {
+  background: linear-gradient(135deg, #ff4d6d, #9b5cff);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(255, 77, 109, 0.35);
+}
+
+/* Progress line after DONE steps */
+.pet-adoption-step--done + .pet-adoption-step-line {
+  background: linear-gradient(90deg, #ff4d6d, #9b5cff);
 }
 
 .pet-adoption-step-line {
