@@ -7,7 +7,7 @@ import "../../assets/css/petAdoptionStep2.css"
 import "../../assets/css/petAdoptionStep3.css"
 import "../../assets/css/petAdoptionStep4.css"
 import { Controller, type Control, type FieldErrors, type UseFormHandleSubmit, type UseFormRegister, type UseFormSetValue, type UseFormWatch } from "react-hook-form";
-import type { PetAdoption2} from "../../Interfaces/zodSchema";
+import type { PetAdoption2 } from "../../Interfaces/zodSchema";
 import { cepSearch } from "../functions/userFunctions";
 import { PatternFormat } from "react-number-format";
 import { IoLocationOutline } from "react-icons/io5";
@@ -18,6 +18,7 @@ import { FcOk } from "react-icons/fc";
 
 type petAdoptionStep1Type = {
   allData: adoptionInterface | null
+  setAllData: React.Dispatch<React.SetStateAction<adoptionInterface | null>>
   user: UserData | null
   token: string | null,
   verifyToken: () => Promise<void>
@@ -49,7 +50,13 @@ function PetAdoptionHeader({ step, title, sectionTitle, desc }: headerType) {
   )
 }
 
-export function PetAdoptionStep1({ allData, user, token, verifyToken, id }: petAdoptionStep1Type) {
+function AlreadyConfirmed(){
+  return (
+    <div className="petAdoption3-confirmationDone"> <FcOk /> Você já confirmou. Aguardando a confirmação da outra pessoa. </div>
+  )
+}
+
+export function PetAdoptionStep1({ allData, user, token, verifyToken, id, setAllData }: petAdoptionStep1Type) {
   const [agreements, setAgreements] = useState<boolean[]>([false, false, false, false]);
   const [isButtonActive, setIsButtonActive] = useState<boolean>(true);
 
@@ -75,6 +82,18 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id }: petA
       })
 
       if (!response) return
+
+      if (response.setAsConfirmed.ownerConfirmedAt || response.setAsConfirmed.adopterConfirmedAt){
+        setAllData((prev: any) => ({
+          ...prev,
+          getInfo: {
+            ...prev?.getInfo,
+            adopterConfirmedAt: response.setAsConfirmed.adopterConfirmedAt,
+            ownerConfirmedAt: response.setAsConfirmed.ownerConfirmedAt
+          }
+        }))
+      }
+
       setIsButtonActive(false)
       if (response.setAdoptionStatus == null) {
         // show notification to kjashdkahsd
@@ -284,7 +303,6 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id }: petA
           </ul>
         </div>}
 
-        {/* What happens next */}
         <div className="pet-adoption-next">
           <h4 className="pet-adoption-next-title">O que acontece a seguir?</h4>
           <ul className="pet-adoption-next-list">
@@ -294,7 +312,6 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id }: petA
           </ul>
         </div>
 
-        {/* CTA */}
         <div className="pet-adoption-cta">
           {user?.id == adopterInfo?.id && !allData?.getInfo.adopterConfirmedAt ? (
             <button type="button" className="pet-adoption-btn" disabled={!allChecked || !isButtonActive} onClick={() => confirmAdoption()}>
@@ -304,7 +321,7 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id }: petA
             <button type="button" className="pet-adoption-btn" disabled={!allChecked || !isButtonActive} onClick={() => confirmAdoption()}>
               {"Confirmar como Dono"}
             </button>
-          ) : ""}
+          ) : <AlreadyConfirmed/>}
 
           <p className="pet-adoption-footnote">
             Ambas as partes devem confirmar antes de prosseguir para a próxima etapa.<br />
@@ -346,42 +363,42 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
   }, [cep]);
 
   const setProposeAsReject = async (proposeId: number) => {
-      const response = await resendApiPrivate({
-        apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${proposeId}/setRejectInitial`,
-        options: { method: "PATCH" },
-        token: String(token),
-        verifyToken: verifyToken
-      })
+    const response = await resendApiPrivate({
+      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${proposeId}/setRejectInitial`,
+      options: { method: "PATCH" },
+      token: String(token),
+      verifyToken: verifyToken
+    })
 
-      if (!response) return
+    if (!response) return
 
-      setAllProposes(prev =>
-        prev.map(p => (p.id == response.id ? { ...p, ...response } : p))
-      );
+    setAllProposes(prev =>
+      prev.map(p => (p.id == response.id ? { ...p, ...response } : p))
+    );
   }
 
   const setProposeAsAccept = async (proposeId: number) => {
-      const response = await resendApiPrivate({
-        apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${proposeId}/setAcceptInitial`,
-        options: { method: "PATCH" },
-        token: String(token),
-        verifyToken: verifyToken
-      })
+    const response = await resendApiPrivate({
+      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${proposeId}/setAcceptInitial`,
+      options: { method: "PATCH" },
+      token: String(token),
+      verifyToken: verifyToken
+    })
 
-      if (!response) return
+    if (!response) return
 
-      setAllData((prev: any) => ({
-        ...prev,
-        getInfo: {
-          ...prev?.getInfo,
-          step: response.nextStep.step
-        }
-      }))
-
-      if (allData?.getInfo.step == "MEETING_CONFIRMED"){
-        setAddress(response.addressAndDate)
-        setIsRescheduleOpen(false)
+    setAllData((prev: any) => ({
+      ...prev,
+      getInfo: {
+        ...prev?.getInfo,
+        step: response.nextStep.step
       }
+    }))
+
+    if (allData?.getInfo.step == "MEETING_CONFIRMED") {
+      setAddress(response.addressAndDate)
+      setIsRescheduleOpen(false)
+    }
   }
 
   const getAllProposes = async () => {
@@ -398,7 +415,7 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
   }
 
   useEffect(() => {
-      getAllProposes()
+    getAllProposes()
   }, [])
 
   const getAmount = allProposes?.length
@@ -655,6 +672,9 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
   const openReschedule = () => setIsRescheduleOpen(true);
   const closeReschedule = () => setIsRescheduleOpen(false);
 
+  const today = new Date()
+  const canConfirm = today >= new Date(String(address?.date))
+
   const getSucessAddressInitial = async () => {
     const response = await resendApiPrivate({
       apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${id}/getInitial/sucessAddress`,
@@ -681,37 +701,44 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
 
     if (!response) return
 
-    if (user?.id == allData?.maskedAdopterInfo.id){
+    console.log("here", response)
+
+    if (user?.id == allData?.maskedAdopterInfo?.id) {
       setUserConfirmed((prev: any) => ({
         ...prev,
         adopterConfirmedAt: response.adopterConfirmedAt
       }))
     }
 
-    if (user?.id == allData?.maskedOwnerInfo.id){
+    if (user?.id == allData?.maskedOwnerInfo?.id) {
       setUserConfirmed((prev: any) => ({
         ...prev,
         ownerConfirmedAt: response.ownerConfirmedAt
       }))
     }
 
-    if (response.step){
+    if (response.step) {
       setAllData((prev: any) => ({
-      ...prev,
-      getInfo: {
-        ...prev?.getInfo,
-        step: response.step
-      }
-    }))
+        ...prev,
+        getInfo: {
+          ...prev?.getInfo,
+          step: response.step,
+        },
+        getPetInfo: {
+          ...prev?.getPetInfo,
+          date: response.createAdoption.adoptedAt
+        }
+      }))
     }
   }
 
   const getConfirmations = async () => {
     const response = await resendApiPrivate({
-      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${id}/getConfirmations`, 
-      options: {method: "GET"}, 
-      token: String(token), 
-      verifyToken: verifyToken}
+      apiUrl: `${import.meta.env.VITE_API_URL}/adoption/propose/${id}/getConfirmations`,
+      options: { method: "GET" },
+      token: String(token),
+      verifyToken: verifyToken
+    }
     )
 
     if (!response) return
@@ -775,22 +802,22 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
           <div className="petAdoption3-meetingTopRow">
             <div className="petAdoption3-meetingHead">
               <span className="petAdoption3-meetingHeadDot" aria-hidden="true">
-                <FaStreetView/>
+                <FaStreetView />
               </span>
               <h3 className="petAdoption3-meetingTitle">Detalhes do Encontro</h3>
             </div>
 
             {userConfirmed?.adopterConfirmedAt ? (
               ""
-            ): userConfirmed?.ownerConfirmedAt ? (
+            ) : userConfirmed?.ownerConfirmedAt ? (
               ""
-            ): <button
+            ) : <button
               type="button"
               className="petAdoption3-meetingActionBtn"
               onClick={openReschedule}
             >
               <span className="petAdoption3-meetingActionIcon" aria-hidden="true">
-                <FaRedo/>
+                <FaRedo />
               </span>
               Reagendar
             </button>}
@@ -798,7 +825,7 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
 
           <div className="petAdoption3-meetingRow">
             <span className="petAdoption3-meetingIcon" aria-hidden="true">
-              <IoLocationOutline/>
+              <IoLocationOutline />
             </span>
             <span className="petAdoption3-meetingText">
               {`${address?.street}, ${address?.neighborhood}, ${address?.city}-${address?.state}`}
@@ -807,7 +834,7 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
 
           <div className="petAdoption3-meetingRow">
             <span className="petAdoption3-meetingIcon" aria-hidden="true">
-              <CiCalendarDate/>
+              <CiCalendarDate />
             </span>
             <span className="petAdoption3-meetingText">{new Date(String(address?.date)).toLocaleDateString("pt-BR", {
               dateStyle: "short"
@@ -841,7 +868,7 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
 
             <span className="petAdoption3-ownerStatus">{userConfirmed?.adopterConfirmedAt ? (
               "Confirmado"
-            ): "Aguardando confirmação..."}</span>
+            ) : "Aguardando confirmação..."}</span>
           </div>
 
           <div className="petAdoption3-ownerCard petAdoption3-ownerCard--owner">
@@ -865,36 +892,38 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
 
             <span className="petAdoption3-ownerStatus">{userConfirmed?.ownerConfirmedAt ? (
               "Confirmado"
-            ): "Aguardando confirmação..."}</span>
+            ) : "Aguardando confirmação..."}</span>
           </div>
         </div>
 
         {/* CONFIRMATION */}
         {user?.id == allData?.maskedAdopterInfo.id && userConfirmed?.adopterConfirmedAt ? (
-          <div className="petAdoption3-confirmationDone"> <FcOk/> Você já confirmou. Aguardando a confirmação da outra pessoa. </div>
-        ): user?.id == allData?.maskedOwnerInfo.id && userConfirmed?.ownerConfirmedAt ? (
-          <div className="petAdoption3-confirmationDone"> <FcOk/> Você já confirmou. Aguardando a confirmação da outra pessoa. </div>
-        ): (
+          <AlreadyConfirmed/>
+        ) : user?.id == allData?.maskedOwnerInfo.id && userConfirmed?.ownerConfirmedAt ? (
+          <AlreadyConfirmed/>
+        ) : (
           <div className="petAdoption3-confirmation">
-          <span className="petAdoption3-confirmationHint">
-            {user?.id == allData?.maskedAdopterInfo.id ? (
-              `Por favor, confirme que você recebeu ${allData?.getPetInfo.name} de ${allData?.maskedOwnerInfo.name} ${allData?.maskedOwnerInfo.lastName} no local combinado.`
-            ) : `Por favor, confirme que você entregou ${allData?.getPetInfo.name} para ${allData?.maskedAdopterInfo.name} ${allData?.maskedAdopterInfo.lastName} no local combinado.`}
-          </span>
-
-          <button type="button" className="petAdoption3-confirmBtn" onClick={() => setAsConfirmed()}>
-            <span className="petAdoption3-confirmBtnIcon" aria-hidden="true">
-              ✓
+            <span className="petAdoption3-confirmationHint">
+              {user?.id == allData?.maskedAdopterInfo.id ? (
+                `Por favor, confirme que você recebeu ${allData?.getPetInfo.name} de ${allData?.maskedOwnerInfo.name} ${allData?.maskedOwnerInfo.lastName} no local combinado.`
+              ) : `Por favor, confirme que você entregou ${allData?.getPetInfo.name} para ${allData?.maskedAdopterInfo.name} ${allData?.maskedAdopterInfo.lastName} no local combinado.`}
             </span>
-            {user?.id == allData?.maskedAdopterInfo.id ? (
-              "Confirmar que Recebi o Pet"
-            ) : "Confirmar que Entreguei o Pet"}
-          </button>
 
-          <span className="petAdoption3-confirmationNote">
-            A confirmação finaliza esta etapa e libera a conclusão da adoção.
-          </span>
-        </div>
+            <button type="button" className="petAdoption3-confirmBtn" disabled={!canConfirm} onClick={() => setAsConfirmed()}>
+              <span className="petAdoption3-confirmBtnIcon" aria-hidden="true">
+                ✓
+              </span>
+              {user?.id == allData?.maskedAdopterInfo.id ? (
+                "Confirmar que Recebi o Pet"
+              ) : "Confirmar que Entreguei o Pet"}
+            </button>
+
+            <span className="petAdoption3-confirmationNote">
+              A confirmação ficará disponível após {new Date(String(address?.date)).toLocaleDateString("pt-BR", {
+                dateStyle: "full"
+              })}.
+            </span>
+          </div>
         )}
       </div>
 
@@ -946,11 +975,18 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
   );
 }
 
-export function PetAdoptionStep4(){
-      return (
+type petAdoptionStep4Type = {
+  allData: adoptionInterface | null
+}
+
+export function PetAdoptionStep4({allData}: petAdoptionStep4Type) {
+  const adopterFullName = `${allData?.maskedAdopterInfo.name} ${allData?.maskedAdopterInfo.lastName}`
+  const ownerFullName = `${allData?.maskedOwnerInfo.name} ${allData?.maskedOwnerInfo.lastName}`
+
+  return (
     <section className="petAdoption4-main-container">
       <div className="petadoption4-pageCard">
-        {/* HERO */}
+
         <header className="petAdoption4-header">
           <div className="petadoption4-pulsating-heart" aria-hidden="true">
             <div className="petadoption4-heart-circle">
@@ -962,26 +998,24 @@ export function PetAdoptionStep4(){
             <span className="petAdoption4-confettiIcon" aria-hidden="true">
               🎉
             </span>
-            Adoption Complete!
+            Adoção Concluída!
           </h2>
 
           <p className="petAdoption4-subtitle">
-            Welcome home, <span className="petAdoption4-highlight">Max</span>!
+            Bem-vindo ao seu novo lar, <span className="petAdoption4-highlight">{allData?.getPetInfo.name}</span>!
           </p>
 
           <p className="petAdoption4-desc">
-            Congratulations on completing the adoption process. Max has officially found a loving forever
-            home with Sarah Johnson!
+            Parabéns por concluir o processo de adoção. {allData?.getPetInfo.name} encontrou oficialmente um lar cheio de amor com {adopterFullName}!
           </p>
         </header>
 
-        {/* SUMMARY */}
         <section className="petadoption4-addoption-summary">
           <div className="petadoption4-left-panel">
             <div className="petadoption4-pet-imgWrap">
               <img
                 className="petadoption4-pet-img"
-                src="https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=1200&auto=format&fit=crop"
+                src={allData?.getPetInfo.imgs[0].url}
                 alt="Foto do pet"
               />
 
@@ -989,20 +1023,19 @@ export function PetAdoptionStep4(){
                 <span className="petadoption4-pet-chipIcon" aria-hidden="true">
                   ✦
                 </span>
-                <span className="petadoption4-pet-chipText">Max</span>
+                <span className="petadoption4-pet-chipText">{allData?.getPetInfo.name}</span>
               </div>
             </div>
 
-            {/* ✅ lighter / smaller avatars row */}
             <div className="petadoption4-peopleRow">
               <div className="petadoption4-personMini">
                 <img
                   className="petadoption4-avatarMini"
-                  src="https://i.pravatar.cc/120?img=5"
+                  src={allData?.maskedAdopterInfo.profileImg}
                   alt="Avatar do adotante"
                 />
                 <div className="petadoption4-personMiniText">
-                  <span className="petadoption4-personMiniName">Sarah J.</span>
+                  <span className="petadoption4-personMiniName">{adopterFullName}</span>
                   <span className="petadoption4-personMiniRole">Adotante</span>
                 </div>
               </div>
@@ -1014,11 +1047,11 @@ export function PetAdoptionStep4(){
               <div className="petadoption4-personMini">
                 <img
                   className="petadoption4-avatarMini"
-                  src="https://i.pravatar.cc/120?img=12"
+                  src={allData?.maskedOwnerInfo.profileImg}
                   alt="Avatar do dono atual"
                 />
                 <div className="petadoption4-personMiniText">
-                  <span className="petadoption4-personMiniName">Lucas L.</span>
+                  <span className="petadoption4-personMiniName">{ownerFullName}</span>
                   <span className="petadoption4-personMiniRole">Dono Atual</span>
                 </div>
               </div>
@@ -1030,63 +1063,60 @@ export function PetAdoptionStep4(){
               <span className="petadoption4-summaryIcon" aria-hidden="true">
                 📄
               </span>
-              <span className="petadoption4-summaryTitle">Adoption Summary</span>
+              <span className="petadoption4-summaryTitle">Resumo da Adoção</span>
             </div>
 
             <div className="petadoption4-details petadoption4-detailsWide">
-              <span className="petadoption4-detailsLabel">Pet Details</span>
-              <span className="petadoption4-detailsValue">Golden Retriever • 3 years old</span>
+              <span className="petadoption4-detailsLabel">Detalhes do Pet</span>
+              <span className="petadoption4-detailsValue">{allData?.getPetInfo.breed} • {allData?.getPetInfo.age} anos de Idade</span>
             </div>
 
             <div className="petadoption4-detailsGrid2">
               <div className="petadoption4-details">
-                <span className="petadoption4-detailsLabel">Adopted By</span>
-                <span className="petadoption4-detailsValue">Sarah Johnson</span>
+                <span className="petadoption4-detailsLabel">Adotado por</span>
+                <span className="petadoption4-detailsValue">{adopterFullName}</span>
               </div>
 
               <div className="petadoption4-details">
-                <span className="petadoption4-detailsLabel">Previous Owner</span>
-                <span className="petadoption4-detailsValue">Michael Chen</span>
+                <span className="petadoption4-detailsLabel">Dono Anterior</span>
+                <span className="petadoption4-detailsValue">{ownerFullName}</span>
               </div>
             </div>
 
             <div className="petadoption4-details petadoption4-detailsWide">
-              <span className="petadoption4-detailsLabel">Adoption Date</span>
-              <span className="petadoption4-detailsValue">Friday, February 20, 2026</span>
+              <span className="petadoption4-detailsLabel">Data da Adoção</span>
+              <span className="petadoption4-detailsValue">{new Date(String(allData?.getPetInfo?.date)).toLocaleDateString("pt-BR", {
+                dateStyle: "full"
+              })}</span>
             </div>
           </div>
         </section>
 
-        {/* ✅ Softer thank-you so it doesn't compete */}
         <section className="petadoption4-thankYou-message">
           <div className="petadoption4-thankIcon" aria-hidden="true">
             ♡
           </div>
           <div className="petadoption4-thankText">
-            <h3>Thank you for choosing adoption!</h3>
+            <h3>Obrigado por escolher a adoção!</h3>
             <p>
-              You’ve made a wonderful decision to give Max a loving home. We wish you both many happy years
-              together filled with joy, play, and unconditional love. Remember, adoption is just the beginning
-              of a beautiful friendship.
+              Você tomou uma decisão incrível ao dar ao {allData?.getPetInfo.name} um lar cheio de amor. Desejamos muitos anos felizes juntos, cheios de alegria, brincadeiras e amor incondicional.
+              Lembre-se: a adoção é apenas o começo de uma linda amizade.
             </p>
           </div>
         </section>
 
-        {/* BUTTONS */}
         <div className="petadoption4-buttons">
           <button className="petadoption4-btn petadoption4-btnPrimary" type="button">
-            ⬇ Download Adoption Certificate
+            ⬇ Baixar Certificado de Adoção
           </button>
 
           <button className="petadoption4-btn petadoption4-btnSecondary" type="button">
-            🏠 Go to My Adoptions
+            🏠 Ir para Minhas Adoções
           </button>
         </div>
 
-        {/* ✅ Footer tightened so card doesn't feel too tall */}
         <div className="petadoption4-footer-message">
-          A copy of the adoption certificate has been sent to both parties. You can access your adoption
-          records anytime from your profile.
+          Uma cópia do certificado de adoção foi enviada para ambas as partes. Você pode acessar seus registros de adoção a qualquer momento pelo seu perfil.
         </div>
       </div>
     </section>

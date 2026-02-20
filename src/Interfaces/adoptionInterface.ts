@@ -13,6 +13,7 @@ export interface adoptionInterface {
         breed: string,
         imgs: any[],
         name: string
+        date: string
     },
     maskedAdopterInfo: {
         addresses: {

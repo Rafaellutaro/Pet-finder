@@ -138,6 +138,7 @@ function PetAdoptionSteps() {
       {allData.getInfo.step == "CONFIRMATION" && (
         <PetAdoptionStep1
           allData={allData}
+          setAllData={setAllData}
           user={user}
           token={token}
           verifyToken={verifyToken}
@@ -208,7 +209,7 @@ function PetAdoptionSteps() {
       )}
 
       {allData.getInfo.step == "FINALIZE" && (
-        <PetAdoptionStep4/>
+        <PetAdoptionStep4 allData={allData}/>
       )}
     </div>
   );

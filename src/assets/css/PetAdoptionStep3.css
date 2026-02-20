@@ -541,6 +541,11 @@
   width: 100% ;
 }
 
+.petAdoption3-confirmBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .petAdoption3-modalStep2Slot .pet-adoption2-right-container-all-proposals {
   max-height: 360px;
   overflow: auto;

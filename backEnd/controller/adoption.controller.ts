@@ -84,7 +84,14 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
                 }
             }
 
-            const getPetInfo = await f.pet.findUnique({
+            const petAdoptionDate = await f.petsAdopted.findFirst({
+                where: {
+                    adopterId: getAdopterData?.id
+                },
+                select: {adoptedAt: true}
+            })
+
+            const petInfo = await f.pet.findUnique({
                 where: { id: getInfo?.petId },
                 select: {
                     name: true,
@@ -95,6 +102,11 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
                     }
                 }
             })
+
+            const getPetInfo = {
+                ...petInfo,
+                date: petAdoptionDate?.adoptedAt
+            }
 
             return { getInfo, maskedAdopterInfo, maskedOwnerInfo, getPetInfo }
         })
@@ -626,6 +638,8 @@ export const setAsConfirmed = async (req: AuthRequest, res: Response) => {
                 });
             }
 
+            let createAdoption = null
+
             if (row.adopterConfirmedAt && row.ownerConfirmedAt) {
                 row = await p.meetingConfirmation.update({
                     where: { adoptionProcessId },
@@ -639,9 +653,20 @@ export const setAsConfirmed = async (req: AuthRequest, res: Response) => {
                     }
                 })
 
+                createAdoption = await p.petsAdopted.create({
+                    data: {
+                        petId: row?.petId,
+                        adopterId: row?.adopterId     
+                    }
+                })
             }
 
-            return row;
+            const final = {
+                ...row,
+                createAdoption
+            }
+
+            return final;
         });
 
         return res.status(200).json({ data: result });
