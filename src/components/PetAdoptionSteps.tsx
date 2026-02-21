@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 function PetAdoptionSteps() {
   const { id } = useParams()
-  const { token, verifyToken, user } = useUser()
+  const { token, verifyToken, user, socket } = useUser()
   const [addressMode, setAddressMode] = useState<"SAVED" | "CUSTOM">("SAVED");
   const [address, setAddress] = useState<adoptionAddress | null>(null)
   const [allData, setAllData] = useState<adoptionInterface | null>(null)
@@ -143,6 +143,7 @@ function PetAdoptionSteps() {
           token={token}
           verifyToken={verifyToken}
           id={id}
+          socket={socket}
         />
       )}
 
@@ -168,6 +169,7 @@ function PetAdoptionSteps() {
           setAllProposes={setAllProposes}
           setIsRescheduleOpen={setIsRescheduleOpen}
           setAddress={setAddress}
+          socket={socket}
         />
       )}
 
@@ -204,6 +206,7 @@ function PetAdoptionSteps() {
             setAllProposes={setAllProposes}
             setIsRescheduleOpen={setIsRescheduleOpen}
             setAddress={setAddress}
+            socket={socket}
           />}
         />
       )}

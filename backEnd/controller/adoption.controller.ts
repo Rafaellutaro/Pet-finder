@@ -88,7 +88,7 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
                 where: {
                     adopterId: getAdopterData?.id
                 },
-                select: {adoptedAt: true}
+                select: { adoptedAt: true }
             })
 
             const petInfo = await f.pet.findUnique({
@@ -139,7 +139,10 @@ export const confirmAdoption = async (req: AuthRequest, res: Response) => {
             let setAsConfirmed = null
             let setAdoptionStatus = null
 
-            if (userId == confirmProcess?.adopterId) {
+            const isOwner = userId == confirmProcess?.ownerId;
+            const isAdopter = userId == confirmProcess?.adopterId;
+
+            if (isAdopter) {
                 setAsConfirmed = await f.adoptionProcess.update({
                     where: {
                         id: Number(id)
@@ -148,9 +151,11 @@ export const confirmAdoption = async (req: AuthRequest, res: Response) => {
                         adopterConfirmedAt: new Date()
                     }
                 })
+
+                io.to(`user:${confirmProcess.ownerId}`).emit("step1:Confirmation", { confirmation: setAsConfirmed })
             }
 
-            if (userId == confirmProcess?.ownerId) {
+            if (isOwner) {
                 setAsConfirmed = await f.adoptionProcess.update({
                     where: {
                         id: Number(id)
@@ -159,6 +164,8 @@ export const confirmAdoption = async (req: AuthRequest, res: Response) => {
                         ownerConfirmedAt: new Date()
                     }
                 })
+
+                io.to(`user:${confirmProcess.adopterId}`).emit("step1:Confirmation", { confirmation: setAsConfirmed })
             }
 
             if (setAsConfirmed?.adopterConfirmedAt && setAsConfirmed.ownerConfirmedAt) {
@@ -170,6 +177,11 @@ export const confirmAdoption = async (req: AuthRequest, res: Response) => {
                         step: "MEETING"
                     }
                 })
+
+                {
+                    isAdopter ? io.to(`user:${confirmProcess.ownerId}`).emit("step1:nextStep", { nextStep: setAdoptionStatus.step }) :
+                        io.to(`user:${confirmProcess.adopterId}`).emit("step1:nextStep", { nextStep: setAdoptionStatus.step })
+                }
             }
 
             return { setAsConfirmed, setAdoptionStatus }
@@ -220,9 +232,13 @@ export const meetingProposalInitial = async (req: AuthRequest, res: Response) =>
             },
             select: {
                 meetingRound: true,
-                step: true
+                step: true,
+                ownerId: true,
+                adopterId: true
             }
         })
+
+        const isAdopter = userId == getAdoptionProcess?.adopterId;
 
         if (getAdoptionProcess?.step == "MEETING") {
             const initialPropose = await prisma.meetingProposal.create({
@@ -243,6 +259,11 @@ export const meetingProposalInitial = async (req: AuthRequest, res: Response) =>
             const result = {
                 ...initialPropose,
                 address: getAddress
+            }
+
+            {
+                isAdopter ? io.to(`user:${getAdoptionProcess.ownerId}`).emit("step2:newPropose", { propose: result }) :
+                    io.to(`user:${getAdoptionProcess.adopterId}`).emit("step2:newPropose", { propose: result })
             }
 
             return res.status(200).json({ data: result })
@@ -305,8 +326,9 @@ export const getAllProposesInitial = async (req: AuthRequest, res: Response) => 
                 where: {
                     adoptionProcessId: adoptionProcessId,
                     type: "INITIAL",
-                    round: 1
+                    round: 1,
                 },
+                orderBy: { createdAt: "desc" },
                 include: { address: true }
             })
 
@@ -321,7 +343,7 @@ export const getAllProposesInitial = async (req: AuthRequest, res: Response) => 
                     adoptionProcessId: adoptionProcessId,
                     type: "RESCHEDULE",
                     round: getCurrentRound,
-                    OR: [{status: "REJECTED"}, {status: "PENDING"}]
+                    OR: [{ status: "REJECTED" }, { status: "PENDING" }]
                 },
                 orderBy: { createdAt: "desc" },
                 include: { address: true }
@@ -354,9 +376,13 @@ export const setProposeToReject = async (req: AuthRequest, res: Response) => {
             },
             select: {
                 meetingRound: true,
-                step: true
+                step: true,
+                adopterId: true,
+                ownerId: true
             }
         })
+
+        const isAdopter = userId == getAdoptionProcess?.adopterId
 
         if (getAdoptionProcess?.step == "MEETING") {
             const setAsRejected = await prisma.meetingProposal.update({
@@ -369,6 +395,11 @@ export const setProposeToReject = async (req: AuthRequest, res: Response) => {
                     status: "REJECTED"
                 }
             })
+
+            {
+                isAdopter ? io.to(`user:${getAdoptionProcess.ownerId}`).emit("step2:reject", { reject: setAsRejected }) :
+                    io.to(`user:${getAdoptionProcess.adopterId}`).emit("step2:reject", { reject: setAsRejected })
+            }
 
             if (!setAsRejected) return res.status(404).json({ message: "couldn't find the propose" })
 
@@ -419,9 +450,13 @@ export const setProposeToAccepted = async (req: AuthRequest, res: Response) => {
                 },
                 select: {
                     meetingRound: true,
-                    step: true
+                    step: true,
+                    adopterId: true,
+                    ownerId: true
                 }
             })
+
+            const isAdopter = userId == getAdoptionProcess?.adopterId;
 
             if (getAdoptionProcess?.step == "MEETING") {
                 const getPropose = await p.meetingProposal.findUnique({
@@ -458,6 +493,11 @@ export const setProposeToAccepted = async (req: AuthRequest, res: Response) => {
 
                 if (!nextStep) return res.status(404).json({ message: "couldn't set the nextStep" })
 
+                {
+                    isAdopter ? io.to(`user:${getAdoptionProcess.ownerId}`).emit("step2:nextStep", { nextStep: nextStep.step }) :
+                        io.to(`user:${getAdoptionProcess.adopterId}`).emit("step2:nextStep", { nextStep: nextStep.step })
+                }
+
                 return { setAsAccepted, nextStep }
             }
 
@@ -486,7 +526,7 @@ export const setProposeToAccepted = async (req: AuthRequest, res: Response) => {
                         respondedById: Number(userId),
                         respondedAt: new Date(),
                         round: nextRound,
-                        
+
                     }
                 })
 
@@ -565,12 +605,12 @@ export const getSucessAddressInitial = async (req: AuthRequest, res: Response) =
             return res.status(200).json({ data: result })
         }
 
-        if (getAdoptionProcess?.meetingRound! > 2){
+        if (getAdoptionProcess?.meetingRound! > 2) {
             const currentRound = getAdoptionProcess?.meetingRound
 
             const getSucess = await prisma.meetingProposal.findFirst({
                 where: { adoptionProcessId: adoptionProcessId, type: "RESCHEDULE", status: "ACCEPTED", round: currentRound },
-                select: {addressId: true, meetingAt: true}
+                select: { addressId: true, meetingAt: true }
 
             })
 
@@ -656,7 +696,7 @@ export const setAsConfirmed = async (req: AuthRequest, res: Response) => {
                 createAdoption = await p.petsAdopted.create({
                     data: {
                         petId: row?.petId,
-                        adopterId: row?.adopterId     
+                        adopterId: row?.adopterId
                     }
                 })
             }

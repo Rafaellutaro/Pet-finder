@@ -15,6 +15,7 @@ import { FaStreetView } from "react-icons/fa";
 import { CiCalendarDate } from "react-icons/ci";
 import { FaRedo } from "react-icons/fa";
 import { FcOk } from "react-icons/fc";
+import type { Socket } from "socket.io-client";
 
 type petAdoptionStep1Type = {
   allData: adoptionInterface | null
@@ -23,6 +24,7 @@ type petAdoptionStep1Type = {
   token: string | null,
   verifyToken: () => Promise<void>
   id: string | undefined
+  socket: Socket | null
 }
 
 type headerType = {
@@ -50,13 +52,13 @@ function PetAdoptionHeader({ step, title, sectionTitle, desc }: headerType) {
   )
 }
 
-function AlreadyConfirmed(){
+function AlreadyConfirmed() {
   return (
     <div className="petAdoption3-confirmationDone"> <FcOk /> Você já confirmou. Aguardando a confirmação da outra pessoa. </div>
   )
 }
 
-export function PetAdoptionStep1({ allData, user, token, verifyToken, id, setAllData }: petAdoptionStep1Type) {
+export function PetAdoptionStep1({ allData, user, token, verifyToken, id, setAllData, socket }: petAdoptionStep1Type) {
   const [agreements, setAgreements] = useState<boolean[]>([false, false, false, false]);
   const [isButtonActive, setIsButtonActive] = useState<boolean>(true);
 
@@ -83,13 +85,23 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id, setAll
 
       if (!response) return
 
-      if (response.setAsConfirmed.ownerConfirmedAt || response.setAsConfirmed.adopterConfirmedAt){
+      if (response.setAsConfirmed.ownerConfirmedAt || response.setAsConfirmed.adopterConfirmedAt) {
         setAllData((prev: any) => ({
           ...prev,
           getInfo: {
             ...prev?.getInfo,
             adopterConfirmedAt: response.setAsConfirmed.adopterConfirmedAt,
             ownerConfirmedAt: response.setAsConfirmed.ownerConfirmedAt
+          }
+        }))
+      }
+
+      if (response.setAsConfirmed.ownerConfirmedAt && response.setAsConfirmed.adopterConfirmedAt) {
+        setAllData((prev: any) => ({
+          ...prev,
+          getInfo: {
+            ...prev?.getInfo,
+            step: response.setAdoptionStatus.step
           }
         }))
       }
@@ -102,6 +114,45 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id, setAll
       console.log(e)
     }
   }
+
+  useEffect(() => {
+    if (!socket) return
+
+    const handleConfirmation = (step1Confirmation: any) => {
+      if (step1Confirmation.confirmation.ownerConfirmedAt || step1Confirmation.confirmation.adopterConfirmedAt) {
+        setAllData((prev: any) => ({
+          ...prev,
+          getInfo: {
+            ...prev?.getInfo,
+            adopterConfirmedAt: step1Confirmation.confirmation.adopterConfirmedAt,
+            ownerConfirmedAt: step1Confirmation.confirmation.ownerConfirmedAt
+          }
+        }))
+      }
+
+      setIsButtonActive(false)
+    }
+
+    const handleNextStep = (nextStep: any) => {
+      if (nextStep) {
+        setAllData((prev: any) => ({
+          ...prev,
+          getInfo: {
+            ...prev?.getInfo,
+            step: nextStep.nextStep
+          }
+        }))
+      }
+    }
+
+    socket.on("step1:Confirmation", handleConfirmation)
+    socket.on("step1:nextStep", handleNextStep)
+
+    return () => {
+      socket.off("step1:Confirmation", handleConfirmation)
+      socket.off("step1:nextStep", handleNextStep)
+    }
+  }, [socket])
 
 
 
@@ -321,7 +372,7 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id, setAll
             <button type="button" className="pet-adoption-btn" disabled={!allChecked || !isButtonActive} onClick={() => confirmAdoption()}>
               {"Confirmar como Dono"}
             </button>
-          ) : <AlreadyConfirmed/>}
+          ) : <AlreadyConfirmed />}
 
           <p className="pet-adoption-footnote">
             Ambas as partes devem confirmar antes de prosseguir para a próxima etapa.<br />
@@ -354,9 +405,10 @@ type petAdoptionStep2Type = {
   allProposes: allProposesInterface[]
   setIsRescheduleOpen: React.Dispatch<React.SetStateAction<boolean>>
   setAddress: React.Dispatch<React.SetStateAction<adoptionAddress | null>>
+  socket: Socket | null
 }
 
-export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken, id, register, handleSubmit, watch, setValue, isSubmiting, setAddressMode, addressMode, onSubmit, errors, control, allProposes, setAllProposes, setIsRescheduleOpen, setAddress }: petAdoptionStep2Type) {
+export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken, id, register, handleSubmit, watch, setValue, isSubmiting, setAddressMode, addressMode, onSubmit, errors, control, allProposes, setAllProposes, setIsRescheduleOpen, setAddress, socket }: petAdoptionStep2Type) {
   const cep = watch("cep");
   useEffect(() => {
     cepSearch(setValue, String(cep));
@@ -417,6 +469,49 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
   useEffect(() => {
     getAllProposes()
   }, [])
+
+  useEffect(() => {
+    if (!socket) return
+
+    const handleNewPropose = ({ propose }: { propose: any }) => {
+      console.log(propose)
+
+      if (propose) {
+        setAllProposes((prev: any[]) => {
+          if (prev.some((p) => p.id == propose.id)) return prev;
+          return [propose, ...prev];
+        });
+      }
+    }
+
+    const handleRejectPropose = ({ reject }: { reject: any }) => {
+      console.log(reject)
+
+      setAllProposes(prev =>
+      prev.map(p => (p.id == reject.id ? { ...p, ...reject } : p))
+    );
+    }
+
+    const handleNextStep = ({nextStep}: {nextStep: any}) => {
+      setAllData((prev: any) => ({
+      ...prev,
+      getInfo: {
+        ...prev?.getInfo,
+        step: nextStep
+      }
+    }))
+    }
+
+    socket.on("step2:newPropose", handleNewPropose)
+    socket.on("step2:reject", handleRejectPropose)
+    socket.on("step2:nextStep", handleNextStep)
+
+    return () => {
+      socket.off("step2:newPropose", handleNewPropose)
+      socket.off("step2:reject", handleRejectPropose)
+      socket.off("step2:nextStep", handleNextStep)
+    }
+  }, [socket])
 
   const getAmount = allProposes?.length
 
@@ -898,9 +993,9 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
 
         {/* CONFIRMATION */}
         {user?.id == allData?.maskedAdopterInfo.id && userConfirmed?.adopterConfirmedAt ? (
-          <AlreadyConfirmed/>
+          <AlreadyConfirmed />
         ) : user?.id == allData?.maskedOwnerInfo.id && userConfirmed?.ownerConfirmedAt ? (
-          <AlreadyConfirmed/>
+          <AlreadyConfirmed />
         ) : (
           <div className="petAdoption3-confirmation">
             <span className="petAdoption3-confirmationHint">
@@ -979,7 +1074,7 @@ type petAdoptionStep4Type = {
   allData: adoptionInterface | null
 }
 
-export function PetAdoptionStep4({allData}: petAdoptionStep4Type) {
+export function PetAdoptionStep4({ allData }: petAdoptionStep4Type) {
   const adopterFullName = `${allData?.maskedAdopterInfo.name} ${allData?.maskedAdopterInfo.lastName}`
   const ownerFullName = `${allData?.maskedOwnerInfo.name} ${allData?.maskedOwnerInfo.lastName}`
 
