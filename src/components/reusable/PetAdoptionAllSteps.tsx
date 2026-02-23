@@ -439,13 +439,15 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
 
     if (!response) return
 
-    setAllData((prev: any) => ({
-      ...prev,
-      getInfo: {
-        ...prev?.getInfo,
-        step: response.nextStep.step
-      }
-    }))
+    if (allData?.getInfo.step == "MEETING") {
+      setAllData((prev: any) => ({
+        ...prev,
+        getInfo: {
+          ...prev?.getInfo,
+          step: response.nextStep.step
+        }
+      }))
+    }
 
     if (allData?.getInfo.step == "MEETING_CONFIRMED") {
       setAddress(response.addressAndDate)
@@ -488,28 +490,44 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
       console.log(reject)
 
       setAllProposes(prev =>
-      prev.map(p => (p.id == reject.id ? { ...p, ...reject } : p))
-    );
+        prev.map(p => (p.id == reject.id ? { ...p, ...reject } : p))
+      );
     }
 
-    const handleNextStep = ({nextStep}: {nextStep: any}) => {
+    const handleNextStep = ({ nextStep }: { nextStep: any }) => {
       setAllData((prev: any) => ({
-      ...prev,
-      getInfo: {
-        ...prev?.getInfo,
-        step: nextStep
+        ...prev,
+        getInfo: {
+          ...prev?.getInfo,
+          step: nextStep
+        }
+      }))
+    }
+
+    const handleNewAddress = ({ newAddress }: { newAddress: any }) => {
+      if (newAddress) {
+
+        setAddress(newAddress)
+        setIsRescheduleOpen(false)
       }
-    }))
     }
 
     socket.on("step2:newPropose", handleNewPropose)
     socket.on("step2:reject", handleRejectPropose)
     socket.on("step2:nextStep", handleNextStep)
 
+    socket.on("step3:newPropose", handleNewPropose)
+    socket.on("step3:reject", handleRejectPropose)
+    socket.on("step3:newAddress", handleNewAddress)
+
     return () => {
       socket.off("step2:newPropose", handleNewPropose)
       socket.off("step2:reject", handleRejectPropose)
       socket.off("step2:nextStep", handleNextStep)
+
+      socket.off("step3:newPropose", handleNewPropose)
+      socket.off("step3:reject", handleRejectPropose)
+      socket.off("step3:newAddress", handleNewAddress)
     }
   }, [socket])
 
@@ -759,9 +777,10 @@ type Step3Props = {
   rescheduleComponent: ReactNode;
   setAddress: React.Dispatch<React.SetStateAction<adoptionAddress | null>>
   address: adoptionAddress | null
+  socket: Socket | null
 };
 
-export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyToken, rescheduleComponent, isRescheduleOpen, setIsRescheduleOpen, setAddress, address }: Step3Props) {
+export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyToken, rescheduleComponent, isRescheduleOpen, setIsRescheduleOpen, setAddress, address, socket }: Step3Props) {
   const [userConfirmed, setUserConfirmed] = useState<confirmations | null>(null)
 
   const openReschedule = () => setIsRescheduleOpen(true);
@@ -859,6 +878,50 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [isRescheduleOpen]);
 
+
+  useEffect(() => {
+    if (!socket) return
+
+    const handleSetAsConfirmed = (final: any) => {
+      console.log("final here", final)
+
+      if (final.adopterConfirmedAt) {
+        setUserConfirmed((prev: any) => ({
+          ...prev,
+          adopterConfirmedAt: final.adopterConfirmedAt
+        }))
+        closeReschedule();
+      }
+
+      if (final.ownerConfirmedAt) {
+        setUserConfirmed((prev: any) => ({
+          ...prev,
+          ownerConfirmedAt: final.ownerConfirmedAt
+        }))
+        closeReschedule();
+      }
+
+      if (final.step) {
+        setAllData((prev: any) => ({
+          ...prev,
+          getInfo: {
+            ...prev?.getInfo,
+            step: final.step,
+          },
+          getPetInfo: {
+            ...prev?.getPetInfo,
+            date: final.createAdoption.adoptedAt
+          }
+        }))
+      }
+    }
+
+    socket.on("step3:setAsConfirmed", handleSetAsConfirmed)
+
+    return () => {
+
+    }
+  }, [socket])
 
   return (
     <section className="petAdoption3-mainCard">

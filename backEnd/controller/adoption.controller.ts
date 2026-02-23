@@ -2,7 +2,7 @@ import type { Response } from "express";
 import prisma from '../../backEnd/client/PrismaClient.ts'
 import type { AuthRequest } from "../middleware/auth.middleware.ts";
 import { io } from "../index.ts";
-import { isUserAllowedInAdoptionProcess, maskEmail, maskPhone, parseBRDateTime } from "../helper.ts";
+import { createNotification, getUserName, isUserAllowedInAdoptionProcess, maskEmail, maskPhone, parseBRDateTime } from "../helper.ts";
 
 export const getDataFromId = async (req: AuthRequest, res: Response) => {
     const userId = req.user.userId
@@ -120,13 +120,13 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
 
 export const confirmAdoption = async (req: AuthRequest, res: Response) => {
     const userId = req.user.userId
-    const { id } = req.params
+    const adoptionProcessId = Number(req.params.id)
 
     try {
         const result = await prisma.$transaction(async (f) => {
             const confirmProcess = await f.adoptionProcess.findUnique({
                 where: {
-                    id: Number(id)
+                    id: adoptionProcessId
                 },
                 select: {
                     adopterId: true,
@@ -141,11 +141,14 @@ export const confirmAdoption = async (req: AuthRequest, res: Response) => {
 
             const isOwner = userId == confirmProcess?.ownerId;
             const isAdopter = userId == confirmProcess?.adopterId;
+            const adopterName = await getUserName(prisma, confirmProcess.adopterId)
+            const ownerName = await getUserName(prisma, confirmProcess.ownerId)
+            const toUser = isAdopter ? confirmProcess.ownerId : confirmProcess.adopterId;
 
             if (isAdopter) {
                 setAsConfirmed = await f.adoptionProcess.update({
                     where: {
-                        id: Number(id)
+                        id: adoptionProcessId
                     },
                     data: {
                         adopterConfirmedAt: new Date()
@@ -153,12 +156,18 @@ export const confirmAdoption = async (req: AuthRequest, res: Response) => {
                 })
 
                 io.to(`user:${confirmProcess.ownerId}`).emit("step1:Confirmation", { confirmation: setAsConfirmed })
+
+                const body = `${adopterName} Confirmou que vai progedir com a adoção`
+                const link = `/PetAdoption/${adoptionProcessId}`
+
+                const notification = await createNotification({ userId: toUser, type: "step1:confirmation", title: "Confirmação da Adoção", body: body, link: link }, prisma)
+                io.to(`user:${toUser}`).emit("notification:new", { notification: notification })
             }
 
             if (isOwner) {
                 setAsConfirmed = await f.adoptionProcess.update({
                     where: {
-                        id: Number(id)
+                        id: adoptionProcessId
                     },
                     data: {
                         ownerConfirmedAt: new Date()
@@ -166,12 +175,18 @@ export const confirmAdoption = async (req: AuthRequest, res: Response) => {
                 })
 
                 io.to(`user:${confirmProcess.adopterId}`).emit("step1:Confirmation", { confirmation: setAsConfirmed })
+
+                const body = `${ownerName} Confirmou que vai progedir com a adoção`
+                const link = `/PetAdoption/${adoptionProcessId}`
+
+                const notification = await createNotification({ userId: toUser, type: "step1:confirmation", title: "Confirmação da Adoção", body: body, link: link }, prisma)
+                io.to(`user:${toUser}`).emit("notification:new", { notification: notification })
             }
 
             if (setAsConfirmed?.adopterConfirmedAt && setAsConfirmed.ownerConfirmedAt) {
                 setAdoptionStatus = await f.adoptionProcess.update({
                     where: {
-                        id: Number(id)
+                        id: adoptionProcessId
                     },
                     data: {
                         step: "MEETING"
@@ -238,7 +253,12 @@ export const meetingProposalInitial = async (req: AuthRequest, res: Response) =>
             }
         })
 
+        if (!getAdoptionProcess) return res.status(404).json({ message: "couldn't find the adoption process" })
+
         const isAdopter = userId == getAdoptionProcess?.adopterId;
+        const adopterName = await getUserName(prisma, getAdoptionProcess.adopterId)
+        const ownerName = await getUserName(prisma, getAdoptionProcess.ownerId)
+        const toUser = isAdopter ? getAdoptionProcess.ownerId : getAdoptionProcess.adopterId;
 
         if (getAdoptionProcess?.step == "MEETING") {
             const initialPropose = await prisma.meetingProposal.create({
@@ -265,6 +285,12 @@ export const meetingProposalInitial = async (req: AuthRequest, res: Response) =>
                 isAdopter ? io.to(`user:${getAdoptionProcess.ownerId}`).emit("step2:newPropose", { propose: result }) :
                     io.to(`user:${getAdoptionProcess.adopterId}`).emit("step2:newPropose", { propose: result })
             }
+
+            const body = isAdopter ? `${adopterName} enviou uma proposta de encontro` : `${ownerName} enviou uma proposta de encontro`
+            const link = `/PetAdoption/${adoptionProcessId}`
+
+            const notification = await createNotification({ userId: toUser, type: "step2:createPropose", title: "Proposta de Encontro Criada", body: body, link: link }, prisma)
+            io.to(`user:${toUser}`).emit("notification:new", { notification: notification })
 
             return res.status(200).json({ data: result })
         }
@@ -295,6 +321,17 @@ export const meetingProposalInitial = async (req: AuthRequest, res: Response) =>
                 ...propose,
                 address: getAddress
             }
+
+            {
+                isAdopter ? io.to(`user:${getAdoptionProcess.ownerId}`).emit("step3:newPropose", { propose: result }) :
+                    io.to(`user:${getAdoptionProcess.adopterId}`).emit("step3:newPropose", { propose: result })
+            }
+
+            const body = isAdopter ? `${adopterName} enviou uma proposta de reagendamento de encontro` : `${ownerName} enviou uma proposta de reagendamento de encontro`
+            const link = `/PetAdoption/${adoptionProcessId}`
+
+            const notification = await createNotification({ userId: toUser, type: "step3:createPropose", title: "Proposta de Reagendamento Criada", body: body, link: link }, prisma)
+            io.to(`user:${toUser}`).emit("notification:new", { notification: notification })
 
             return res.status(200).json({ data: result })
         }
@@ -382,7 +419,12 @@ export const setProposeToReject = async (req: AuthRequest, res: Response) => {
             }
         })
 
+        if (!getAdoptionProcess) return res.status(404).json({ message: "couldn't find the adoption process" })
+
         const isAdopter = userId == getAdoptionProcess?.adopterId
+        const adopterName = await getUserName(prisma, getAdoptionProcess.adopterId)
+        const ownerName = await getUserName(prisma, getAdoptionProcess.ownerId)
+        const toUser = isAdopter ? getAdoptionProcess.ownerId : getAdoptionProcess.adopterId;
 
         if (getAdoptionProcess?.step == "MEETING") {
             const setAsRejected = await prisma.meetingProposal.update({
@@ -396,12 +438,18 @@ export const setProposeToReject = async (req: AuthRequest, res: Response) => {
                 }
             })
 
+            if (!setAsRejected) return res.status(404).json({ message: "couldn't find the propose" })
+
             {
                 isAdopter ? io.to(`user:${getAdoptionProcess.ownerId}`).emit("step2:reject", { reject: setAsRejected }) :
                     io.to(`user:${getAdoptionProcess.adopterId}`).emit("step2:reject", { reject: setAsRejected })
             }
 
-            if (!setAsRejected) return res.status(404).json({ message: "couldn't find the propose" })
+            const body = isAdopter ? `${adopterName}  rejeitou o encontro` : `${ownerName} rejeitou o encontro`
+            const link = `/PetAdoption/${getMeetingProposal?.adoptionProcessId}`
+
+            const notification = await createNotification({ userId: toUser, type: "step2:rejectPropose", title: "Encontro Rejeitado", body: body, link: link }, prisma)
+            io.to(`user:${toUser}`).emit("notification:new", { notification: notification })
 
             return res.status(200).json({ data: setAsRejected })
         }
@@ -421,6 +469,17 @@ export const setProposeToReject = async (req: AuthRequest, res: Response) => {
             })
 
             if (!setAsRejected) return res.status(404).json({ message: "couldn't find the propose" })
+
+            {
+                isAdopter ? io.to(`user:${getAdoptionProcess.ownerId}`).emit("step3:reject", { reject: setAsRejected }) :
+                    io.to(`user:${getAdoptionProcess.adopterId}`).emit("step3:reject", { reject: setAsRejected })
+            }
+
+            const body = isAdopter ? `${adopterName}  rejeitou reagendar o encontro` : `${ownerName} rejeitou reagendar o encontro`
+            const link = `/PetAdoption/${getMeetingProposal?.adoptionProcessId}`
+
+            const notification = await createNotification({ userId: toUser, type: "step3:rejectPropose", title: "Reagendamento Rejeitado", body: body, link: link }, prisma)
+            io.to(`user:${toUser}`).emit("notification:new", { notification: notification })
 
             return res.status(200).json({ data: setAsRejected })
         }
@@ -498,6 +557,16 @@ export const setProposeToAccepted = async (req: AuthRequest, res: Response) => {
                         io.to(`user:${getAdoptionProcess.adopterId}`).emit("step2:nextStep", { nextStep: nextStep.step })
                 }
 
+                const adopterName = await getUserName(p, getAdoptionProcess.adopterId)
+                const ownerName = await getUserName(p, getAdoptionProcess.ownerId)
+
+                const toUser = isAdopter ? getAdoptionProcess.ownerId : getAdoptionProcess.adopterId;
+                const body = isAdopter ? `${adopterName} Aceitou Sua Proposta de Encontro` : `${ownerName} Aceitou Sua Proposta de Encontro`
+                const link = `/PetAdoption/${getMeetingProposal?.adoptionProcessId}`
+
+                const notification = await createNotification({ userId: toUser, type: "step2:AcceptPropose", title: "Proposta de Encontro Aceita", body: body, link: link }, prisma)
+                io.to(`user:${toUser}`).emit("notification:new", { notification: notification })
+
                 return { setAsAccepted, nextStep }
             }
 
@@ -553,6 +622,22 @@ export const setProposeToAccepted = async (req: AuthRequest, res: Response) => {
                     ...getAddress,
                     date: setAsAccepted.meetingAt
                 }
+
+                {
+                    isAdopter ? io.to(`user:${getAdoptionProcess.ownerId}`).emit("step3:newAddress", { newAddress: addressAndDate }) :
+                        io.to(`user:${getAdoptionProcess.adopterId}`).emit("step3:newAddress", { newAddress: addressAndDate })
+                }
+
+                const adopterName = await getUserName(p, getAdoptionProcess.adopterId)
+                const ownerName = await getUserName(p, getAdoptionProcess.ownerId)
+
+                const toUser = isAdopter ? getAdoptionProcess.ownerId : getAdoptionProcess.adopterId;
+                const body = isAdopter ? `${adopterName} aceitou reagendar o encontro` : `${ownerName} aceitou reagendar o encontro`
+                const link = `/PetAdoption/${getMeetingProposal?.adoptionProcessId}`
+
+                const notification = await createNotification({ userId: toUser, type: "step2:AcceptNewSchedule", title: "Reagendamento aceito", body: body, link: link }, prisma)
+                io.to(`user:${toUser}`).emit("notification:new", { notification: notification })
+
 
                 return { setAsAccepted, nextStep, addressAndDate }
             }
@@ -705,6 +790,23 @@ export const setAsConfirmed = async (req: AuthRequest, res: Response) => {
                 ...row,
                 createAdoption
             }
+
+            const getAdopterName = await getUserName(p, ap.adopterId)
+
+            const getOwnerName = await getUserName(p, ap.ownerId)
+
+            {
+                isAdopter ? io.to(`user:${ap?.ownerId}`).emit("step3:setAsConfirmed", final) :
+                    io.to(`user:${ap?.adopterId}`).emit("step3:setAsConfirmed", final)
+            }
+
+            const toUser = isAdopter ? ap.ownerId : ap.adopterId
+            const body = isAdopter ? `${getAdopterName} confirmou o encontro` : `${getOwnerName} confirmou o encontro`
+            const link = `/PetAdoption/${adoptionProcessId}`
+
+            const notification = await createNotification({ userId: toUser, type: "step3:Confirmation", title: "Confirmação de Encontro", body: body, link: link }, prisma)
+            io.to(`user:${toUser}`).emit("notification:new", { notification: notification })
+
 
             return final;
         });

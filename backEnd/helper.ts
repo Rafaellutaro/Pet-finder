@@ -19,6 +19,17 @@ export async function createNotification({ userId, type, title, body, link }: no
     }
 }
 
+export async function getUserName(prisma: any, adopterId: Number) {
+    const getAdopterName = await prisma.user.findFirst({
+        where: {
+            id: adopterId
+        },
+        select: { name: true }
+    })
+
+    return getAdopterName.name
+}
+
 export async function isUserAllowedInAdoptionProcess(userId: number, prisma: any) {
     const isUserAllowed = await prisma.adoptionProcess.findFirst({
         where: {

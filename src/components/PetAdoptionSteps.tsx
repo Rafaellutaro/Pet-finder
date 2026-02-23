@@ -183,6 +183,7 @@ function PetAdoptionSteps() {
           id={id}
           setAddress={setAddress}
           address={address}
+          socket={socket}
           isRescheduleOpen={isRescheduleOpen}
           setIsRescheduleOpen={setIsRescheduleOpen}
           rescheduleComponent={<PetAdoptionStep2
