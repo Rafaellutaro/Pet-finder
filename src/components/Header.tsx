@@ -1,22 +1,23 @@
 import "../assets/css/header.css";
 import "../assets/css/notification.css";
-import { FaUserCircle } from "react-icons/fa";
+import { FaTimes, FaUserCircle } from "react-icons/fa";
 import { MdPets } from "react-icons/md";
 import { Link } from "react-router-dom";
-import { FaShieldDog } from "react-icons/fa6";
+import { FaBars, FaShieldDog } from "react-icons/fa6";
 import { useUser } from "../Interfaces/GlobalUser";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaRegBell } from "react-icons/fa";
 import { useMemo, useRef, useState, useEffect } from "react";
 import { useNavigateWithFrom } from "./reusable/Redirect";
 import type { NotificationItem } from "../Interfaces/notificationInterface";
-import {setAsRead, setAllAsRead} from "./reusable/notification"
+import { setAsRead, setAllAsRead } from "./reusable/notification"
 import { HiOutlineChatBubbleOvalLeft } from "react-icons/hi2";
 
 
 function Header() {
     const { loggedIn, user, notification, token, verifyToken, setNotification } = useUser();
     const [bellOpen, setBellOpen] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
     const chatRedirect = useNavigateWithFrom()
 
     const bellWrapRef = useRef<HTMLLIElement | null>(null);
@@ -48,8 +49,22 @@ function Header() {
                 </Link>
             </div>
 
-            <div className="header-items">
-                <ul className="header-actions">
+            <button
+                type="button"
+                className="mobile-menu-btn"
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={menuOpen}
+                aria-controls="header-menu"
+                onClick={() => setMenuOpen((v) => !v)}
+            >
+                {menuOpen ? <FaTimes /> : <FaBars />}
+            </button>
+
+            <nav
+                id="header-menu"
+                className={`header-items ${menuOpen ? "is-open" : ""}`}
+            >
+                <ul className="header-actions" onClick={() => setMenuOpen(false)}>
                     <li className="user-avatar">
                         <Link to={link} aria-label="Profile">
                             {user?.profileImg ? (
@@ -57,24 +72,28 @@ function Header() {
                             ) : (
                                 <FaUserCircle className="userIcon" />
                             )}
+                            <span className="mobile-label">Perfil</span>
                         </Link>
                     </li>
 
                     <li>
                         <Link to="/Pets" aria-label="Pets">
                             <MdPets />
+                            <span className="mobile-label">Pets</span>
                         </Link>
                     </li>
 
                     <li>
                         <Link to="/Chat" aria-label="Chats">
                             <HiOutlineChatBubbleOvalLeft />
+                            <span className="mobile-label">Chats</span>
                         </Link>
                     </li>
 
                     <li>
                         <Link to="/Settings" aria-label="Settings">
                             <IoSettingsOutline />
+                            <span className="mobile-label">Configurações</span>
                         </Link>
                     </li>
 
@@ -82,7 +101,10 @@ function Header() {
                         <button
                             type="button"
                             className="bell"
-                            onClick={() => setBellOpen(v => !v)}
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                setBellOpen(v => !v)
+                            }}
                             aria-expanded={bellOpen}
                             aria-label="Open notifications"
                         >
@@ -93,6 +115,8 @@ function Header() {
                                     {newCount}
                                 </span>
                             )}
+
+                            <span className="mobile-label">Notificações</span>
                         </button>
 
                         {bellOpen && (
@@ -172,7 +196,7 @@ function Header() {
                         )}
                     </li>
                 </ul>
-            </div>
+            </nav>
         </div>
     );
 }

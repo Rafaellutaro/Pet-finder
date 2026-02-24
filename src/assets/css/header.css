@@ -1,47 +1,44 @@
-/* Basic Reset */
+/* =========================
+   RESET
+========================= */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html, body {
-  height: 100%;
-  margin: 0;
-}
-
-/* Top navigation header (fixed) */
+/* =========================
+   HEADER BASE (DESKTOP)
+========================= */
 .header-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background-color: var(--details-heading);
-  color: var(--white);
-  z-index: 1000;
-  padding: 10px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 4px 8px var(--shadow-light);
   height: 80px;
+  background: var(--details-heading);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  z-index: 1000;
+  box-shadow: 0 4px 8px var(--shadow-light);
 }
 
-/* Left side of the header (logo) */
 .header-icon a {
-  color: inherit;
-  text-decoration: none;
   display: flex;
   align-items: center;
+  text-decoration: none;
+  color: inherit;
 }
 
 .header-icon a svg {
   font-size: 50px;
-  color: var(--white);
   display: block;
 }
 
-/* Right side icons container */
+/* desktop menu */
 .header-items ul {
   display: flex;
   list-style: none;
@@ -49,84 +46,43 @@ html, body {
   align-items: center;
 }
 
-/* Make every li align the same */
-.header-items ul li {
+.header-items li {
   display: flex;
   align-items: center;
 }
 
-/* Normalize SVG baseline for react-icons */
-.header-items svg {
-  display: block;
-}
-
-/* Make all header actions (links + bell button) aligned and SAME size */
+/* icon links */
 .header-items a,
 .bell {
-  color: var(--white);
-  text-decoration: none;
-  transition: color 0.3s ease;
-  cursor: pointer;
-
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  width: 28px;
-  height: 28px;
-
-  background: transparent; /* important */
-  line-height: 1;
-}
-
-/* ✅ This removes the “black square” default button styles */
-.bell {
+  background: transparent;
   border: 0;
-  outline: none;
-  box-shadow: none;
-  -webkit-appearance: none;
-  appearance: none;
-  padding: 0;
-  margin: 0;
+  color: var(--white);
+  cursor: pointer;
+  text-decoration: none;
 }
 
-/* Optional: nice accessible focus (not a black square) */
-.bell:focus-visible {
-  outline: 2px solid rgba(124, 58, 237, 0.65);
-  outline-offset: 2px;
-  border-radius: 8px;
-}
-
-/* Hover color */
-.header-icon a svg:hover,
-.header-items a:hover,
-.bell:hover {
-  color: var(--primary-light);
-}
-
-/* Size icons consistently */
 .header-items a svg,
 .bell svg {
   font-size: 24px;
+  display: block;
 }
 
-/* --- Avatar --- */
+/* avatar */
 .user-avatar {
   width: 28px;
   height: 28px;
   border-radius: 999px;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-/* Make the <Link> inside avatar match avatar size (FIXED: was 36px) */
 .user-avatar a {
   width: 28px;
   height: 28px;
-  border-radius: 999px;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -136,43 +92,129 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
 }
 
-.user-avatar .userIcon {
-  width: 100%;
-  height: 100%;
-  display: block;
+/* mobile label hidden on desktop */
+.mobile-label {
+  display: none;
 }
 
-/* Optional: hover effect */
-.user-avatar:hover {
-  outline: 2px solid rgba(255, 255, 255, 0.25);
-  outline-offset: 2px;
+/* hamburger hidden on desktop */
+.mobile-menu-btn {
+  display: none;
 }
 
-/* Body background */
-body {
-  background-color: var(--white);
-  font-family: Arial, sans-serif;
-}
-
-/* Responsive */
+/* =========================
+   MOBILE MENU
+========================= */
 @media (max-width: 768px) {
-  .header-items ul {
-    gap: 15px;
+
+  .header-container {
+    height: 64px;
+    padding: 10px 14px;
   }
 
-  .header-items a,
-  .bell,
-  .user-avatar,
-  .user-avatar a {
-    width: 26px;
-    height: 26px;
+  .mobile-menu-btn {
+    display: flex;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    color: var(--white);
+    cursor: pointer;
+    z-index: 1100;
   }
 
-  .header-items a svg,
-  .bell svg {
+  .mobile-menu-btn svg {
     font-size: 22px;
+  }
+
+  /* right rail */
+  .header-items {
+    position: fixed;
+    top: 64px;
+    right: 0;
+    width: 200px;
+    background: var(--details-heading);
+    border-radius: 18px 0 0 18px;
+    box-shadow: -10px 0 24px rgba(0,0,0,0.25);
+    padding: 12px;
+    opacity: 0;
+    transform: translateX(20px);
+    pointer-events: none;
+    transition: 0.18s ease;
+  }
+
+  .header-items.is-open {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  /* vertical list */
+  .header-items ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  /* row */
+  .header-items a,
+  .header-items .bell {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px;
+    padding: 0 12px;
+    border-radius: 12px;
+  }
+
+  .header-items a:hover,
+  .header-items .bell:hover {
+    background: rgba(255,255,255,0.08);
+  }
+
+  /* icon size */
+  .header-items a svg,
+  .header-items .bell svg {
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  /* avatar row */
+  .header-items .user-avatar {
+    width: 100%;
+    height: auto;
+  }
+
+  .header-items .user-avatar a {
+    width: 100%;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 12px;
+  }
+
+  .header-items .user-avatar img,
+  .header-items .user-avatar .userIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+
+  /* labels visible on mobile */
+  .mobile-label {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
   }
 }

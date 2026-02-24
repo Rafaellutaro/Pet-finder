@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import type { UserData } from '../../Interfaces/userInterface'
 import SupabaseUpload from "./SupabaseUpload";
-import apiFetch from "../../Interfaces/TokenAuthorization";
 import { useUser } from "../../Interfaces/GlobalUser";
 import Loader from "./Loader";
 import "../../assets/css/Profile.css"
