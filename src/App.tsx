@@ -54,15 +54,21 @@ function App() {
         {petData && petData.data ? (
           <Swiper
             modules={[Navigation, Pagination, Scrollbar, A11y]}
-            spaceBetween={50}
+            spaceBetween={16}
             slidesPerView={4}
             navigation
             pagination={{ clickable: true }}
             scrollbar={{ draggable: true }}
+            breakpoints={{
+              0: { slidesPerView: 1.15, spaceBetween: 12 },     // phones
+              480: { slidesPerView: 1.6, spaceBetween: 14 },    // big phones
+              768: { slidesPerView: 2.4, spaceBetween: 16 },    // tablets
+              1024: { slidesPerView: 4, spaceBetween: 18 },     // desktop
+            }}
           >
             {petData.data.map((item: any) => (
               <SwiperSlide key={item.id}>
-                <img src={item.imgs[0]?.url} alt={item.name} onClick={() => singlePet(`/Pets/${item.id}`)}/>
+                <img src={item.imgs[0]?.url} alt={item.name} onClick={() => singlePet(`/Pets/${item.id}`)} />
               </SwiperSlide>
             ))}
           </Swiper>

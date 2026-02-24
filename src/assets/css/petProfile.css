@@ -40,7 +40,7 @@
 
   /* keep your top/side padding, add more space at the bottom */
   padding: 48px;
-  padding-bottom: 120px;  /* <-- reserve space for the highlights overlap */
+  padding-bottom: 120px;  /* reserve space for the highlights overlap */
 
   min-height: 640px;
   width: 100%;
@@ -118,6 +118,10 @@
   font-size: 15.5px;
   line-height: 1.75;
   color: #374151;
+
+  /* safety for long unbroken text */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* =========================================================
@@ -125,21 +129,15 @@
    ========================================================= */
 .pet-highlights-banner {
   width: 100%;
-
-  /* was -72px, this was too aggressive for your hero height */
-  margin: 20px 0 0;  /* <-- safer overlap */
-
+  margin: 20px 0 0; /* safer overlap */
   position: relative;
   z-index: 3;
   padding: 0 !important;
 }
 
-
 .pet-highlights-row {
   width: 100%;
   display: grid;
-
-  /* minmax(0,1fr) prevents “shrinking columns” issues */
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 28px;
 }
@@ -187,7 +185,6 @@
 /* =========================================================
    PET ACTION BUTTONS (Hero section)
    ========================================================= */
-
 .pet-buttons {
   /* place buttons in the right column of the hero */
   grid-column: 2;
@@ -217,7 +214,6 @@
 .heart-button {
   background: #fff;
   color: #f97316;
-
   border: 2px solid #f97316;
 }
 
@@ -246,8 +242,6 @@
 .personalitys-favorites {
   width: 100%;
   margin: 56px 0 0;
-
-  /* alignment safety */
   padding: 0 !important;
 }
 
@@ -361,10 +355,14 @@
   margin: 0;
   font-size: 15px;
   color: #6b7280;
+
+  /* safety for long text */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* =========================================================
-   RESPONSIVE
+   RESPONSIVE (existing)
    ========================================================= */
 @media (max-width: 1100px) {
   .PetBanner {
@@ -408,5 +406,183 @@
 
   .both-row {
     grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   MOBILE FRIENDLY (NEW) — iPhone/Android focus
+   Keeps your design, just makes it fit cleanly
+   ========================================================= */
+@media (max-width: 600px) {
+  /* wrapper: full width with safe padding */
+  .petProfilePage {
+    width: 100%;
+    margin: 84px auto 56px;
+    padding: 0 14px;
+  }
+
+  /* HERO */
+  .PetBanner {
+    grid-template-columns: 1fr;
+    gap: 14px;
+
+    padding: 16px;
+    padding-bottom: 18px; /* no need for huge reserve on mobile */
+
+    min-height: auto;
+    border-radius: 20px;
+  }
+
+  .petImg {
+    align-items: stretch;
+  }
+
+  .petImg img {
+    height: 240px;
+    border-radius: 18px;
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.14);
+  }
+
+  .pet-information h1 {
+    font-size: 42px;
+    line-height: 1.02;
+    margin-top: 6px;
+  }
+
+  .pet-type {
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+
+  .pet-meta,
+  .pet-location {
+    font-size: 13.5px;
+  }
+
+  .pet-description {
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 100%;
+  }
+
+  /* buttons: centered + compact (keeps your look) */
+  .pet-buttons {
+    grid-column: auto;
+    margin-top: 14px;
+    justify-content: center;
+  }
+
+  .pet-buttons button {
+    height: 46px;
+    padding: 0 18px;
+    font-size: 14px;
+  }
+
+  /* HIGHLIGHTS: no overlap, clean grid */
+  .pet-highlights-banner {
+    margin: 14px 0 0;
+  }
+
+  .pet-highlights-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .pet-highlight.card {
+    min-height: 128px;
+    padding: 14px 12px;
+    border-radius: 18px;
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.10);
+  }
+
+  .highlight-icon {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+
+  .pet-highlight strong {
+    font-size: 28px;
+    margin-bottom: 6px;
+  }
+
+  .pet-highlight span {
+    font-size: 12.5px;
+  }
+
+  /* PERSONALITY + FAVORITES */
+  .personalitys-favorites {
+    margin-top: 18px;
+  }
+
+  .both-row {
+    gap: 14px;
+  }
+
+  .personalitys.card,
+  .favorites.card {
+    padding: 18px;
+    border-radius: 20px;
+    min-height: 0;
+  }
+
+  .personality-header h2,
+  .favorites-header h2 {
+    font-size: 18px;
+  }
+
+  .personality-label label {
+    font-size: 14px;
+  }
+
+  .personality-label span {
+    font-size: 13px;
+  }
+
+  .bar {
+    height: 12px;
+  }
+
+  /* favorites items: tighter + responsive */
+  .favorite {
+    gap: 14px;
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .favorite .icon {
+    font-size: 26px;
+  }
+
+  .favorite h3 {
+    font-size: 15px;
+  }
+
+  .favorite p {
+    font-size: 13px;
+  }
+}
+
+/* super small phones */
+@media (max-width: 380px) {
+  .pet-information h1 {
+    font-size: 38px;
+  }
+
+  .petImg img {
+    height: 220px;
+  }
+
+  .pet-highlights-row {
+    grid-template-columns: 1fr; /* prevent squeezing */
+  }
+
+  .pet-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pet-buttons button {
+    width: 100%;
   }
 }

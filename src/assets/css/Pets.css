@@ -170,8 +170,7 @@
 }
 
 
-/* Pet container and related shit*/
-
+/* Pet container and related */
 .pet-container-public {
   display: flex;
   flex-direction: column;
@@ -192,20 +191,16 @@
   box-shadow: 0 6px 16px var(--shadow-light);
 }
 
-/* ----------------------
-   PET IMAGE
----------------------- */
+/* PET IMAGE */
 .pet-container-public img {
   width: 100%;
-  height: 260px; /* ↓ was 500px */
+  height: 260px;
   object-fit: cover;
   border-radius: 10px;
   background: #eaeaea;
 }
 
-/* ----------------------
-   PET NAME AND DETAILS
----------------------- */
+/* PET NAME AND DETAILS */
 .pet-name-public {
   margin-top: 10px;
   font-size: 17px;
@@ -222,7 +217,7 @@
   overflow-wrap: break-word;
   hyphens: auto;
 
-  max-height: 56px; /* ↓ tighter */
+  max-height: 56px;
   overflow: hidden;
 }
 
@@ -235,10 +230,6 @@
 /* ----------------------
    HORIZONTAL PET STUFF
 ---------------------- */
-
-/* ----------------------
-   BASE CARD
----------------------- */
 .pet-card {
   display: flex;
   background: linear-gradient(135deg, #ffffff, #fafafa);
@@ -246,7 +237,7 @@
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
-  cursor: default; /* optional */
+  cursor: default;
 }
 
 .pet-card:hover {
@@ -254,17 +245,11 @@
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
 }
 
-/* ----------------------
-   HORIZONTAL VARIANT
----------------------- */
 .pet-card--horizontal {
   width: 100%;
   height: 190px;
 }
 
-/* ----------------------
-   IMAGE
----------------------- */
 .pet-card__image {
   flex: 0 0 200px;
   height: 100%;
@@ -276,24 +261,16 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 14px 0 0 14px; /* rounded only on left */
+  border-radius: 14px 0 0 14px;
 }
 
-/* subtle overlay for depth */
 .pet-card__image::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.25),
-    rgba(0, 0, 0, 0)
-  );
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0));
 }
 
-/* ----------------------
-   CONTENT AREA
----------------------- */
 .pet-card__content {
   flex: 1;
   padding: 20px 24px;
@@ -302,10 +279,9 @@
   justify-content: center;
   gap: 10px;
   position: relative;
-  isolation: isolate; /* contain blur effect */
+  isolation: isolate;
 }
 
-/* faint background image */
 .pet-card__content::after {
   content: "";
   position: absolute;
@@ -338,11 +314,6 @@
   box-shadow: inset 0 0 80px rgba(0,0,0,0.25);
 }
 
-
-
-
-
-/* white translucent overlay for text readability */
 .pet-card__content::before {
   content: "";
   position: absolute;
@@ -356,20 +327,15 @@
   border-radius: 0 14px 14px 0;
 }
 
-/* subtle left divider */
 .pet-card__content::before,
 .pet-card__content::after {
   pointer-events: none;
 }
 
-/* divider line between image and content */
 .pet-card__content::before {
   box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.06);
 }
 
-/* ----------------------
-   TEXT STYLES
----------------------- */
 .pet-card__name {
   font-size: 20px;
   font-weight: 700;
@@ -391,22 +357,13 @@
   overflow: hidden;
 }
 
-
-
-/* ----------------------
-   OPTIONAL ACTION AREA (future-proof)
----------------------- */
 .pet-card__actions {
   margin-top: auto;
   display: flex;
   gap: 12px;
 }
 
-
-
-/* ----------------------
-   PAGINATION HEREEEEEEEEEEEEEEEEEEEEEEE
----------------------- */
+/* PAGINATION */
 .pagination {
   display: flex;
   align-items: center;
@@ -414,17 +371,14 @@
   user-select: none;
   align-self: center;
   margin-right: 1.2rem;
-  
 }
 
-/* Arrow containers */
 .pagination__controls {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-/* Arrow icons */
 .pagination__icon {
   cursor: pointer;
   font-size: 1.25rem;
@@ -437,13 +391,11 @@
   transform: scale(1.1);
 }
 
-/* Pages container */
 .pagination__pages {
   display: flex;
   gap: 0.5rem;
 }
 
-/* Page buttons */
 .pagination__page {
   min-width: 2rem;
   height: 2rem;
@@ -467,7 +419,6 @@
   font-weight: 600;
 }
 
-/* Debug / test button */
 .pagination__debug {
   margin-left: 1rem;
   padding: 0.4rem 0.7rem;
@@ -483,7 +434,9 @@
 }
 
 
-/* Responsive Design */
+/* ===================================================== */
+/* MOBILE FIXES ONLY (STRONG OVERRIDES)                   */
+/* ===================================================== */
 @media (max-width: 768px) {
     .box-container {
         flex-direction: column;
@@ -496,22 +449,61 @@
         margin-bottom: 30px;
     }
 
+    /* remove both icons completely on mobile */
+    .icons {
+        display: none !important;
+    }
+
+    /* tighten header layout (this is where your "select off" comes from) */
     .right-container-header {
         flex-direction: column;
-        gap: 20px;
+        gap: 12px;
+        align-items: stretch;
     }
 
-    .right-container-header > div {
-        min-width: 100%;
-    }
-
-    .right-container-header select {
+    /* force label + select alignment */
+    .right-container-header .order,
+    .right-container-header .show {
         width: 100%;
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
     }
 
-    .icons {
-        justify-content: flex-start;
-        margin-top: 10px;
+    /* if total amount is inside header, keep it clean */
+    .right-container-header .total-amount {
+        width: 100%;
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .order h2,
+    .show h2 {
+        margin-top: 0;
+        font-size: 16px;
+        line-height: 1;
+    }
+
+    /* ✅ this is the real fix: override width:100% on select */
+    .right-container-header .order select,
+    .right-container-header .show select {
+        width: 200px !important;     /* fixed width so it aligns */
+        max-width: 70vw !important;  /* safety on tiny phones */
+        height: 44px;
+        padding: 10px 12px;
+        font-size: 14px;
+        border-radius: 10px;
+    }
+
+    /* category selects too */
+    .state-category select,
+    .breed-category select,
+    .age-category select {
+        height: 44px;
+        padding: 10px 12px;
+        font-size: 14px;
+        border-radius: 10px;
     }
 
     .pets-container-allpets {

@@ -234,8 +234,128 @@
   font-size: 15px;
   margin-top: 25px;
 
-  /* FIX: button below right+left columns */
   grid-column: 1 / -1;
+  justify-self: end;
+}
 
-  justify-self: end; /* align right */
+/* ---------------------------------------------------
+   MOBILE IMPROVEMENTS
+--------------------------------------------------- */
+@media (max-width: 820px) {
+  .settings-page {
+    padding: 14px;
+  }
+
+  /* Header becomes stacked */
+  .profile-header-settings {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .profile-left {
+    align-items: center;
+    gap: 12px;
+  }
+
+  .profile-img {
+    width: 72px;
+    height: 72px;
+  }
+
+  .profile-name {
+    font-size: 18px;
+  }
+
+  .profile-tags {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* keep edit button visible and not awkward */
+  .edit-btn {
+    align-self: flex-end;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(17, 24, 39, 0.05);
+  }
+
+  /* Tabs: horizontal scroll instead of wrapping */
+  .tabs {
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    flex: 0 0 auto;
+    padding: 10px 12px;
+    border-radius: 999px;
+    background: rgba(17, 24, 39, 0.04);
+  }
+
+  .tab.active {
+    background: rgba(255, 123, 84, 0.14);
+    border-bottom: none;
+  }
+
+  /* Details: single column */
+  .details-container {
+    padding: 16px;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .details-column {
+    gap: 16px;
+  }
+
+  /* Address: single column (no squeezed inputs) */
+  .address-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .address-grid .full {
+    grid-column: auto;
+  }
+
+  /* Inputs: slightly bigger for touch */
+  .field input,
+  .field select {
+    font-size: 16px; /* prevents iOS zoom */
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  /* Save button: full width */
+  .save-btn {
+    width: 100%;
+    justify-self: stretch;
+    padding: 14px 16px;
+    border-radius: 10px;
+  }
+}
+
+@media (max-width: 420px) {
+  .profile-left {
+    align-items: flex-start;
+  }
+
+  .profile-name {
+    font-size: 17px;
+  }
+
+  .tag {
+    font-size: 12px;
+  }
 }

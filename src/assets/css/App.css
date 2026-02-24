@@ -58,6 +58,7 @@ section {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 65px;
   height: 100vh;
   padding: 0 10%;
   position: relative;
@@ -75,7 +76,7 @@ section {
   top: -10%;
   width: 60%;
   height: 120%;
-  background: var(--dog-blop); /* primary color glow */
+  background: var(--dog-blop);
   border-radius: 50% 40% 60% 30%;
   filter: blur(40px);
   z-index: 0;
@@ -193,12 +194,43 @@ section {
 }
 
 /* ----------------------------------------------------- */
-/* DOGS GRID                                              */
+/* DOGS GRID + SWIPER                                    */
 /* ----------------------------------------------------- */
 .dogs-grid {
   padding-top: 140px;
 }
 
+/* If you use Swiper inside .dogs-grid, style it properly */
+.dogs-grid .swiper {
+  width: 100%;
+  padding: 14px 2px 28px;
+}
+
+.dogs-grid .swiper-wrapper {
+  align-items: stretch;
+}
+
+.dogs-grid .swiper-slide {
+  height: auto;
+  display: flex;
+}
+
+.dogs-grid .swiper-slide img {
+  width: 100%;
+  height: 260px;        /* desktop baseline */
+  object-fit: cover;
+  border-radius: var(--radius);
+  box-shadow: 0 5px 18px rgba(0,0,0,0.1);
+  transition: 0.25s ease;
+  display: block;
+  cursor: pointer;
+}
+
+.dogs-grid .swiper-slide img:hover {
+  transform: scale(1.03);
+}
+
+/* Keep your grid version too, if you still use it elsewhere */
 .dogs-grid .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -315,27 +347,203 @@ section {
 /* RESPONSIVITY                                           */
 /* ----------------------------------------------------- */
 @media (max-width: 950px) {
+  section {
+    padding: 56px 18px;
+  }
+
+  /* NEW APPROACH: hero becomes a clean stack + watermark background dog */
   .hero {
-    flex-direction: column-reverse;
+    flex-direction: column;
     text-align: center;
     height: auto;
-    padding: 60px 10% 130px;
+    padding: 22px 18px 34px;
+    border-radius: 0 0 40px 40px;
+    gap: 14px;
+
+    /* important for watermark layering */
+    position: relative;
+    overflow: hidden;
   }
 
   .hero::before {
-    width: 130%;
-    height: 70%;
-    left: -15%;
-    top: 50px;
+    width: 120%;
+    height: 55%;
+    left: -10%;
+    top: 0;
+    filter: blur(30px);
+  }
+
+  .hero::after { display: none; }
+
+  /* OPTION A (WATERMARK): dog image behind content, not as a card */
+  .hero-right {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    pointer-events: none;
   }
 
   .hero-right img {
     position: static;
-    width: 260px;
+    width: min(520px, 125vw);
     height: auto;
+    max-height: none;
+    margin-top: -22px;
+
+    /* watermark styling */
+    opacity: 0.13;
+    filter: saturate(0.95) contrast(1.05);
+    transform: translateY(10px);
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .hero-left {
     max-width: 100%;
+    margin-top: 0;
+    z-index: 2; /* keep content above watermark */
+  }
+
+  .hero-left h1 {
+    font-size: 2.15rem;
+    line-height: 1.12;
+  }
+
+  .hero-left p {
+    font-size: 1rem;
+    margin: 12px 0 14px;
+  }
+
+  .hero-left p:last-of-type {
+    margin-top: 16px;
+    margin-bottom: 10px;
+  }
+
+  .hero-search {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .hero-search select,
+  .hero-search button {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 1rem;
+  }
+
+  .cities-grid {
+    max-width: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .city-pill {
+    width: 100%;
+    padding: 12px 12px;
+    text-align: center;
+    border-radius: 18px;
+  }
+
+  .dogs-grid {
+    padding-top: 30px;
+  }
+
+  /* Swiper slides on mobile: make cards taller + nicer */
+  .dogs-grid .swiper-slide img {
+    height: 210px;
+    border-radius: 16px;
+  }
+
+  .accessories {
+    border-radius: 40px;
+  }
+
+  .accessories-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    justify-content: initial;
+  }
+
+  .access-card {
+    width: 100%;
+    height: 180px;
+    border-radius: 16px;
+  }
+
+  .breeds-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .breeds-grid img {
+    height: 190px;
+    border-radius: 16px;
+  }
+
+  .blog {
+    border-radius: 40px;
+  }
+
+  .blog-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .blog-card img {
+    height: 170px;
+  }
+
+  .blog-card p {
+    padding: 14px;
+    font-size: 0.98rem;
+  }
+}
+
+@media (max-width: 600px) {
+  section {
+    padding: 46px 14px;
+  }
+
+  .hero {
+    padding: 18px 14px 28px;
+  }
+
+  .hero-left h1 {
+    font-size: 2rem;
+  }
+
+  /* make watermark a bit smaller on very small screens */
+  .hero-right img {
+    width: min(460px, 132vw);
+    margin-top: -18px;
+    opacity: 0.12;
+  }
+
+  .dogs-grid .swiper {
+    padding: 10px 2px 24px;
+  }
+
+  .dogs-grid .swiper-slide img {
+    height: 220px; /* slightly bigger for the 1.15 slidesPerView look */
+  }
+}
+
+@media (max-width: 380px) {
+  .hero-left h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-right img {
+    width: 140vw;
+    opacity: 0.11;
   }
 }

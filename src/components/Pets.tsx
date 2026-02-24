@@ -113,7 +113,7 @@ function Pets() {
                         <div className="pets-container-allpets">
                         <PetContainerPublicApi petData={PetData} /> 
                         </div>
-                    ) : currentGrid == "laying" ?(<PetContainerPublicApiLaying petData={PetData} />): <div>O que que você fez?</div>}
+                    ) : currentGrid == "laying" ?(<PetContainerPublicApiLaying petData={PetData} />): <div>O que você fez?</div>}
                 
 
                 {/* negocio chatinho em, mais dificil do que eu esperava */}
