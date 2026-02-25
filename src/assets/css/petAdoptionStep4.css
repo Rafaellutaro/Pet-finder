@@ -367,9 +367,156 @@
   }
 }
 
-@media (max-width: 520px) {
+/* ✅ MOBILE POLISH (fixes the issues shown in your screenshot) */
+@media (max-width: 560px) {
+  /* Your header looks fixed — push content below it */
+  .petAdoption4-main-container {
+    --app-header-h: 72px; /* tweak if your header is different */
+    padding-top: calc(14px + var(--app-header-h) + env(safe-area-inset-top));
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 44px;
+  }
+
+  .petadoption4-pageCard {
+    border-radius: 18px;
+    padding: 18px 14px 16px;
+  }
+
+  .petAdoption4-header {
+    padding: 4px 6px 10px;
+  }
+
+  /* Hero sizes */
+  .petadoption4-heart-circle {
+    width: 76px;
+    height: 76px;
+  }
+
+  .petadoption4-heart-icon {
+    font-size: 28px;
+  }
+
   .petAdoption4-title {
     font-size: 34px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    display: block;          /* ✅ prevents awkward centering gaps on narrow screens */
+    text-align: center;
+  }
+
+  .petAdoption4-confettiIcon {
+    transform: none;
+    margin-left: 6px;
+  }
+
+  .petAdoption4-subtitle {
+    font-size: 16px;
+    line-height: 1.25;
+    margin: 8px 0 6px;
+  }
+
+  .petAdoption4-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    max-width: 100%;
+  }
+
+  /* Summary box */
+  .petadoption4-addoption-summary {
+    padding: 14px;
+    border-radius: 16px;
+    gap: 14px;
+  }
+
+  .petadoption4-left-panel,
+  .petadoption4-right-panel {
+    border-radius: 14px;
+    padding: 12px;
+  }
+
+  /* Image MUST be responsive on mobile (no overflow / no weird cropping) */
+  .petadoption4-pet-imgWrap {
+    width: 100%;
+  }
+
+  .petadoption4-pet-img {
+    width: min(260px, 100%);
+    height: auto;              /* ✅ key: stop forcing a square that can overflow */
+    aspect-ratio: 1 / 1;       /* ✅ keeps it square when width shrinks */
+    border-radius: 18px;
+  }
+
+  .petadoption4-pet-chip {
+    bottom: -12px;
+    padding: 7px 12px;
+  }
+
+  /* People row: avoid cramped look */
+  .petadoption4-peopleRow {
+    grid-template-columns: 1fr 30px 1fr;
+    gap: 8px;
+    padding: 8px 4px 0;
+    margin-top: 14px;
+  }
+
+  .petadoption4-avatarMini {
+    width: 34px;
+    height: 34px;
+  }
+
+  /* Details */
+  .petadoption4-details {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .petadoption4-detailsValue {
+    font-size: 13.5px;
+  }
+
+  /* Thank you */
+  .petadoption4-thankYou-message {
+    border-radius: 16px;
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .petadoption4-thankIcon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .petadoption4-thankText h3 {
+    font-size: 14.5px;
+  }
+
+  .petadoption4-thankText p {
+    font-size: 12.6px;
+  }
+
+  /* Buttons: full width stack */
+  .petadoption4-buttons {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .petadoption4-btn {
+    height: 50px;
+    border-radius: 14px;
+    width: 100%;
+  }
+
+  .petadoption4-footer-message {
+    font-size: 11.5px;
+    padding: 6px 6px 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .petAdoption4-title {
+    font-size: 32px;
   }
 
   .petadoption4-buttons {

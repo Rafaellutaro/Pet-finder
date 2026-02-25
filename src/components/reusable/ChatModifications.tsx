@@ -77,7 +77,7 @@ export function WorkingChat({ token, verifyToken, alldata, user, setMessage, mes
         })
 
         setOpen(false)
-        if (!response) return 
+        if (!response) return
     }
 
     const petImg = alldata?.pet?.imgs[0]?.url
@@ -151,8 +151,7 @@ export function WorkingChat({ token, verifyToken, alldata, user, setMessage, mes
 
                                 {/* <span className="pet-chat__divider" aria-hidden="true" /> */}
 
-                                {/* Accept/Decline only for owner + pending */}
-                                {user?.id == alldata?.ownerId && (
+                                {user?.id == alldata?.ownerId && alldata?.conversationStatus == "PENDING" && (
                                     <div className="pet-chat__adoption-inline">
                                         <button
                                             className="pet-chat__action pet-chat__action--accept"

@@ -23,14 +23,13 @@
   padding: 18px;
   box-shadow: 0 14px 34px rgba(17, 24, 39, 0.08);
 
-  /* ✅ important: make both columns stretch to same row height */
   align-items: stretch;
 }
 
-/* ✅ CRITICAL FIX: allow grid children to shrink instead of forcing row height */
+/* allow grid children to shrink */
 .pet-adoption2-grid > * {
   min-width: 0;
-  min-height: 0; /* <<< this is what stops right side from growing the grid */
+  min-height: 0;
 }
 
 /* LEFT */
@@ -40,7 +39,6 @@
   border-radius: 16px;
   padding: 14px;
 
-  /* ✅ NEW */
   height: 100%;
   min-height: 0;
   display: flex;
@@ -53,11 +51,8 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0;
-
-  /* ✅ NEW */
   flex: 0 0 auto;
 }
-
 
 .pet-adoption2-left-title {
   font-weight: 900;
@@ -74,8 +69,6 @@
   border: 1px solid rgba(17, 24, 39, 0.10);
   border-radius: 14px;
   margin-bottom: 0;
-
-  /* ✅ NEW */
   flex: 0 0 auto;
 }
 
@@ -134,7 +127,6 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
 }
 
-/* ✅ Custom address grid */
 .pet-adoption2-customGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -172,7 +164,6 @@
   padding: 8px 10px;
   min-width: 0;
 
-  /* ✅ Make right column match left height and NOT push the row */
   height: 100%;
   min-height: 0;
   overflow: hidden;
@@ -182,24 +173,35 @@
 }
 
 .pet-adoption2-right-top {
+  /* ✅ FIX: make the title+count align perfectly and never overlap */
   display: flex;
-  align-items: center;
+  align-items: baseline;      /* was center; baseline fixes "floating" look */
   justify-content: space-between;
+  gap: 12px;
   margin: 6px 4px 12px;
 
   flex: 0 0 auto;
+  min-width: 0;
 }
 
 .pet-adoption2-right-title {
   margin: 0;
   font-size: 15px;
   font-weight: 900;
+
+  /* ✅ allow wrapping instead of pushing into the count */
+  min-width: 0;
+  line-height: 1.15;
 }
 
 .pet-adoption2-right-count {
+  /* ✅ FIX: keep it as a single block aligned on the same baseline */
   font-size: 13px;
   opacity: 0.7;
   font-weight: 800;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  line-height: 1.15;
 }
 
 .pet-adoption2-right-container-all-proposals {
@@ -216,13 +218,11 @@
   width: 100%;
   max-width: 100%;
 
-  /* ✅ THIS is the scroll window */
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
 
-  /* ✅ show only ~3-4 items at most (adjust if you want) */
   max-height: 520px;
 
   overscroll-behavior: contain;
@@ -273,12 +273,10 @@
   max-width: 100%;
   overflow: hidden;
 
-  /* ✅ prevent cards from shrinking/being "compressed" */
   flex: 0 0 auto;
   flex-shrink: 0;
 }
 
-/* ✅ head can wrap; badge stays to the right */
 .pet-adoption2-proposal-head {
   display: flex;
   align-items: flex-start;
@@ -287,7 +285,6 @@
   min-width: 0;
 }
 
-/* ✅ FULL ADDRESS: allow multi-line wrapping */
 .pet-adoption2-proposal-address {
   margin: 0;
   font-weight: 900;
@@ -301,7 +298,6 @@
   line-height: 1.25;
 }
 
-/* badge pinned right, never shrinks */
 .pet-adoption2-proposal-badge {
   font-size: 12px;
   font-weight: 900;
@@ -357,11 +353,41 @@
   background: linear-gradient(90deg, #ff7a18, #ff2bb8);
 }
 
-/* ✅ Optional: on smaller widths, stack badge under title */
+/* Optional: on smaller widths, stack badge under title */
 @media (max-width: 520px) {
   .pet-adoption2-proposal-head {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+/* ✅ MOBILE: right top should stack to avoid any "floating" */
+@media (max-width: 560px) {
+  .pet-adoption2-main {
+    padding-top: calc(14px + env(safe-area-inset-top) + 72px);
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 44px;
+  }
+
+  .pet-adoption2-right-top {
+    flex-direction: row;
+    align-items: baseline;
+    margin: 6px 2px 12px;
+  }
+
+  .pet-adoption2-right-title {
+    font-size: 15px;
+  }
+
+  .pet-adoption2-right-count {
+    font-size: 13px;
+  }
+
+  /* slightly tighter */
+  .pet-adoption2-right-container-all-proposals {
+    padding: 14px;
+    border-radius: 14px;
   }
 }
 
@@ -375,7 +401,6 @@
     grid-template-columns: 1fr;
   }
 
-  /* On small screens, allow natural height but keep internal scroll */
   .pet-adoption2-right-container {
     height: auto;
     overflow: visible;
