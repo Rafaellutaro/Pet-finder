@@ -6,6 +6,7 @@ import { useUser } from "../Interfaces/GlobalUser";
 import type { chatInterface } from "../Interfaces/chatInterface";
 import bannerDFT from "../assets/imgs/bannerDFT.png";
 import { useNavigateWithFrom } from "./reusable/Redirect";
+import Loader from "./reusable/Loader";
 
 type ConversationFilter = "ALL" | "PENDING" | "ACCEPTED" | "DECLINED";
 
@@ -45,6 +46,8 @@ function Chat() {
         ACCEPTED: "accepted",
         DECLINED: "rejected",
     };
+
+    if (!allChatsData) return <Loader/>
 
     const normalized = useMemo(() => {
         return allChatsData.map((c) => {

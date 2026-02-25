@@ -16,7 +16,11 @@ export default async function resendApiPrivate({ apiUrl, options, token, verifyT
         if (response.ok) {
             const data = await response.json()
             return data.data
+        }else if (!response.ok){
+            const data = await response.json()
+            return data.message
         }
+        
         const newToken = await verifyToken()
 
         const newResponse = await apiFetch(apiUrl,

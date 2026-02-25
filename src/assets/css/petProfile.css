@@ -1,5 +1,5 @@
 /* =========================================================
-   PET PROFILE PAGE (SCOPED)
+   PET PROFILE PAGE (SCOPED) — recolored to your palette
    Uses ONLY your component class names (+ wrapper classes)
    ========================================================= */
 
@@ -13,8 +13,6 @@
 .petProfilePage {
   width: min(1280px, 92%);
   margin: 102px auto 80px;
-
-  /* IMPORTANT: neutralize any parent padding influence visually */
   padding: 0;
 }
 
@@ -25,22 +23,22 @@
 
 /* ---------- Generic card look used in THIS PAGE ---------- */
 .card {
-  background: #fffdf9;
+  background: var(--surface);
   border-radius: 22px;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.10);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
 }
 
 /* =========================================================
-   HERO (PetBanner) — same look, but locked to wrapper edges
+   HERO (PetBanner)
    ========================================================= */
 .PetBanner {
   display: grid;
   grid-template-columns: 560px 1fr;
   gap: 56px;
 
-  /* keep your top/side padding, add more space at the bottom */
   padding: 48px;
-  padding-bottom: 120px;  /* reserve space for the highlights overlap */
+  padding-bottom: 120px;
 
   min-height: 640px;
   width: 100%;
@@ -49,16 +47,21 @@
   border-radius: 26px;
   position: relative;
   overflow: hidden;
+
+  /* ✅ key fix: neutral surface (so accents pop) */
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
 
-/* subtle warm glow like reference */
+/* subtle warm glow */
 .PetBanner::before {
   content: "";
   position: absolute;
   inset: -40px;
   background:
-    radial-gradient(circle at 15% 20%, rgba(255, 183, 77, 0.20), transparent 55%),
-    radial-gradient(circle at 85% 15%, rgba(255, 210, 130, 0.14), transparent 55%);
+    radial-gradient(circle at 15% 20%, rgba(255, 123, 84, 0.20), transparent 55%),
+    radial-gradient(circle at 85% 15%, rgba(255, 176, 138, 0.18), transparent 55%);
   pointer-events: none;
 }
 
@@ -94,7 +97,10 @@
   font-size: 72px;
   line-height: 1;
   font-weight: 800;
-  color: #f97316;
+
+  /* ✅ use palette */
+  color: var(--primary);
+
   letter-spacing: -0.02em;
 }
 
@@ -102,14 +108,14 @@
   margin: 0 0 10px 0;
   font-size: 18px;
   font-weight: 600;
-  color: #111827;
+  color: var(--text);
 }
 
 .pet-meta,
 .pet-location {
   margin: 0;
   font-size: 15px;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
 .pet-description {
@@ -117,19 +123,18 @@
   max-width: 560px;
   font-size: 15.5px;
   line-height: 1.75;
-  color: #374151;
+  color: var(--field-label);
 
-  /* safety for long unbroken text */
   overflow-wrap: anywhere;
   word-break: break-word;
 }
 
 /* =========================================================
-   HIGHLIGHTS — guaranteed same outer edges as hero
+   HIGHLIGHTS
    ========================================================= */
 .pet-highlights-banner {
   width: 100%;
-  margin: 20px 0 0; /* safer overlap */
+  margin: 20px 0 0;
   position: relative;
   z-index: 3;
   padding: 0 !important;
@@ -155,7 +160,17 @@
   border-radius: 24px;
   text-align: center;
 
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.12);
+  /* ✅ floating card feel */
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+
+  transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+.pet-highlight.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 38px rgba(255, 123, 84, 0.18);
 }
 
 /* icon */
@@ -163,6 +178,7 @@
   font-size: 34px;
   line-height: 1;
   margin-bottom: 20px;
+  color: rgba(255, 123, 84, 0.90);
 }
 
 /* number */
@@ -170,7 +186,7 @@
   display: block;
   font-size: 42px;
   font-weight: 800;
-  color: #f97316;
+  color: var(--primary);
   margin-bottom: 10px;
   letter-spacing: -0.02em;
 }
@@ -179,14 +195,13 @@
 .pet-highlight span {
   display: block;
   font-size: 16px;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
 /* =========================================================
    PET ACTION BUTTONS (Hero section)
    ========================================================= */
 .pet-buttons {
-  /* place buttons in the right column of the hero */
   grid-column: 2;
   align-self: start;
 
@@ -196,7 +211,6 @@
   margin-top: 24px;
 }
 
-/* shared button base */
 .pet-buttons button {
   height: 52px;
   padding: 0 26px;
@@ -212,32 +226,31 @@
 
 /* secondary action (heart) */
 .heart-button {
-  background: #fff;
-  color: #f97316;
-  border: 2px solid #f97316;
+  background: var(--surface);
+  color: var(--primary);
+  border: 2px solid var(--primary);
 }
 
 .heart-button:hover {
-  background: #fff7ed;
+  background: var(--bg-alt);
   transform: translateY(-1px);
 }
 
 /* primary action (adopt) */
 .adopt-button {
-  background: #f97316;
-  color: #fff;
-
-  box-shadow: 0 10px 25px rgba(249, 115, 22, 0.35);
+  background: var(--primary);
+  color: var(--white);
+  box-shadow: 0 10px 25px rgba(255, 123, 84, 0.35);
 }
 
 .adopt-button:hover {
-  background: #ea580c;
+  filter: brightness(0.98);
   transform: translateY(-1px);
-  box-shadow: 0 14px 30px rgba(249, 115, 22, 0.45);
+  box-shadow: 0 14px 30px rgba(255, 123, 84, 0.45);
 }
 
 /* =========================================================
-   PERSONALITY + FAVORITES — same outer edges as hero
+   PERSONALITY + FAVORITES
    ========================================================= */
 .personalitys-favorites {
   width: 100%;
@@ -258,6 +271,10 @@
   padding: 44px;
   border-radius: 26px;
   min-height: 520px;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
 
 /* headers */
@@ -274,7 +291,7 @@
   margin: 0;
   font-size: 26px;
   font-weight: 800;
-  color: #111827;
+  color: var(--text);
 }
 
 /* =========================================================
@@ -293,19 +310,19 @@
 
 .personality-label label {
   font-size: 16px;
-  color: #374151;
+  color: var(--field-label);
   font-weight: 600;
 }
 
 .personality-label span {
   font-size: 15px;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
 /* track */
 .bar {
   height: 14px;
-  background: #e5e7eb;
+  background: rgba(0, 0, 0, 0.08);
   border-radius: 999px;
   overflow: hidden;
 }
@@ -318,7 +335,7 @@
   border-radius: 999px;
 }
 
-/* COLORS */
+/* COLORS (kept as-is; these are fine accent colors) */
 .bar.blue > span   { background: #3b82f6; }
 .bar.green > span  { background: #22c55e; }
 .bar.purple > span { background: #a855f7; }
@@ -335,28 +352,32 @@
 
   padding: 24px;
   border-radius: 18px;
-  background: #faf5ff;
+
+  /* ✅ key fix: neutral card + warm border */
+  background: var(--surface);
+  border: 1px solid rgba(255, 123, 84, 0.22);
+
   margin-bottom: 16px;
 }
 
 .favorite .icon {
   font-size: 34px;
   line-height: 1;
+  color: rgba(255, 123, 84, 0.95);
 }
 
 .favorite h3 {
   margin: 0 0 6px 0;
   font-size: 18px;
   font-weight: 800;
-  color: #111827;
+  color: var(--text);
 }
 
 .favorite p {
   margin: 0;
   font-size: 15px;
-  color: #6b7280;
+  color: var(--text-muted);
 
-  /* safety for long text */
   overflow-wrap: anywhere;
   word-break: break-word;
 }
@@ -410,24 +431,21 @@
 }
 
 /* =========================================================
-   MOBILE FRIENDLY (NEW) — iPhone/Android focus
-   Keeps your design, just makes it fit cleanly
+   MOBILE FRIENDLY (NEW)
    ========================================================= */
 @media (max-width: 600px) {
-  /* wrapper: full width with safe padding */
   .petProfilePage {
     width: 100%;
     margin: 84px auto 56px;
     padding: 0 14px;
   }
 
-  /* HERO */
   .PetBanner {
     grid-template-columns: 1fr;
     gap: 14px;
 
     padding: 16px;
-    padding-bottom: 18px; /* no need for huge reserve on mobile */
+    padding-bottom: 18px;
 
     min-height: auto;
     border-radius: 20px;
@@ -466,7 +484,6 @@
     max-width: 100%;
   }
 
-  /* buttons: centered + compact (keeps your look) */
   .pet-buttons {
     grid-column: auto;
     margin-top: 14px;
@@ -479,7 +496,6 @@
     font-size: 14px;
   }
 
-  /* HIGHLIGHTS: no overlap, clean grid */
   .pet-highlights-banner {
     margin: 14px 0 0;
   }
@@ -510,7 +526,6 @@
     font-size: 12.5px;
   }
 
-  /* PERSONALITY + FAVORITES */
   .personalitys-favorites {
     margin-top: 18px;
   }
@@ -543,7 +558,6 @@
     height: 12px;
   }
 
-  /* favorites items: tighter + responsive */
   .favorite {
     gap: 14px;
     padding: 14px;
@@ -563,7 +577,6 @@
   }
 }
 
-/* super small phones */
 @media (max-width: 380px) {
   .pet-information h1 {
     font-size: 38px;
@@ -574,7 +587,7 @@
   }
 
   .pet-highlights-row {
-    grid-template-columns: 1fr; /* prevent squeezing */
+    grid-template-columns: 1fr;
   }
 
   .pet-buttons {

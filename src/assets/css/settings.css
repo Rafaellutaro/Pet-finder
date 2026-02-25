@@ -6,7 +6,10 @@
   padding: 20px;
   font-family: Arial, sans-serif;
   margin-top: 40px;
+
+  /* ✅ back to clean settings look */
   background: var(--white);
+  color: var(--secondary);
 }
 
 /* Allow form contents to not break layout */
@@ -25,8 +28,10 @@
   gap: 25px;
   border-radius: 12px;
   padding: 25px;
+
   background-color: var(--white);
   box-shadow: 0 3px 10px var(--shadow-light);
+
   justify-content: space-between;
 }
 
@@ -69,6 +74,7 @@
 .profile-name {
   margin: 0;
   font-size: 22px;
+  color: var(--secondary);
 }
 
 .edit-btn {
@@ -77,6 +83,7 @@
   color: var(--primary);
   font-size: 16px;
   cursor: pointer;
+  border-radius: 10px;
 }
 
 /* ---------------------------------------------------
@@ -97,11 +104,12 @@
   padding-bottom: 8px;
   cursor: pointer;
   color: var(--secondary);
+  border-radius: 10px;
 }
 
 .tab:hover,
 .edit-btn:hover {
-  background-color: var(--primary-light);
+  background-color: var(--bg-alt);
 }
 
 .tab.active {
@@ -114,7 +122,10 @@
 --------------------------------------------------- */
 .details-container {
   margin-top: 30px;
-  background: var(--details-bg);
+
+  /* ✅ remove the blue-ish tone and use your warm alt background */
+  background: var(--bg);
+
   padding: 25px;
   border-radius: 12px;
 }
@@ -164,6 +175,7 @@
   border: 1px solid var(--field-border);
   border-radius: 6px;
   background: var(--white);
+  color: var(--secondary);
 }
 
 .field select {
@@ -173,12 +185,10 @@
   border: 1px solid var(--field-border);
   margin-top: 5px;
   background: var(--white);
+  color: var(--secondary);
   font-size: 14px;
   appearance: none;
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 20 20' fill='%23gray' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7L10 12L15 7' stroke='%23gray' stroke-width='2'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
 }
 
 .field input:hover,
@@ -238,6 +248,10 @@
   justify-self: end;
 }
 
+.save-btn:hover {
+  filter: brightness(0.98);
+}
+
 /* ---------------------------------------------------
    MOBILE IMPROVEMENTS
 --------------------------------------------------- */
@@ -273,12 +287,11 @@
     gap: 8px;
   }
 
-  /* keep edit button visible and not awkward */
   .edit-btn {
     align-self: flex-end;
     padding: 8px 10px;
     border-radius: 10px;
-    background: rgba(17, 24, 39, 0.05);
+    background: var(--bg-alt);
   }
 
   /* Tabs: horizontal scroll instead of wrapping */
@@ -297,7 +310,7 @@
     flex: 0 0 auto;
     padding: 10px 12px;
     border-radius: 999px;
-    background: rgba(17, 24, 39, 0.04);
+    background: var(--bg-alt);
   }
 
   .tab.active {
@@ -305,7 +318,6 @@
     border-bottom: none;
   }
 
-  /* Details: single column */
   .details-container {
     padding: 16px;
   }
@@ -319,7 +331,6 @@
     gap: 16px;
   }
 
-  /* Address: single column (no squeezed inputs) */
   .address-grid {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -329,15 +340,13 @@
     grid-column: auto;
   }
 
-  /* Inputs: slightly bigger for touch */
   .field input,
   .field select {
-    font-size: 16px; /* prevents iOS zoom */
+    font-size: 16px;
     padding: 12px;
     border-radius: 10px;
   }
 
-  /* Save button: full width */
   .save-btn {
     width: 100%;
     justify-self: stretch;

@@ -1,194 +1,250 @@
+/* ============================
+   PUBLIC PET LIST PAGE (palette-aligned + cleaner surfaces)
+   ============================ */
+
 /* General Container Setup */
 .box-container {
-    display: flex;
-    gap: 20px;
-    padding: 30px;
-    padding-top: 100px;
-    flex-wrap: wrap;
-    justify-content: space-between;
+  display: flex;
+  gap: 20px;
+  padding: 30px;
+  padding-top: 100px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  /* ✅ make the page feel like your main site */
+  background: var(--surface);
+  color: var(--text);
 }
 
 /* Left Container (Categories) */
 .left-container {
-    flex: 0.5;
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  flex: 0.5;
+
+  /* ✅ was too tinted; keep it as a real "card" */
+  background-color: var(--surface);
+  padding: 20px;
+  border-radius: 12px;
+
+  /* consistent shadow/border */
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  /* subtle warm accent without flooding the whole panel */
+  position: relative;
+  overflow: hidden;
+}
+
+.left-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(900px 420px at 10% 0%, rgba(255, 123, 84, 0.12), transparent 55%);
+  pointer-events: none;
 }
 
 .left-container h1 {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 10px;
+  position: relative;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 10px;
 }
 
 /* Category Dropdowns */
 .state-category select,
 .breed-category select,
 .age-category select {
-    width: 100%;
-    padding: 12px 15px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    background-color: #fff;
-    transition: all 0.3s ease;
-    color: #333;
+  position: relative;
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  color: var(--text);
+}
+
+.state-category select:hover,
+.breed-category select:hover,
+.age-category select:hover {
+  border-color: rgba(255, 123, 84, 0.35);
+  background: var(--surface-2);
 }
 
 .state-category select:focus,
 .breed-category select:focus,
 .age-category select:focus {
-    outline: none;
-    border-color: #6a73e2;
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--focus);
+  background: var(--surface);
 }
 
 /* Right Container (Pet Listings & Controls) */
 .right-container {
-    flex: 2;
-    width: 50%;
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+  flex: 2;
+  width: 50%;
+  background-color: var(--surface);
+  padding: 30px;
+  border-radius: 12px;
+
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
 /* Right Container Header */
 .right-container-header {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center; 
-    gap: 30px; 
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 30px;
 }
 
-/* Individual Header Sections (Ordernar, Exibir, Total Amount) */
+/* Individual Header Sections */
 .right-container-header > div {
-    display: flex;
-    flex-direction: row; 
-    gap: 10px; 
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
 
-/* Label (H2) for each section */
+/* Labels */
 .order h2,
 .show h2 {
-    font-size: 20px;
-    color: #333;
-    font-weight: bold;
-    margin: 0;
-    text-align: left;
-    margin-top: 12px; 
+  font-size: 18px;
+  color: var(--text);
+  font-weight: 900;
+  margin: 0;
+  text-align: left;
+  margin-top: 10px;
 }
 
-.total-amount{
-    font-size: 20px;
-    color: #333;
-    font-weight: bold;
-    margin: 0;
-    text-align: left;
-    margin-bottom: 15px;
+.total-amount {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 900;
+  margin: 0;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.total-amount h2 {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 900;
+  margin-top: 20px;
 }
 
 /* Dropdown (select) styling */
 .right-container-header select {
-    width: 100%;
-    padding: 12px 15px;
-    font-size: 14px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    background-color: #f9f9f9;
-    color: #333;
-    transition: border-color 0.3s ease;
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+
+  /* ✅ was bg-alt (too warm); use subtle surface instead */
+  background-color: var(--surface-2);
+  color: var(--text);
+
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-/* Focused state for dropdown */
+.right-container-header select:hover {
+  border-color: rgba(255, 123, 84, 0.35);
+  background: var(--surface);
+}
+
 .right-container-header select:focus {
-    border-color: #6a73e2;
-}
-
-/* Total amount section */
-.total-amount h2 {
-    font-size: 16px;
-    color: #333;
-    font-weight: bold;
-    margin-top: 20px;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--focus);
+  background: var(--surface);
 }
 
 /* Icon Styling */
 .icons {
-    display: flex;
-    justify-content: flex-start;
-    gap: 20px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 20px;
 }
 
 .icons svg {
-    width: 30px;
-    height: 30px;
-    color: #6a73e2;
-    cursor: pointer;
-    transition: transform 0.3s ease;
+  width: 30px;
+  height: 30px;
+  color: var(--primary);
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
+  opacity: 0.95;
 }
 
 .icons svg:hover {
-    transform: scale(1.1);
+  transform: scale(1.08);
+  filter: brightness(0.96);
+  opacity: 1;
 }
 
 /* Pets List (Grid) */
 .pets-container-allpets {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(280px, 1fr));
-    gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(280px, 1fr));
+  gap: 20px;
 }
 
 /* Single Pet Card */
 .single-pet {
-    background-color: #fafafa;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    transition: all 0.3s ease;
-    cursor: pointer;
+  background-color: var(--surface);
+  border-radius: 14px;
+
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.10);
+  padding: 15px;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  cursor: pointer;
+
+  border: 1px solid var(--border);
 }
 
 .single-pet:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.14);
 }
 
 .single-pet img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-    object-fit: cover;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
 }
-
 
 /* Pet container and related */
 .pet-container-public {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: var(--white);
+  background: var(--surface);
   padding: 14px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px var(--shadow-light);
+  border-radius: 12px;
+
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   width: 300px;
   min-height: 220px;
+
+  border: 1px solid var(--border);
 }
 
 /* Hover effect for cards */
 .pet-container:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px var(--shadow-light);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
 }
 
 /* PET IMAGE */
@@ -196,16 +252,16 @@
   width: 100%;
   height: 260px;
   object-fit: cover;
-  border-radius: 10px;
-  background: #eaeaea;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.06);
 }
 
 /* PET NAME AND DETAILS */
 .pet-name-public {
   margin-top: 10px;
   font-size: 17px;
-  font-weight: 600;
-  color: var(--details-heading);
+  font-weight: 900;
+  color: var(--text);
   text-align: center;
 }
 
@@ -223,7 +279,7 @@
 
 .pet-details-public p {
   font-size: 14px;
-  color: var(--field-label);
+  color: var(--text-muted);
   line-height: 1.3;
 }
 
@@ -232,17 +288,20 @@
 ---------------------- */
 .pet-card {
   display: flex;
-  background: linear-gradient(135deg, #ffffff, #fafafa);
+  background: linear-gradient(135deg, var(--surface), var(--surface-2));
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.08);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
   cursor: default;
+
+  border: 1px solid var(--border);
 }
 
 .pet-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
 }
 
 .pet-card--horizontal {
@@ -254,7 +313,7 @@
   flex: 0 0 200px;
   height: 100%;
   position: relative;
-  background: #eaeaea;
+  background: rgba(0, 0, 0, 0.06);
 }
 
 .pet-card__image img {
@@ -268,7 +327,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0));
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0));
 }
 
 .pet-card__content {
@@ -282,38 +341,6 @@
   isolation: isolate;
 }
 
-.pet-card__content::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-
-  background:
-    linear-gradient(
-      to right,
-      rgba(255,255,255,0.55) 0%,
-      rgba(255,255,255,0.35) 35%,
-      rgba(255,255,255,0.15) 65%,
-      rgba(255,255,255,0) 100%
-    ),
-    linear-gradient(
-      to right,
-      rgba(0,0,0,0.15) 0%,
-      rgba(0,0,0,0.08) 40%,
-      rgba(0,0,0,0.0) 80%
-    ),
-    var(--bg-img);
-
-  background-size: cover;
-  background-position: center;
-
-  filter: blur(6px);
-  opacity: 0.3;
-  z-index: -1;
-  border-radius: 0 14px 14px 0;
-
-  box-shadow: inset 0 0 80px rgba(0,0,0,0.25);
-}
-
 .pet-card__content::before {
   content: "";
   position: absolute;
@@ -321,32 +348,25 @@
   background: linear-gradient(
     to right,
     rgba(255, 255, 255, 0.92),
-    rgba(255, 255, 255, 0.85)
+    rgba(255, 255, 255, 0.86)
   );
   z-index: -1;
   border-radius: 0 14px 14px 0;
-}
-
-.pet-card__content::before,
-.pet-card__content::after {
   pointer-events: none;
-}
-
-.pet-card__content::before {
   box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.06);
 }
 
 .pet-card__name {
   font-size: 20px;
-  font-weight: 700;
-  color: var(--details-heading);
+  font-weight: 900;
+  color: var(--text);
   margin: 0;
   letter-spacing: 0.2px;
 }
 
 .pet-card__details {
   font-size: 16px;
-  color: var(--field-label);
+  color: var(--text-muted);
   line-height: 1.55;
   max-width: 70%;
   font-weight: 500;
@@ -382,12 +402,12 @@
 .pagination__icon {
   cursor: pointer;
   font-size: 1.25rem;
-  color: #555;
+  color: var(--text-muted);
   transition: color 0.2s ease, transform 0.1s ease;
 }
 
 .pagination__icon:hover {
-  color: #000;
+  color: var(--text);
   transform: scale(1.1);
 }
 
@@ -400,113 +420,116 @@
   min-width: 2rem;
   height: 2rem;
   padding: 0 0.5rem;
-  border: 1px solid #ccc;
-  background: white;
-  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  color: var(--text);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .pagination__page:hover {
-  background: #f2f2f2;
+  background: var(--surface-2);
 }
 
 .pagination__page.active {
-  background: #000;
-  color: #fff;
-  border-color: #000;
-  font-weight: 600;
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+  font-weight: 800;
 }
 
 .pagination__debug {
   margin-left: 1rem;
   padding: 0.4rem 0.7rem;
   font-size: 0.75rem;
-  border: 1px dashed #aaa;
+  border: 1px dashed rgba(0, 0, 0, 0.30);
   background: transparent;
   cursor: pointer;
-  opacity: 0.6;
+  opacity: 0.65;
+  color: var(--text-muted);
 }
 
 .pagination__debug:hover {
   opacity: 1;
 }
 
-
 /* ===================================================== */
 /* MOBILE FIXES ONLY (STRONG OVERRIDES)                   */
 /* ===================================================== */
 @media (max-width: 768px) {
-    .box-container {
-        flex-direction: column;
-        align-items: center;
-    }
+  .box-container {
+    flex-direction: column;
+    align-items: center;
+    padding: 18px;
+    padding-top: 88px;
+  }
 
-    .left-container,
-    .right-container {
-        width: 100%;
-        margin-bottom: 30px;
-    }
+  .left-container,
+  .right-container {
+    width: 100%;
+    margin-bottom: 22px;
+  }
 
-    /* remove both icons completely on mobile */
-    .icons {
-        display: none !important;
-    }
+  /* remove both icons completely on mobile */
+  .icons {
+    display: none !important;
+  }
 
-    /* tighten header layout (this is where your "select off" comes from) */
-    .right-container-header {
-        flex-direction: column;
-        gap: 12px;
-        align-items: stretch;
-    }
+  /* tighten header layout */
+  .right-container-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
 
-    /* force label + select alignment */
-    .right-container-header .order,
-    .right-container-header .show {
-        width: 100%;
-        display: flex !important;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-    }
+  /* force label + select alignment */
+  .right-container-header .order,
+  .right-container-header .show {
+    width: 100%;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
 
-    /* if total amount is inside header, keep it clean */
-    .right-container-header .total-amount {
-        width: 100%;
-        margin: 0;
-        font-size: 16px;
-    }
+  /* if total amount is inside header, keep it clean */
+  .right-container-header .total-amount {
+    width: 100%;
+    margin: 0;
+    font-size: 16px;
+  }
 
-    .order h2,
-    .show h2 {
-        margin-top: 0;
-        font-size: 16px;
-        line-height: 1;
-    }
+  .order h2,
+  .show h2 {
+    margin-top: 0;
+    font-size: 16px;
+    line-height: 1;
+  }
 
-    /* ✅ this is the real fix: override width:100% on select */
-    .right-container-header .order select,
-    .right-container-header .show select {
-        width: 200px !important;     /* fixed width so it aligns */
-        max-width: 70vw !important;  /* safety on tiny phones */
-        height: 44px;
-        padding: 10px 12px;
-        font-size: 14px;
-        border-radius: 10px;
-    }
+  /* override width:100% on select */
+  .right-container-header .order select,
+  .right-container-header .show select {
+    width: 200px !important;
+    max-width: 70vw !important;
+    height: 44px;
+    padding: 10px 12px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
 
-    /* category selects too */
-    .state-category select,
-    .breed-category select,
-    .age-category select {
-        height: 44px;
-        padding: 10px 12px;
-        font-size: 14px;
-        border-radius: 10px;
-    }
+  /* category selects too */
+  .state-category select,
+  .breed-category select,
+  .age-category select {
+    height: 44px;
+    padding: 10px 12px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
 
-    .pets-container-allpets {
-        grid-template-columns: 1fr;
-    }
+  .pets-container-allpets {
+    grid-template-columns: 1fr;
+  }
 }

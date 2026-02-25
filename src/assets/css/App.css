@@ -9,14 +9,14 @@
   --bg-alt: #ffefe7;
   --white: #ffffff;
   --radius: 18px;
-  --shadow-light: rgba(0,0,0,0.15);
+  --shadow-light: rgba(0, 0, 0, 0.15);
   --tab-border: #ddd;
   --details-bg: #f5f7fc;
   --details-heading: #333;
   --field-label: #444;
   --field-border: #ccc;
-  --field-hover-border: #ccc; 
-  --field-focus-shadow: rgba(47,108,246,0.3);
+  --field-hover-border: #ccc;
+  --field-focus-shadow: rgba(47, 108, 246, 0.3);
   --tag-blue-bg: #e6f0ff;
   --tag-blue-color: #2f6cf6;
   --tag-green-bg: #e7f9ef;
@@ -24,6 +24,52 @@
   --tip-text: #666;
   --select-arrow: gray;
   --dog-blop: rgba(255, 123, 84, 0.35);
+
+  --surface: #ffffff;
+  --surface-2: #fffaf7;
+  --border: rgba(0, 0, 0, 0.08);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --text: #2b2b2b;
+  --text-muted: #6b7280;
+  --focus: rgba(255, 123, 84, 0.22);
+
+  --accent-blue: #2f6cf6;
+  --accent-green: #2e9f5c;
+  --accent-purple: #9b5cff;
+  --accent-pink: #ff4d6d;
+  --accent-amber: #f59e0b;
+
+  --danger: #ef4444;
+  --success: #22c55e;
+  --warning: #f59e0b;
+
+  --primary-grad: linear-gradient(90deg, #ff7b54, #ffb08a);
+  --card-bg: rgba(255,255,255,0.92);
+  --input-bg: rgba(0,0,0,0.04);
+
+  --success: var(--tag-green-color);
+  --success-bg: var(--tag-green-bg);
+  --danger: #ef4444;
+  --danger-bg: rgba(239, 68, 68, 0.12);
+
+  --chat-bubble-out-1: var(--primary);
+  --chat-bubble-out-2: var(--primary-light);
+
+  --card-bg: rgba(255,255,255,0.92);
+  --card-bg-2: rgba(255,255,255,0.86);
+
+  --accent-2: #ff5a7a;                 /* optional warm pink accent */
+  --surface-3: #fff3ec;                /* warm surface for sections */
+  --surface-4: #fff7f3;                /* even softer warm surface */
+  --border-2: rgba(255, 123, 84, 0.20);/* warm border */
+  --shadow-2: 0 16px 44px rgba(0,0,0,0.10);
+
+  --success: #2e9f5c;
+  --success-bg: rgba(46, 159, 92, 0.12);
+  --warning: #b45309;
+  --warning-bg: rgba(255, 123, 84, 0.16); /* warm warning */
+  --danger: #dc2626;
+  --danger-bg: rgba(220, 38, 38, 0.12);
 }
 
 * {
@@ -46,8 +92,15 @@ section {
 
 /* smooth fade for all sections */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ----------------------------------------------------- */
@@ -170,7 +223,7 @@ section {
 
 .cities-grid {
   display: flex;
-  flex-wrap:wrap;
+  flex-wrap: wrap;
   gap: 14px;
   max-width: 600px;
 }
@@ -181,7 +234,7 @@ section {
   background: var(--white);
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
   transition: 0.2s;
   border: 2px solid transparent;
   color: var(--secondary);
@@ -217,10 +270,11 @@ section {
 
 .dogs-grid .swiper-slide img {
   width: 100%;
-  height: 260px;        /* desktop baseline */
+  height: 260px;
+  /* desktop baseline */
   object-fit: cover;
   border-radius: var(--radius);
-  box-shadow: 0 5px 18px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.1);
   transition: 0.25s ease;
   display: block;
   cursor: pointer;
@@ -243,7 +297,7 @@ section {
   object-fit: cover;
   border-radius: var(--radius);
   transition: 0.3s ease;
-  box-shadow: 0 5px 18px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.1);
 }
 
 .dogs-grid img:hover {
@@ -271,7 +325,7 @@ section {
   background: var(--white);
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
   transition: 0.3s;
 }
 
@@ -324,7 +378,7 @@ section {
   background: var(--white);
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
   transition: 0.3s;
 }
 
@@ -373,7 +427,9 @@ section {
     filter: blur(30px);
   }
 
-  .hero::after { display: none; }
+  .hero::after {
+    display: none;
+  }
 
   /* OPTION A (WATERMARK): dog image behind content, not as a card */
   .hero-right {
@@ -404,7 +460,8 @@ section {
   .hero-left {
     max-width: 100%;
     margin-top: 0;
-    z-index: 2; /* keep content above watermark */
+    z-index: 2;
+    /* keep content above watermark */
   }
 
   .hero-left h1 {
@@ -533,7 +590,8 @@ section {
   }
 
   .dogs-grid .swiper-slide img {
-    height: 220px; /* slightly bigger for the 1.15 slidesPerView look */
+    height: 220px;
+    /* slightly bigger for the 1.15 slidesPerView look */
   }
 }
 

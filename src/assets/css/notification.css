@@ -1,4 +1,4 @@
-/* notification.css */
+/* notification.css (recolored to your palette variables) */
 
 /* --- Bell anchor (dropdown positioning) --- */
 .bell-wrap {
@@ -15,14 +15,19 @@
   height: 18px;
   padding: 0 5px;
   border-radius: 999px;
-  background: #ef4444;
-  color: #fff;
+
+  /* was: #ef4444 */
+  background: var(--primary);
+  color: var(--white);
+
   font-size: 11px;
   font-weight: 800;
   display: grid;
   place-items: center;
   line-height: 1;
-  border: 2px solid #fff;
+
+  /* was: 2px solid #fff */
+  border: 2px solid var(--white);
 }
 
 /* --- Dropdown container --- */
@@ -31,10 +36,16 @@
   top: calc(100% + 10px);
   right: 0;
   width: 360px;
-  background: #fff;
+
+  background: var(--white);
   border-radius: 14px;
-  box-shadow: 0 14px 40px rgba(16, 24, 40, 0.18);
-  border: 1px solid rgba(17, 24, 39, 0.08);
+
+  /* was: rgba(16, 24, 40, 0.18) */
+  box-shadow: 0 14px 40px var(--shadow-light);
+
+  /* was: rgba(17, 24, 39, 0.08) */
+  border: 1px solid rgba(0, 0, 0, 0.08);
+
   overflow: hidden;
   z-index: 9999;
 }
@@ -45,15 +56,19 @@
   justify-content: space-between;
   align-items: center;
   padding: 14px 14px;
-  background: #faf5ff;
-  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+
+  /* was: #faf5ff */
+  background: var(--bg-alt);
+
+  /* was: rgba(17, 24, 39, 0.08) */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .left-side-notification-header {
   display: flex;
-  flex-direction: column;   
-  align-items: flex-start;  
-  gap: 6px;                 
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
 }
 
 .notification-header-title {
@@ -61,13 +76,18 @@
   align-items: center;
   gap: 8px;
   font-weight: 800;
-  color: #111827;
+
+  /* was: #111827 */
+  color: var(--secondary);
 }
 
 .notification-mark-read {
   border: 0;
   background: transparent;
-  color: #7c3aed;
+
+  /* was: #7c3aed */
+  color: var(--primary);
+
   font-weight: 700;
   cursor: pointer;
   padding: 6px 8px;
@@ -75,14 +95,18 @@
 }
 
 .notification-mark-read:hover {
-  background: rgba(124, 58, 237, 0.08);
+  /* was: rgba(124, 58, 237, 0.08) */
+  background: rgba(255, 123, 84, 0.12);
 }
 
 .notification-new-badge {
   font-size: 12px;
   font-weight: 800;
-  color: #fff;
-  background: #ef4444;
+  color: var(--white);
+
+  /* was: #ef4444 */
+  background: var(--primary);
+
   padding: 4px 8px;
   border-radius: 999px;
 }
@@ -99,9 +123,13 @@
 }
 
 .notification-body::-webkit-scrollbar-thumb {
-  background: rgba(17, 24, 39, 0.18);
+  /* was: rgba(17, 24, 39, 0.18) */
+  background: rgba(0, 0, 0, 0.18);
+
   border-radius: 999px;
-  border: 3px solid #fff;
+
+  /* was: 3px solid #fff */
+  border: 3px solid var(--white);
 }
 
 /* Row */
@@ -120,7 +148,8 @@
 }
 
 .notification-row:hover {
-  background: rgba(17, 24, 39, 0.04);
+  /* was: rgba(17, 24, 39, 0.04) */
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .notification-row + .notification-row {
@@ -139,19 +168,23 @@
   border-radius: 999px;
   display: grid;
   place-items: center;
-  background: rgba(124, 58, 237, 0.08);
-  color: #7c3aed;
+
+  /* was: purple tones */
+  background: rgba(255, 123, 84, 0.14);
+  color: var(--primary);
 }
 
 /* optional color by type */
 .notification-icon-bubble.message {
-  background: rgba(59, 130, 246, 0.10);
-  color: #2563eb;
+  /* keep same palette by using your blue tag colors */
+  background: var(--tag-blue-bg);
+  color: var(--tag-blue-color);
 }
 
 .notification-icon-bubble.chatCreated {
-  background: rgba(168, 85, 247, 0.10);
-  color: #7c3aed;
+  /* keep within your palette: warm primary */
+  background: rgba(255, 123, 84, 0.14);
+  color: var(--primary);
 }
 
 .notification-body-content {
@@ -163,13 +196,18 @@
 
 .notification-title {
   font-weight: 900;
-  color: #111827;
+
+  /* was: #111827 */
+  color: var(--secondary);
+
   font-size: 14px;
   line-height: 1.2;
 }
 
 .notification-content {
-  color: rgba(17, 24, 39, 0.70);
+  /* was: rgba(17, 24, 39, 0.70) */
+  color: rgba(74, 74, 74, 0.78);
+
   font-size: 13px;
   line-height: 1.25;
   display: -webkit-box;
@@ -179,7 +217,9 @@
 }
 
 .notification-date {
-  color: rgba(17, 24, 39, 0.45);
+  /* was: rgba(17, 24, 39, 0.45) */
+  color: rgba(74, 74, 74, 0.55);
+
   font-size: 12px;
 }
 
@@ -187,7 +227,10 @@
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: #3b82f6;
+
+  /* was: #3b82f6 */
+  background: var(--tag-blue-color);
+
   justify-self: end;
 }
 
@@ -198,14 +241,19 @@
 /* Footer */
 .bellow-header {
   padding: 10px 12px;
-  border-top: 1px solid rgba(17, 24, 39, 0.08);
+
+  /* was: rgba(17, 24, 39, 0.08) */
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .notification-view-all {
   width: 100%;
   border: 0;
   background: transparent;
-  color: #7c3aed;
+
+  /* was: #7c3aed */
+  color: var(--primary);
+
   font-weight: 900;
   padding: 10px 12px;
   border-radius: 12px;
@@ -213,7 +261,8 @@
 }
 
 .notification-view-all:hover {
-  background: rgba(124, 58, 237, 0.08);
+  /* was: rgba(124, 58, 237, 0.08) */
+  background: rgba(255, 123, 84, 0.12);
 }
 
 /* Empty state */
@@ -226,10 +275,14 @@
 
 .notification-empty-title {
   font-weight: 900;
-  color: #111827;
+
+  /* was: #111827 */
+  color: var(--secondary);
 }
 
 .notification-empty-sub {
-  color: rgba(17, 24, 39, 0.6);
+  /* was: rgba(17, 24, 39, 0.6) */
+  color: rgba(74, 74, 74, 0.70);
+
   font-size: 13px;
 }

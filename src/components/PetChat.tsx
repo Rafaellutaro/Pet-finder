@@ -27,7 +27,6 @@ function PetChat() {
 
     if (!response) return backRedirect()
     setAlldata(response)
-    // console.log(response)
   }
 
   const getMessages = async () => {
@@ -61,8 +60,6 @@ function PetChat() {
       if (!message || typeof message !== "object") return;
 
       if (message.conversationId !== Number(id)) return;
-
-      console.log("new realtime message", message);
 
       setAllMessages((prev) => {
         if (prev.some((m) => m.id == message.id)) return prev;

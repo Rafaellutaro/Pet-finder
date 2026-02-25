@@ -64,6 +64,7 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
     };
 
     useEffect(() => {
+        console.log("running....")
         let cancelled = false;
 
         const initAuth = async () => {
@@ -100,7 +101,7 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
 
         initAuth();
         return () => { cancelled = true };
-    }, []);
+    }, [token]);
 
     useEffect(() => {
         if (!token) {

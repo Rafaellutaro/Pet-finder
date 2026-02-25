@@ -190,7 +190,6 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
                 content: message
             }
         })
-        res.status(200).json({ data: send })
 
         const getSenderName = await prisma.user.findFirst({
             where: {
@@ -213,6 +212,7 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
 
         const ownerId = getReceiver?.ownerId
         const adopterId = getReceiver?.adopterId
+        let markAsRead = null
 
         { senderId == adopterId ? receiverId = ownerId : receiverId = adopterId }
 
@@ -225,6 +225,24 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
         if (!isUserInConversation(conversationId, Number(receiverId))) {
             io.to(`user:${receiverId}`).emit("notification:new", { notification: notification });
         }
+
+         if (isUserInConversation(conversationId, Number(receiverId))) {
+            markAsRead = await prisma.notification.update({
+                where: {
+                    id: Number(notification.id)
+                },
+                data: {
+                    isRead: true
+                }
+            })
+        }
+
+        const result = {
+            ...send,
+            markAsRead
+        }
+
+        res.status(200).json({ data: result })
 
         io.to(`conversation:${conversationId}`).emit("message:new", { message: send });
     } catch (e) {

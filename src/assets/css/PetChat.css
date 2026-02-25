@@ -7,8 +7,12 @@
   /* ✅ IMPORTANT: your header/navbar is fixed, so we need space for it */
   padding-top: 92px; /* adjust if your navbar is taller/shorter */
 
-  background: radial-gradient(1200px 700px at 50% 0%, #f3f6ff 0%, #fbf8ff 45%, #fff 100%);
-  color: #1f2937;
+  background:
+    radial-gradient(1200px 700px at 50% 0%,
+      rgba(255, 123, 84, 0.20) 0%,
+      rgba(255, 239, 231, 0.65) 45%,
+      var(--bg) 100%);
+  color: var(--text);
 
   overflow-x: hidden;
 }
@@ -27,9 +31,10 @@
   height: min(720px, calc(100svh - 170px));
   height: min(720px, calc(100vh - 170px)); /* fallback */
 
-  background: rgba(255, 255, 255, 0.86);
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--border);
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(17, 24, 39, 0.10);
+  box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -41,7 +46,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.82);
 }
 
 .pet-chat__top-left {
@@ -58,6 +64,8 @@
   overflow: hidden;
   position: relative;
   flex: 0 0 auto;
+  background: rgba(0, 0, 0, 0.06);
+  border: 2px solid rgba(255, 255, 255, 0.9);
 }
 
 .pet-chat__pet-avatar img {
@@ -73,13 +81,14 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #22c55e;
-  border: 2px solid #fff;
+  background: var(--tag-green-color);
+  border: 2px solid var(--white);
 }
 
 .pet-chat__pet-name {
-  font-weight: 700;
+  font-weight: 800;
   font-size: 15px;
+  color: var(--details-heading);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -88,7 +97,7 @@
 
 .pet-chat__pet-owner {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--text-muted);
   margin-top: 4px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -113,11 +122,11 @@
   cursor: pointer;
   display: grid;
   place-items: center;
-  color: rgba(17, 24, 39, 0.75);
+  color: rgba(43, 43, 43, 0.78); /* based on --text */
 }
 
 .pet-chat__icon-btn:hover {
-  background: rgba(17, 24, 39, 0.05);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .pet-chat__icon {
@@ -130,7 +139,8 @@
   margin: 12px 16px 0;
   padding: 10px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(168, 85, 247, 0.18);
+  border: 1px solid rgba(255, 123, 84, 0.22);
+  background: rgba(255, 239, 231, 0.55);
   display: flex;
   gap: 12px;
   align-items: center;
@@ -139,13 +149,14 @@
 
 .pet-chat__pill-item {
   font-size: 12.5px;
+  color: var(--details-heading);
 }
 
 .pet-chat__pill-sep {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: rgba(107, 114, 128, 0.45);
+  background: rgba(107, 114, 128, 0.45); /* matches --text-muted feel */
 }
 
 /* ===== Messages ===== */
@@ -156,15 +167,15 @@
   -webkit-overflow-scrolling: touch;
 
   background:
-    radial-gradient(800px 400px at 30% 0%,
-      rgba(168, 85, 247, 0.10),
+    radial-gradient(900px 420px at 25% 0%,
+      rgba(255, 123, 84, 0.18),
       transparent 60%),
-    radial-gradient(600px 300px at 70% 30%,
-      rgba(255, 95, 162, 0.08),
+    radial-gradient(700px 320px at 75% 35%,
+      rgba(255, 176, 138, 0.14),
       transparent 55%),
     linear-gradient(180deg,
-      rgba(168, 85, 247, 0.06) 0%,
-      rgba(255, 95, 162, 0.04) 45%,
+      rgba(255, 239, 231, 0.40) 0%,
+      rgba(255, 247, 242, 0.18) 55%,
       rgba(255, 255, 255, 0.00) 100%);
 }
 
@@ -191,10 +202,10 @@
   object-position: center;
   display: block;
 
-  /* optional subtle frame so it matches the UI */
-  border: 2px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.12);
-  background: rgba(17, 24, 39, 0.06);
+  /* subtle frame */
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.06);
 }
 
 /* if you ever use initials instead of img, keep these harmless */
@@ -226,19 +237,21 @@
 }
 
 .pet-chat__bubble--in {
-  background: #fff;
-  border: 1px solid rgba(168, 85, 247, 0.16);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--border);
+  color: var(--text);
 }
 
 .pet-chat__bubble--out {
-  background: linear-gradient(135deg, #a855f7, #ff5fa2);
-  color: #fff;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: var(--white);
+  box-shadow: 0 10px 22px rgba(255, 123, 84, 0.22);
 }
 
 .pet-chat__time {
   font-size: 11px;
   margin-top: 6px;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
 /* ===== Composer ===== */
@@ -247,7 +260,8 @@
   align-items: center;
   gap: 8px;
   padding: 14px 16px;
-  border-top: 1px solid rgba(17, 24, 39, 0.06);
+  border-top: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.84);
   flex: 0 0 auto;
 }
 
@@ -260,24 +274,24 @@
   cursor: pointer;
   display: grid;
   place-items: center;
-  color: rgba(17, 24, 39, 0.65);
+  color: rgba(43, 43, 43, 0.70);
   flex: 0 0 auto;
 }
 
 .pet-chat__composer-btn:hover {
-  background: rgba(17, 24, 39, 0.05);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .pet-chat__input-shell {
   flex: 1;
   height: 40px;
   border-radius: 12px;
-  border: 1px solid rgba(17, 24, 39, 0.10);
+  border: 1px solid var(--border);
   padding: 0 12px;
   display: flex;
   align-items: center;
   min-width: 0;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.96);
 }
 
 .pet-chat__input {
@@ -286,6 +300,11 @@
   outline: none;
   font-size: 13px;
   background: transparent;
+  color: var(--text);
+}
+
+.pet-chat__input::placeholder {
+  color: rgba(107, 114, 128, 0.85);
 }
 
 .pet-chat__send {
@@ -297,10 +316,15 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  background: linear-gradient(135deg, #a855f7, #ff5fa2);
-  color: #fff;
-  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: var(--white);
+  font-weight: 900;
   flex: 0 0 auto;
+  box-shadow: 0 10px 22px rgba(255, 123, 84, 0.22);
+}
+
+.pet-chat__send:hover {
+  filter: brightness(0.98);
 }
 
 .pet-chat__send-plane {
@@ -311,7 +335,7 @@
 .pet-chat__divider {
   width: 1px;
   height: 18px;
-  background: rgba(17, 24, 39, 0.12);
+  background: rgba(0, 0, 0, 0.12);
   margin: 0 2px;
 }
 
@@ -329,11 +353,12 @@
   border: 0;
   background: transparent;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 800;
   font-size: 13px;
   border-radius: 10px;
   transition: background 0.18s ease, transform 0.18s ease;
   white-space: nowrap;
+  color: var(--text);
 }
 
 .pet-chat__action-icon {
@@ -347,26 +372,28 @@
   line-height: 1;
 }
 
+/* Accept */
 .pet-chat__action--accept {
-  color: #16a34a;
+  color: var(--tag-green-color);
 }
 
 .pet-chat__action--accept .pet-chat__action-icon {
-  background: rgba(34, 197, 94, 0.14);
-  color: #16a34a;
+  background: var(--tag-green-bg);
+  color: var(--tag-green-color);
 }
 
 .pet-chat__action--accept:hover {
-  background: rgba(34, 197, 94, 0.10);
+  background: rgba(46, 159, 92, 0.10);
 }
 
+/* Decline */
 .pet-chat__action--decline {
-  color: #dc2626;
+  color: #ef4444;
 }
 
 .pet-chat__action--decline .pet-chat__action-icon {
   background: rgba(239, 68, 68, 0.14);
-  color: #dc2626;
+  color: #ef4444;
 }
 
 .pet-chat__action--decline:hover {
@@ -441,12 +468,12 @@
     padding: 10px 14px;
     border-radius: 999px;
     font-size: 13px;
-    background: rgba(17, 24, 39, 0.04);
+    background: rgba(0, 0, 0, 0.04);
     white-space: nowrap;
   }
 
   .pet-chat__action--accept {
-    background: rgba(34, 197, 94, 0.12);
+    background: rgba(46, 159, 92, 0.12);
   }
 
   .pet-chat__action--decline {

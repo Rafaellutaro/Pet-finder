@@ -6,6 +6,9 @@
   padding-bottom: 28px;
   width: min(1200px, 100%);
   margin: 0 auto;
+
+  /* palette */
+  color: var(--text);
 }
 
 /* SEARCH BAR */
@@ -17,19 +20,22 @@
   align-items: center;
 
   padding: 12px;
-  border: 1px solid rgba(17, 24, 39, 0.08);
+  border: 1px solid var(--border);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--card-bg);
 
   position: sticky;
   top: 72px;
   z-index: 20;
+
+  box-shadow: var(--shadow);
 }
 
 /* icon */
 .search-icon {
   font-size: 20px;
   opacity: 0.75;
+  color: var(--text-muted);
 }
 
 /* input */
@@ -40,14 +46,21 @@
   font-size: 14px;
   padding: 10px 12px;
   border-radius: 10px;
-  background: rgba(17, 24, 39, 0.05);
+
+  background: var(--input-bg);
+  color: var(--text);
 }
 
 #searchBar::placeholder {
   opacity: 0.65;
+  color: var(--text-muted);
 }
 
-/* ✅ NEW: filters wrapper */
+#searchBar:focus {
+  box-shadow: 0 0 0 3px var(--focus);
+}
+
+/* ✅ filters wrapper */
 .search-filters {
   grid-column: 1 / -1;
   display: grid;
@@ -57,23 +70,28 @@
 
 /* buttons */
 .search-filters button {
-  border: 1px solid rgba(17, 24, 39, 0.12);
-  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--text);
+
   padding: 9px 12px;
   border-radius: 999px;
   font-size: 13px;
   cursor: pointer;
-  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
   white-space: nowrap;
 }
 
 .search-filters button:hover {
   transform: translateY(-1px);
+  background: var(--bg-alt);
+  border-color: rgba(0,0,0,0.12);
 }
 
 .search-filters button.isActive {
-  border-color: rgba(17, 24, 39, 0.20);
-  background: rgba(17, 24, 39, 0.07);
+  border-color: rgba(0,0,0,0.14);
+  background: rgba(255, 123, 84, 0.14);
+  box-shadow: 0 0 0 3px rgba(255, 123, 84, 0.10);
   font-weight: 800;
 }
 
@@ -88,8 +106,8 @@
 /* CHAT ROW */
 .all-chats-container {
   width: 100%;
-  border: 1px solid rgba(17, 24, 39, 0.10);
-  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
   border-radius: 16px;
   padding: 12px;
 
@@ -99,13 +117,16 @@
   align-items: start;
 
   position: relative;
-  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease, box-shadow 120ms ease;
+
+  box-shadow: 0 10px 26px rgba(0,0,0,0.06);
 }
 
 .all-chats-container:hover {
   transform: translateY(-1px);
-  border-color: rgba(17, 24, 39, 0.16);
+  border-color: rgba(0,0,0,0.12);
   background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.08);
 }
 
 /* CLICKABLE OPEN AREA */
@@ -131,7 +152,7 @@
   height: 56px;
   border-radius: 999px;
   object-fit: cover;
-  background: rgba(17, 24, 39, 0.06);
+  background: rgba(0, 0, 0, 0.06);
 }
 
 /* DETAILS */
@@ -158,6 +179,7 @@
   font-weight: 800;
   margin: 0;
   line-height: 1.1;
+  color: var(--text);
 
   overflow: hidden;
   text-overflow: ellipsis;
@@ -169,23 +191,28 @@
   font-size: 12px;
   padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(17, 24, 39, 0.12);
+  border: 1px solid rgba(0,0,0,0.10);
   white-space: nowrap;
+  color: var(--text);
+  background: rgba(0,0,0,0.03);
 }
 
 .all-chat-status.pending {
-  background: rgba(245, 158, 11, 0.12);
-  border-color: rgba(245, 158, 11, 0.22);
+  background: color-mix(in srgb, var(--warning) 16%, white);
+  border-color: color-mix(in srgb, var(--warning) 28%, transparent);
+  color: #7a4a00;
 }
 
 .all-chat-status.accepted {
-  background: rgba(34, 197, 94, 0.12);
-  border-color: rgba(34, 197, 94, 0.22);
+  background: color-mix(in srgb, var(--success) 14%, white);
+  border-color: color-mix(in srgb, var(--success) 26%, transparent);
+  color: #0f5b34;
 }
 
 .all-chat-status.rejected {
-  background: rgba(239, 68, 68, 0.12);
-  border-color: rgba(239, 68, 68, 0.22);
+  background: color-mix(in srgb, var(--danger) 14%, white);
+  border-color: color-mix(in srgb, var(--danger) 26%, transparent);
+  color: #7a1f1f;
 }
 
 /* OWNER LINE */
@@ -201,12 +228,14 @@
   height: 18px;
   border-radius: 999px;
   object-fit: cover;
-  background: rgba(17, 24, 39, 0.06);
+  background: rgba(0, 0, 0, 0.06);
 }
 
 .all-chat-ownerName {
   font-size: 13px;
-  opacity: 0.85;
+  opacity: 0.88;
+  color: var(--text-muted);
+
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -215,14 +244,15 @@
 /* LAST MESSAGE — capped so it doesn’t break layout */
 .all-chat-lastMessage {
   font-size: 13px;
-  opacity: 0.82;
+  color: var(--text-muted);
+  opacity: 0.95;
 
   white-space: normal;
   overflow: hidden;
 
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3; /* ✅ safe default */
+  -webkit-line-clamp: 3;
   line-height: 1.35;
 
   max-height: calc(1.35em * 3);
@@ -247,7 +277,8 @@
 
 .all-chat-time {
   font-size: 12px;
-  opacity: 0.70;
+  color: var(--text-muted);
+  opacity: 0.9;
   line-height: 1;
   white-space: nowrap;
 }
@@ -261,22 +292,27 @@
 
   padding: 7px 12px;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 900;
 
   border-radius: 999px;
   border: none;
 
-  background: linear-gradient(90deg, #ff7a18, #ff2bb8);
-  color: white;
+  background: var(--primary-grad);
+  color: var(--white);
 
   cursor: pointer;
-  box-shadow: 0 8px 18px rgba(255, 64, 160, 0.22);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 10px 22px rgba(255, 123, 84, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
 .all-chat-confirm-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 22px rgba(255, 64, 160, 0.30);
+  box-shadow: 0 14px 26px rgba(255, 123, 84, 0.32);
+  filter: saturate(1.05);
+}
+
+.all-chat-confirm-btn:active {
+  transform: translateY(0px);
 }
 
 /* RESPONSIVE */
@@ -310,7 +346,7 @@
     font-size: 11px;
   }
 
-  /* mobile last message: still capped */
+  /* mobile last message */
   .all-chat-lastMessage {
     -webkit-line-clamp: 3;
     max-height: calc(1.35em * 3);

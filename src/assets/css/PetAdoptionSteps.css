@@ -1,8 +1,20 @@
+/* =========================================================
+   PET ADOPTION PAGE (Clean + Palette-aligned)
+   - Warm consistent palette
+   - No duplicate overrides at the end
+   - Keeps your layout + mobile stepper alignment fixes
+   ========================================================= */
+
 .pet-adoption-page {
   min-height: 100vh;
   padding: 36px 18px 60px;
-  background: radial-gradient(1200px 700px at 50% 0%, #f3f6ff 0%, #fbf8ff 45%, #fff 100%);
-  color: #111827;
+
+  background:
+    radial-gradient(1200px 700px at 50% 0%,
+      rgba(255, 123, 84, 0.18) 0%,
+      rgba(255, 239, 231, 0.55) 45%,
+      var(--bg) 100%);
+  color: var(--text);
 }
 
 .pet-adoption-header {
@@ -13,17 +25,20 @@
 
 .pet-adoption-title {
   font-size: 30px;
-  font-weight: 800;
+  font-weight: 900;
   margin: 0;
+  color: var(--details-heading);
 }
 
 .pet-adoption-subtitle {
   margin: 8px 0 18px;
-  color: #6b7280;
+  color: var(--text-muted);
   font-size: 14px;
 }
 
-/* Stepper */
+/* =========================
+   STEPPER
+========================= */
 .pet-adoption-stepper {
   display: flex;
   align-items: center;
@@ -45,24 +60,27 @@
   border-radius: 999px;
   display: grid;
   place-items: center;
-  font-weight: 800;
+  font-weight: 900;
   font-size: 13px;
-  background: #e5e7eb;
-  color: #6b7280;
+
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
 }
 
 .pet-adoption-step-label {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
-/* DONE step circle */
+/* DONE */
 .pet-adoption-step--done .pet-adoption-step-circle {
-  background: linear-gradient(135deg, #ff4d6d, #9b5cff);
+  background: linear-gradient(135deg, var(--primary), var(--accent-2));
   color: transparent;
   position: relative;
-  opacity: 0.85; /* subtle difference from active */
-  box-shadow: 0 4px 12px rgba(255, 77, 109, 0.25);
+  opacity: 0.85;
+  box-shadow: 0 6px 14px rgba(255, 123, 84, 0.22);
+  border-color: rgba(255, 123, 84, 0.25);
 }
 
 .pet-adoption-step--done .pet-adoption-step-circle::after {
@@ -71,43 +89,46 @@
   inset: 0;
   display: grid;
   place-items: center;
-  color: #fff;
+  color: var(--white);
   font-weight: 900;
   font-size: 14px;
 }
 
-/* ACTIVE step (slightly stronger glow so it stands out) */
+/* ACTIVE */
 .pet-adoption-step--active .pet-adoption-step-circle {
-  background: linear-gradient(135deg, #ff4d6d, #9b5cff);
-  color: #fff;
-  box-shadow: 0 8px 18px rgba(255, 77, 109, 0.35);
+  background: linear-gradient(135deg, var(--primary), var(--accent-2));
+  color: var(--white);
+  box-shadow: 0 10px 22px rgba(255, 123, 84, 0.30);
+  border-color: rgba(255, 123, 84, 0.28);
 }
 
 /* Progress line after DONE steps */
 .pet-adoption-step--done + .pet-adoption-step-line {
-  background: linear-gradient(90deg, #ff4d6d, #9b5cff);
+  background: linear-gradient(90deg, var(--primary), var(--accent-2));
 }
 
 .pet-adoption-step-line {
   width: 80px;
   height: 2px;
-  background: #e5e7eb;
+  background: rgba(0, 0, 0, 0.10);
   border-radius: 999px;
   opacity: 0.9;
 }
 
-/* Main Card */
+/* =========================
+   MAIN CARD
+========================= */
 .pet-adoption-container {
   max-width: 980px;
   margin: 0 auto;
 }
 
 .pet-adoption-card {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   border-radius: 18px;
-  box-shadow: 0 18px 50px rgba(17, 24, 39, 0.12);
+  box-shadow: var(--shadow-2);
   padding: 22px 22px 26px;
-  border: 1px solid rgba(229, 231, 235, 0.8);
+  border: 1px solid var(--border);
   overflow: hidden;
 }
 
@@ -122,10 +143,11 @@
   gap: 10px;
   padding: 10px 14px;
   border-radius: 999px;
-  background: #fff3e8;
-  border: 1px solid #ffe2c8;
-  color: #ff4a00;
-  font-weight: 700;
+
+  background: var(--surface-3);
+  border: 1px solid var(--border-2);
+  color: var(--primary);
+  font-weight: 900;
   font-size: 13px;
 }
 
@@ -135,25 +157,29 @@
   display: grid;
   place-items: center;
   border-radius: 999px;
-  background: rgba(255, 74, 0, 0.12);
+  background: rgba(255, 123, 84, 0.14);
+  color: var(--primary);
 }
 
 .pet-adoption-section-title {
   margin: 14px 0 6px;
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 900;
+  color: var(--details-heading);
 }
 
 .pet-adoption-section-desc {
   margin: 0;
-  color: #6b7280;
+  color: var(--text-muted);
   font-size: 13px;
 }
 
-/* Pet block */
+/* =========================
+   PET BLOCK
+========================= */
 .pet-adoption-block {
-  background: #fff7f2;
-  border: 1px solid rgba(255, 193, 158, 0.5);
+  background: var(--surface-4);
+  border: 1px solid var(--border-2);
   border-radius: 16px;
   padding: 16px;
   margin-top: 10px;
@@ -172,15 +198,16 @@
   border-radius: 10px;
   display: grid;
   place-items: center;
-  background: rgba(255, 122, 24, 0.15);
-  color: #ff4a00;
+  background: rgba(255, 123, 84, 0.14);
+  color: var(--primary);
   font-weight: 900;
 }
 
 .pet-adoption-block-title {
   margin: 0;
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 900;
+  color: var(--details-heading);
 }
 
 .pet-adoption-pet {
@@ -195,8 +222,8 @@
   height: 92px;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 10px 26px rgba(17, 24, 39, 0.18);
-  background: #f3f4f6;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
+  background: rgba(0, 0, 0, 0.06);
 }
 
 .pet-adoption-pet-image {
@@ -217,17 +244,19 @@
 }
 
 .pet-adoption-muted {
-  color: #6b7280;
+  color: var(--text-muted);
   font-size: 12px;
 }
 
 .pet-adoption-strong {
-  color: #111827;
-  font-weight: 800;
+  color: var(--details-heading);
+  font-weight: 900;
   font-size: 14px;
 }
 
-/* People */
+/* =========================
+   PEOPLE
+========================= */
 .pet-adoption-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -237,17 +266,16 @@
 
 .pet-adoption-person {
   border-radius: 16px;
-  border: 1px solid rgba(229, 231, 235, 0.85);
+  border: 1px solid var(--border);
   padding: 14px;
-  background: #fff;
+  background: var(--surface);
 }
 
-.pet-adoption-person--adopter {
-  background: #eef6ff;
-}
-
+/* Both roles warm-neutral (no blue/purple clash) */
+.pet-adoption-person--adopter,
 .pet-adoption-person--owner {
-  background: #f6efff;
+  background: var(--surface-4);
+  border: 1px solid var(--border-2);
 }
 
 .pet-adoption-person-head {
@@ -262,8 +290,9 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  font-weight: 800;
+  font-weight: 900;
   font-size: 14px;
+  color: var(--details-heading);
 }
 
 .pet-adoption-person-icon {
@@ -272,7 +301,8 @@
   border-radius: 8px;
   display: grid;
   place-items: center;
-  background: rgba(17, 24, 39, 0.08);
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--border);
 }
 
 .pet-adoption-person-badges {
@@ -283,32 +313,33 @@
 
 .pet-adoption-badge {
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 900;
   padding: 6px 10px;
   border-radius: 999px;
-  background: #1d4ed8;
-  color: #fff;
+  background: var(--primary);
+  color: var(--white);
 }
 
 .pet-adoption-status {
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 900;
   padding: 6px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(229, 231, 235, 0.9);
-  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.75);
+  color: var(--text);
 }
 
 .pet-adoption-status--ok {
-  color: #065f46;
-  border-color: rgba(16, 185, 129, 0.35);
-  background: rgba(16, 185, 129, 0.12);
+  color: var(--success);
+  border-color: rgba(46, 159, 92, 0.30);
+  background: var(--success-bg);
 }
 
 .pet-adoption-status--wait {
-  color: #92400e;
-  border-color: rgba(245, 158, 11, 0.35);
-  background: rgba(245, 158, 11, 0.12);
+  color: var(--warning);
+  border-color: rgba(255, 123, 84, 0.35);
+  background: var(--warning-bg);
 }
 
 .pet-adoption-person-body {
@@ -321,12 +352,14 @@
   gap: 4px;
 }
 
-/* Agreement */
+/* =========================
+   AGREEMENT
+========================= */
 .pet-adoption-agreement {
   margin-top: 14px;
   border-radius: 16px;
-  border: 1px solid rgba(253, 230, 138, 0.85);
-  background: rgba(255, 251, 235, 0.95);
+  border: 1px solid var(--border-2);
+  background: var(--surface-3);
   padding: 16px;
 }
 
@@ -334,12 +367,13 @@
   margin: 0;
   font-size: 14px;
   font-weight: 900;
+  color: var(--details-heading);
 }
 
 .pet-adoption-agreement-subtitle {
   margin: 6px 0 0;
   font-size: 12px;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
 .pet-adoption-agreement-list {
@@ -361,20 +395,23 @@
   margin-top: 2px;
   width: 16px;
   height: 16px;
+  accent-color: var(--primary);
 }
 
 .pet-adoption-agreement-text {
   font-size: 13px;
-  color: #374151;
+  color: var(--text);
   line-height: 1.35;
 }
 
-/* Next */
+/* =========================
+   NEXT
+========================= */
 .pet-adoption-next {
   margin-top: 14px;
   border-radius: 16px;
-  border: 1px solid rgba(229, 231, 235, 0.9);
-  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.80);
   padding: 14px 16px;
 }
 
@@ -382,17 +419,20 @@
   margin: 0 0 8px;
   font-size: 13px;
   font-weight: 900;
+  color: var(--details-heading);
 }
 
 .pet-adoption-next-list {
   margin: 0;
   padding-left: 16px;
-  color: #4b5563;
+  color: rgba(75, 85, 99, 0.95);
   font-size: 13px;
   line-height: 1.4;
 }
 
-/* CTA */
+/* =========================
+   CTA
+========================= */
 .pet-adoption-cta {
   margin-top: 16px;
   display: grid;
@@ -409,20 +449,26 @@
   padding: 14px 16px;
   font-size: 14px;
   font-weight: 900;
-  color: #fff;
-  background: linear-gradient(90deg, #ff7a18, #ff2bb8);
-  box-shadow: 0 14px 30px rgba(255, 64, 160, 0.22);
+  color: var(--white);
+  background: linear-gradient(90deg, var(--primary), var(--accent-2));
+  box-shadow: 0 14px 30px rgba(255, 123, 84, 0.22);
   cursor: pointer;
+}
+
+.pet-adoption-btn:hover {
+  filter: brightness(0.98);
 }
 
 .pet-adoption-footnote {
   margin: 0;
   text-align: center;
   font-size: 12px;
-  color: #6b7280;
+  color: var(--text-muted);
 }
 
-/* Responsive */
+/* =========================
+   RESPONSIVE
+========================= */
 @media (max-width: 860px) {
   .pet-adoption-step-line {
     width: 44px;
@@ -449,7 +495,7 @@
 /* ✅ MOBILE POLISH (iPhone / small Android) */
 @media (max-width: 560px) {
   .pet-adoption-page {
-    --app-header-h: 72px; /* tweak if needed */
+    --app-header-h: 72px;
     padding-top: calc(14px + var(--app-header-h) + env(safe-area-inset-top));
     padding-left: 12px;
     padding-right: 12px;
@@ -470,10 +516,10 @@
     margin: 8px 0 12px;
   }
 
-  /* Stepper: horizontal scroll (stable), AND fix bubble vertical alignment */
+  /* Stepper: horizontal scroll (stable) + aligned circles */
   .pet-adoption-stepper {
     justify-content: flex-start;
-    align-items: flex-start; /* ✅ prevents taller labels from shifting circles up/down */
+    align-items: flex-start;
     flex-wrap: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -487,7 +533,7 @@
 
   .pet-adoption-step {
     min-width: 78px;
-    grid-template-rows: 32px auto; /* ✅ consistent first row for the circle */
+    grid-template-rows: 32px auto;
     align-content: start;
   }
 
@@ -501,7 +547,7 @@
     font-size: 11px;
     line-height: 1.15;
     text-align: center;
-    min-height: 26px; /* ✅ equal label height so circles align perfectly */
+    min-height: 26px;
   }
 
   .pet-adoption-step-line {
