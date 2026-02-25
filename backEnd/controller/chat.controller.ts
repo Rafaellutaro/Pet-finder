@@ -1,7 +1,7 @@
 import type { Response } from "express";
 import prisma from '../../backEnd/client/PrismaClient.ts'
 import type { AuthRequest } from "../middleware/auth.middleware.ts";
-import { createNotification, verifyUserInConversation } from "../helper.ts"
+import { createNotification, getUserName, verifyUserInConversation } from "../helper.ts"
 import { io, isUserInConversation } from "../index.ts";
 
 export const ConversationCreate = async (req: AuthRequest, res: Response) => {
@@ -235,6 +235,7 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
 
 export const progressToConfirmation = async (req: AuthRequest, res: Response) => {
     const { id } = req.params
+    const userId = req.user.userId
     const status = req.body.status
 
     console.log("status here", status)
@@ -259,6 +260,12 @@ export const progressToConfirmation = async (req: AuthRequest, res: Response) =>
 
             let updatePet = null
             let createAdoptionProcess = null
+
+            const isOwner = Number(userId) == Number(updateConversation.ownerId)
+            const ownerName = await getUserName(ts, updateConversation.ownerId)
+
+            if (!isOwner) return res.status(403).json({message: "you are not allowed here"})
+
             if (status == "ACCEPTED") {
                 updatePet = await ts.pet.update({
                     where: { id: verify?.petId },
@@ -273,6 +280,12 @@ export const progressToConfirmation = async (req: AuthRequest, res: Response) =>
                         ownerId: verify.ownerId
                     }
                 })
+
+                const body = isOwner ? `${ownerName} Aceitou Dar Inicio ao Processo de Adoção` : "Erro"
+                const link = `/PetAdoption/${createAdoptionProcess?.id}`
+
+                const notification = await createNotification({ userId: updateConversation.adopterId, type: "chat:accept", title: "Adoção Aceita", body: body, link: link }, prisma)
+                io.to(`user:${updateConversation.adopterId}`).emit("notification:new", { notification: notification })
             }
 
             if (status == "DECLINED") {
@@ -280,6 +293,12 @@ export const progressToConfirmation = async (req: AuthRequest, res: Response) =>
                     conversationId: Number(id),
                     status: "DECLINED",
                 });
+
+                const body = isOwner ? `${ownerName} Rejeitou Dar Inicio ao Processo de Adoção` : "Erro"
+                const link = `/Chat/${Number(id)}`
+
+                const notification = await createNotification({ userId: updateConversation.adopterId, type: "chat:rejected", title: "Adoção Rejeitada", body: body, link: link }, prisma)
+                io.to(`user:${updateConversation.adopterId}`).emit("notification:new", { notification: notification })
             }
 
             return { updateConversation, updatePet, createAdoptionProcess };

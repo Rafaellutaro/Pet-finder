@@ -129,8 +129,6 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id, setAll
           }
         }))
       }
-
-      setIsButtonActive(false)
     }
 
     const handleNextStep = (nextStep: any) => {
