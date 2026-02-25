@@ -6,38 +6,16 @@ import { type SetURLSearchParams } from 'react-router-dom';
 import { useNavigateWithFrom } from "./Redirect";
 import updateParams from "./setParams";
 
-type StateSelectProp = {
-    setPetData: React.Dispatch<React.SetStateAction<any[]>>;
-};
+// type StateSelectProp = {
+//     setPetData: React.Dispatch<React.SetStateAction<any[]>>;
+//     setApiRegion: React.Dispatch<React.SetStateAction<string>>
+//     apiRegion: string
+// };
 
-export default function StateSelect({ setPetData }: StateSelectProp) {
+export default function StateSelect() {
     const [selectedOrigin, setSelectedOrigin] = useState<any | null>(null);
     // const [petData, setPetData] = useState<any[]>([]);
-    const [apiRegion, setApiRegion] = useState('');
     const petsRedirectWithUf = useNavigateWithFrom();
-
-    useEffect(() => {
-        const fetchRegion = async () => {
-            const regionReturn = await getUserLanguage();
-            const regionName = statesOfBrazil.find(i => i.name === regionReturn);
-
-            if (regionName) {
-                setApiRegion(regionName.uf);
-            }
-        };
-        fetchRegion();
-    }, []);
-
-
-    useEffect(() => {
-        if (apiRegion) {
-            getAllPetsPublic(apiRegion, undefined!, undefined!, undefined!, "10", undefined!, 1, setPetData);
-        }
-    }, [apiRegion]);
-
-    useEffect(() => {
-        console.log(selectedOrigin)
-    }, [selectedOrigin]);
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selected = JSON.parse(e.target.value);

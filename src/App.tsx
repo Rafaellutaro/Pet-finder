@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./assets/css/App.css";
 import heroImg from "./assets/imgs/hero.png";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -7,6 +7,9 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import StateSelect from "./components/reusable/StateSelection";
 import { useNavigateWithFrom } from "./components/reusable/Redirect";
+import { getAllPetsPublic } from "./components/functions/petFunctions";
+import { statesOfBrazil } from "./Interfaces/usefulPetInterface"
+import { getUserLanguage } from "./components/functions/userFunctions";
 
 const dog1 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
 const dog2 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/pets/1764766820159_1207881.jpg";
@@ -15,7 +18,27 @@ const dog4 = "https://llfkhrdruddwcscedwyu.supabase.co/storage/v1/object/public/
 
 function App() {
   const [petData, setPetData] = useState<any>({});
+  const [apiRegion, setApiRegion] = useState('');
   const singlePet = useNavigateWithFrom();
+  
+
+   useEffect(() => {
+        const fetchRegion = async () => {
+            const regionReturn = await getUserLanguage();
+            const regionName = statesOfBrazil.find(i => i.name === regionReturn);
+
+            if (regionName) {
+                setApiRegion(regionName.uf);
+            }
+        };
+        fetchRegion();
+    }, []);
+
+  useEffect(() => {
+          if (apiRegion) {
+              getAllPetsPublic(apiRegion, undefined!, undefined!, undefined!, "10", undefined!, 1, setPetData);
+          }
+      }, [apiRegion]);
 
   return (
     <>
@@ -31,14 +54,14 @@ function App() {
           </p>
 
           <div className="hero-search">
-            <StateSelect setPetData={setPetData} />
+            <StateSelect />
           </div>
 
           <p>Estados Mais Procuradas</p>
           <div className="cities-grid">
-            <div className="city-pill">São Paulo</div>
-            <div className="city-pill">Rio de Janeiro</div>
-            <div className="city-pill">Roraima</div>
+            <button className="city-pill" onClick={() => singlePet(`/Pets?uf=SP`)}>São Paulo</button>
+            <button className="city-pill" onClick={() => singlePet(`/Pets?uf=RJ`)}>Rio de Janeiro</button>
+            <button className="city-pill" onClick={() => singlePet(`/Pets?uf=RO`)}>Roraima</button>
           </div>
         </div>
 
