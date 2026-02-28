@@ -1,0 +1,353 @@
+/* ----------------------
+   PET GRID (RESPONSIVE)
+---------------------- */
+
+/* Default desktop (keep your current behavior outside 1080p range) */
+.pet-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(420px, 1fr));
+  gap: 26px;
+  width: 100%;
+  padding: 0 32px;
+  align-items: start;
+  grid-auto-rows: 1fr;
+}
+
+/* Safety: stop any horizontal overflow caused by large content */
+.ProfilePage-mainContainer,
+.details {
+  overflow-x: hidden;
+}
+
+/* ----------------------
+   PET CARD (same size for all cards)
+---------------------- */
+
+.pet-container,
+.pet-container.add-pet {
+  width: 100%;
+  max-width: none;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  background: var(--white);
+  padding: 18px;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px var(--shadow-light);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  overflow: hidden;
+  min-width: 0;
+
+  height: 100%;
+  min-height: 420px;
+}
+
+.pet-container:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px var(--shadow-light);
+}
+
+.pet-container img {
+  width: 100%;
+  display: block;
+
+  height: 300px;
+  max-width: 100%;
+
+  object-fit: cover;
+  object-position: center;
+
+  border-radius: 14px;
+  background: #eaeaea;
+}
+
+/* ----------------------
+   PET NAME AND DETAILS
+---------------------- */
+
+.pet-name {
+  margin-top: 14px;
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--details-heading);
+  text-align: center;
+}
+
+.pet-details {
+  margin-top: 10px;
+  width: 100%;
+  text-align: center;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pet-details p {
+  font-size: 15px;
+  color: var(--field-label);
+  margin: 0;
+  line-height: 1.25;
+}
+
+/* ----------------------
+   ADD-PET CARD (match others exactly)
+---------------------- */
+
+.pet-container.add-pet {
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+
+  border: 2px dashed var(--field-border);
+  background: var(--white);
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  min-height: 420px;
+}
+
+.pet-container.add-pet .add-text {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--details-heading);
+  text-align: center;
+}
+
+.pet-container.add-pet:hover {
+  border-color: var(--primary);
+  background: var(--bg-alt);
+}
+
+/* =========================================================
+   ✅ 1080p LOOK (ONLY THIS RANGE)
+   - makes it look like your old screenshot: 4 big columns
+   - bigger gaps, slightly smaller min widths to fit 4 columns
+   - cards still big and consistent
+   - DOES NOT affect mobile or other resolutions outside this range
+========================================================= */
+@media (min-width: 1000px) and (max-width: 1300px) {
+  .pet-grid {
+    grid-template-columns: repeat(4, minmax(300px, 1fr));
+    gap: 34px;
+    padding: 0 40px;
+  }
+
+  .pet-container,
+  .pet-container.add-pet {
+    min-height: 440px;
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .pet-container img {
+    height: 320px;
+    border-radius: 16px;
+  }
+
+  .pet-name {
+    font-size: 20px;
+  }
+
+  .pet-details p {
+    font-size: 15px;
+  }
+}
+
+/* ----------------------
+   MODAL (ONLY HEADER + CLOSE FIX)
+---------------------- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: grid;
+  place-items: center;
+  z-index: 9999;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 760px;
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+
+  background: var(--white);
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  position: relative;
+
+  padding: 14px 14px 14px;
+  padding-bottom: calc(14px + env(safe-area-inset-bottom));
+}
+
+.modal-content::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  height: 44px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 127, 80, 0.16),
+    rgba(0, 123, 255, 0.10)
+  );
+  pointer-events: none;
+  border-radius: 14px 14px 0 0;
+}
+
+.modal-content h1 {
+  font-size: 16px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.78);
+  letter-spacing: -0.2px;
+  margin: 0 42px 8px 0;
+  line-height: 1.2;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+
+  background: rgba(0, 0, 0, 0.06);
+  font-size: 18px;
+
+  display: grid;
+  place-items: center;
+  z-index: 3;
+}
+
+.modal-close:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+/* ----------------------
+   BREAKPOINTS (KEEP)
+---------------------- */
+
+/* Large desktops */
+@media (min-width: 1500px) {
+  .pet-grid {
+    grid-template-columns: repeat(4, minmax(380px, 1fr));
+    padding: 0 36px;
+  }
+}
+
+/* Laptop / smaller desktop */
+@media (max-width: 1200px) {
+  .pet-grid {
+    grid-template-columns: repeat(3, minmax(340px, 1fr));
+    padding: 0 18px;
+    gap: 18px;
+  }
+
+  .pet-container img {
+    height: 260px;
+  }
+
+  .pet-container,
+  .pet-container.add-pet {
+    min-height: 380px;
+  }
+
+  .pet-container.add-pet {
+    min-height: 380px;
+  }
+}
+
+/* 2 columns */
+@media (max-width: 900px) {
+  .pet-grid {
+    grid-template-columns: repeat(2, minmax(260px, 1fr));
+    gap: 14px;
+    padding: 0 14px;
+  }
+
+  .pet-container img {
+    height: 220px;
+  }
+
+  .pet-container,
+  .pet-container.add-pet {
+    min-height: 320px;
+  }
+
+  .pet-container.add-pet {
+    min-height: 320px;
+  }
+}
+
+/* ✅ DO NOT CHANGE MOBILE */
+@media (max-width: 600px) {
+  .pet-grid {
+    grid-template-columns: 1fr;
+    padding: 0 10px;
+    gap: 14px;
+  }
+
+  .pet-container,
+  .pet-container.add-pet {
+    max-width: 100%;
+    padding: 12px;
+    min-height: 0;
+  }
+
+  .pet-container img {
+    height: 210px;
+  }
+
+  .pet-container.add-pet {
+    min-height: 210px;
+  }
+
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .modal-content {
+    max-height: calc(100dvh - 20px);
+    padding: 12px 12px 12px;
+    border-radius: 12px;
+  }
+
+  .modal-content::before {
+    height: 40px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .modal-content h1 {
+    font-size: 15px;
+    margin-right: 44px;
+  }
+
+  .modal-close {
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* ✅ DO NOT CHANGE MOBILE */
+@media (max-width: 360px) {
+  .pet-container img {
+    height: 190px;
+  }
+}
