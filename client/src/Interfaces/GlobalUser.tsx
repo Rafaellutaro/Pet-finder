@@ -44,7 +44,7 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
 
     const verifyToken = async () => {
         try {
-            const response = await fetch('http://localhost:3000/users/refreshToken', {
+            const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/users/refreshToken`, {
                 method: 'POST',
                 credentials: 'include'
             });
@@ -64,13 +64,12 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
     };
 
     useEffect(() => {
-        console.log("running....")
         let cancelled = false;
 
         const initAuth = async () => {
             try {
                 const res = await fetch(
-                    "http://localhost:3000/users/refreshToken",
+                    `${import.meta.env.VITE_SERVER_URL}/users/refreshToken`,
                     { method: "POST", credentials: "include" }
                 );
 
@@ -81,7 +80,7 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
                 setLoggedIn(true);
 
                 const userRes = await apiFetch(
-                    "http://localhost:3000/users/getId",
+                    `${import.meta.env.VITE_SERVER_URL}/users/getId`,
                     { method: "GET" },
                     data.accessToken
                 );

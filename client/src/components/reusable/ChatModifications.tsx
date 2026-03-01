@@ -37,7 +37,7 @@ export function WorkingChat({ token, verifyToken, alldata, user, setMessage, mes
 
     const handleAdoptionAccept = async () => {
         const changeStatus = await resendApiPrivate({
-            apiUrl: `http://localhost:3000/chat/conversation/${id}/adoption`
+            apiUrl: `${import.meta.env.VITE_SERVER_URL}/chat/conversation/${id}/adoption`
             , options: { method: "PATCH", body: JSON.stringify({ status: "ACCEPTED" }) },
             token: String(token),
             verifyToken: verifyToken
@@ -51,7 +51,7 @@ export function WorkingChat({ token, verifyToken, alldata, user, setMessage, mes
 
     const handleAdoptionReject = async () => {
         const changeStatus = await resendApiPrivate({
-            apiUrl: `http://localhost:3000/chat/conversation/${id}/adoption`
+            apiUrl: `${import.meta.env.VITE_SERVER_URL}/chat/conversation/${id}/adoption`
             , options: { method: "PATCH", body: JSON.stringify({ status: "DECLINED" }) },
             token: String(token),
             verifyToken: verifyToken
@@ -70,7 +70,7 @@ export function WorkingChat({ token, verifyToken, alldata, user, setMessage, mes
         if (!message.trim()) return;
 
         const response = await resendApiPrivate({
-            apiUrl: `http://localhost:3000/chat/conversation/${id}/messages`
+            apiUrl: `${import.meta.env.VITE_SERVER_URL}/chat/conversation/${id}/messages`
             , options: { method: "POST", body: JSON.stringify({ message }) },
             token: String(token),
             verifyToken: verifyToken

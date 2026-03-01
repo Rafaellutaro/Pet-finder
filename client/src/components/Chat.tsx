@@ -19,7 +19,7 @@ function Chat() {
 
     const getAllChats = async () => {
         const response = await resendApiPrivate({
-            apiUrl: "http://localhost:3000/chat/allConversation",
+            apiUrl: `${import.meta.env.VITE_SERVER_URL}/chat/allConversation`,
             options: { method: "GET" },
             token: String(token),
             verifyToken: verifyToken,

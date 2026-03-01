@@ -7,7 +7,7 @@ import useRedirect from "./reusable/Redirect";
 
 const getOwner = async (id: string) => {
     try {
-        const res = await fetch(`http://localhost:3000/users/getIdPublic?userId=${id}`, {
+        const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/users/getIdPublic?userId=${id}`, {
             method: "GET",
             headers: { 'content-type': 'application/json' }
         })
@@ -20,7 +20,7 @@ const getOwner = async (id: string) => {
 
 const getUniquePet = async (id: string) => {
     try {
-        const res = await fetch(`http://localhost:3000/pets/getUniquePet?petId=${id}`, {
+        const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/pets/getUniquePet?petId=${id}`, {
             method: "GET",
             headers: { 'content-type': 'application/json' }
         });
@@ -33,7 +33,7 @@ const getUniquePet = async (id: string) => {
 
 const getTraits = async (id: string) => {
     try {
-        const res = await fetch(`http://localhost:3000/pets/getPetTraits?petIdQuery=${id}`, {
+        const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/pets/getPetTraits?petIdQuery=${id}`, {
             method: "GET",
             headers: { 'content-type': 'application/json' }
         });

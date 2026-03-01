@@ -69,10 +69,9 @@ function RegisterPage() {
     };
 
     const allUserData = { userData, addressData };
-    console.log("Final payload:", allUserData);
 
     try {
-      const res = await fetch('http://localhost:3000/users/insert', {
+      const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/users/insert`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(allUserData)

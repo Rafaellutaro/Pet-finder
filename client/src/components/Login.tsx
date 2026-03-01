@@ -21,12 +21,7 @@ function LoginPage() {
 
     const login = async (e: any) => {
         e.preventDefault();
-
-        console.log(email);
-        console.log(password);
-
         // create api call to express here
-
         const loginDetails = {
             email,
             password
@@ -35,7 +30,7 @@ function LoginPage() {
         try {
             // maybe try to fit those two endPoints in only 1, would be cleaner.
 
-            const sendRes = await fetch('http://localhost:3000/users/getEmail', {
+            const sendRes = await fetch(`${import.meta.env.VITE_SERVER_URL}/users/getEmail`, {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json',
@@ -46,7 +41,7 @@ function LoginPage() {
 
             // creating a global variable for the user data
             if (sendRes.ok){
-              const createToken = await fetch('http://localhost:3000/users/createToken', {
+              const createToken = await fetch(`${import.meta.env.VITE_SERVER_URL}/users/createToken`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

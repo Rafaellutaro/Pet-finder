@@ -1,5 +1,4 @@
 import resendApiPrivate from "../components/reusable/resendApi"
-import apiFetch from "../Interfaces/TokenAuthorization"
 
 
 export async function userProfileImage(token: string, img: {}, verifyToken: () => Promise<void>) {

@@ -8,9 +8,9 @@ import { PetSchemaPart1, PetSchemaPart1Edited, PetSchemaPart2, PetSchemaPart3 } 
 import PetData from "./PetData";
 import PetPersonality from "./PetPersonality";
 import PetFavorite from "./PetFavorite";
-import apiFetch from "../../Interfaces/TokenAuthorization";
 import SupabaseUpload from "../reusable/SupabaseUpload";
 import { emptyToNullObject } from "../functions/userFunctions";
+import resendApiPrivate from "../reusable/resendApi";
 
 type RegisterPetProp = {
     onClose: () => void;
@@ -128,30 +128,13 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
                 address: addressToUse
             };
 
-            const res = await apiFetch("http://localhost:3000/pets/insert", {
-                method: "POST",
-                body: JSON.stringify(payload)
-            }, String(token))
+            const res = await resendApiPrivate({
+                apiUrl: `${import.meta.env.VITE_SERVER_URL}/pets/insert`, 
+                options: {method: "POST", body: JSON.stringify(payload)}, 
+                token: String(token), 
+                verifyToken: verifyToken})
 
-            if (res.ok){
-                const apiResult = await res.json();
-                console.log("API result:", apiResult);
-            }
-
-            if (res.status == 401 || res.status == 403){
-                const newToken = await verifyToken();
-
-                const res = await apiFetch("http://localhost:3000/pets/insert", {
-                method: "POST",
-                body: JSON.stringify(payload)
-                }, String(newToken))
-
-                if (res.ok){
-                const apiResult = await res.json();
-                console.log("API result verified:", apiResult);
-            }
-            }
-
+            if (!res) return
             onClose();
         } catch (e) {
             console.log("Error submitting pet:", e);

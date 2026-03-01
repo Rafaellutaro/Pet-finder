@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useUser } from "../../Interfaces/GlobalUser";
 import { cepSearch, UserCepController, UserPhoneController } from "../functions/userFunctions";
-import apiFetch from "../../Interfaces/TokenAuthorization";
 import { z } from "zod"
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SettingsSchema as schema } from "../../Interfaces/zodSchema"
 import { emptyToNull } from "../functions/userFunctions";
+import resendApiPrivate from "../reusable/resendApi";
 
 export default function SettingsForm() {
-    const { user, token } = useUser();
+    const { user, token, verifyToken } = useUser();
     const allAddress = user?.addresses || [];
     const [selectedAddress, setSelectedAddress] = useState<any>(allAddress[0]);
 
@@ -83,13 +83,13 @@ export default function SettingsForm() {
                 : { personal: cleanedPersonal };
 
         if (hasValues(payload.personal) || hasValues(payload.newAddress) || hasValues(payload.address)) {
-            const response = await apiFetch('http://localhost:3000/users/updateById', {
-                method: 'PUT',
-                body: JSON.stringify(payload)
-            }, token)
-
-            const res = await response.json();
-            console.log("API Response:", res);
+            const response = await resendApiPrivate({
+                apiUrl: `${import.meta.env.VITE_SERVER_URL}/users/updateById`, 
+                options: {method: "PUT", body: JSON.stringify(payload)}, 
+                token: String(token), 
+                verifyToken: verifyToken})
+            
+            if (!response) return
         } else{
             alert("Insira algo primeiro")
         }

@@ -7,7 +7,6 @@ import { GrView } from "react-icons/gr";
 import { IoTimeOutline } from "react-icons/io5";
 import { BsFillPuzzleFill } from "react-icons/bs";
 import { getWaitingText } from "../functions/petFunctions";
-import apiFetch from "../../Interfaces/TokenAuthorization";
 import { useEffect } from "react";
 import type { UserData } from "../../Interfaces/userInterface";
 import { useNavigateWithFrom } from "./Redirect";
@@ -31,7 +30,7 @@ export default function PetProfile({ data }: petProfile) {
   let petGender
 
   const getConversationId = async () => {
-      const response = await resendApiPrivate({ apiUrl: "http://localhost:3000/chat/conversationCreate", 
+      const response = await resendApiPrivate({ apiUrl: `${import.meta.env.VITE_SERVER_URL}/chat/conversationCreate`, 
         options: { method: "POST", body: JSON.stringify({petId: petData?.id}) }, 
         token: String(token), 
         verifyToken: verifyToken })
@@ -87,13 +86,13 @@ export default function PetProfile({ data }: petProfile) {
 
   const incrementViews = async () => {
     try {
-      const token = await verifyToken()
-      const views = await apiFetch(`http://localhost:3000/pets/${petData?.id}/view`, {
-        method: "POST"
-      }, String(token))
-
-      const res = await views.json();
-      console.log(res)
+      const views = await resendApiPrivate({
+        apiUrl: `${import.meta.env.VITE_SERVER_URL}/pets/${petData?.id}/view`, 
+        options: {method: "POST"}, 
+        token: String(token), 
+        verifyToken: verifyToken})
+      
+      if (!views) return
     } catch (e) {
       console.log(e)
     }

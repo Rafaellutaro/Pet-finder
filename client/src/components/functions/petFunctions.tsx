@@ -2,8 +2,9 @@ import { FaPlus } from "react-icons/fa6";
 import { useNavigateWithFrom } from "../reusable/Redirect";
 import { useUser } from "../../Interfaces/GlobalUser"
 import { useEffect, useState } from "react";
-import apiFetch from "../../Interfaces/TokenAuthorization";
 import type { PetData } from "../../Interfaces/usefulPetInterface";
+import resendApiPrivate from "../reusable/resendApi";
+import Loader from "../reusable/Loader";
 
 const getAllPetsById = () => {
     const { token, verifyToken } = useUser();
@@ -11,17 +12,16 @@ const getAllPetsById = () => {
     const [loading, setLoading] = useState(true);
 
     const fetchPets = async () => {
-            const verifiedToken = await verifyToken();
+        const response = await resendApiPrivate({
+            apiUrl: `${import.meta.env.VITE_SERVER_URL}/pets/getAllPetsById`,
+            options: { method: "GET" },
+            token: String(token),
+            verifyToken: verifyToken
+        })
 
-            const response = await apiFetch('http://localhost:3000/pets/getAllPetsById', {
-                method: "GET"
-            }, String(verifiedToken));
-
-            const data = await response.json();
-
-            setPets(data);
-            setLoading(false);
-        };
+        setPets(response);
+        setLoading(false);
+    };
 
     useEffect(() => {
         if (!token) return;
@@ -34,7 +34,7 @@ const getAllPetsById = () => {
 
 export function getAllPetsPublic(region: string, type: string, breed: string, age: string, pageLimit: string, order: string, page: number, setPetData: React.Dispatch<React.SetStateAction<any[]>>) {
     const FetchPetData = async () => {
-        const petApi = await fetch(`http://localhost:3000/pets/getAllPets?uf=${region}&type=${type}&breed=${breed}&age=${age}&limit=${pageLimit}&orderDirection=${order}&page=${page}`, {
+        const petApi = await fetch(`${import.meta.env.VITE_SERVER_URL}/pets/getAllPets?uf=${region}&type=${type}&breed=${breed}&age=${age}&limit=${pageLimit}&orderDirection=${order}&page=${page}`, {
             method: "GET",
             headers: {
                 "content-type": "application/json",
@@ -75,43 +75,43 @@ type petContainerProp = {
     index: number
 }
 
-export default function petContainer({index}: petContainerProp) {
+export default function petContainer({ index }: petContainerProp) {
     const { pets, loading, refetch } = getAllPetsById();
-  const singlePet = useNavigateWithFrom();
+    const singlePet = useNavigateWithFrom();
 
-  // refetch when refreshKey changes
-  useEffect(() => {
-    if (index) {
-      refetch();
-    }
-  }, [index]);
+    // refetch when refreshKey changes
+    useEffect(() => {
+        if (index) {
+            refetch();
+        }
+    }, [index]);
 
-  if (loading) return <div>Loading Data</div>;
-  if (!pets?.data) return null;
+    if (loading) return <Loader/>;
+    if (!pets) return null;
 
-  return (
-    <>
-      {pets.data.map((item: any) => (
-        <div
-          key={item.id}
-          className="pet-container"
-          onClick={() => singlePet(`/Pets/${item.id}`)}
-        >
-          <img src={item.imgs?.[0]?.url} alt={item.name} />
+    return (
+        <>
+            {pets.map((item: any) => (
+                <div
+                    key={item.id}
+                    className="pet-container"
+                    onClick={() => singlePet(`/Pets/${item.id}`)}
+                >
+                    <img src={item.imgs?.[0]?.url} alt={item.name} />
 
-          <div className="pet-name">{item.name}</div>
+                    <div className="pet-name">{item.name}</div>
 
-          <div className="pet-details">
-            <p>{item.details}</p>
-          </div>
-        </div>
-      ))}
-    </>
-  );
+                    <div className="pet-details">
+                        <p>{item.details}</p>
+                    </div>
+                </div>
+            ))}
+        </>
+    );
 }
 
 export function PetContainerPublicApi({ petData }: { petData: any }) {
-    if (!petData?.data) return <div>loading Data</div>
+    if (!petData?.data) return <Loader/>
 
     const singlePet = useNavigateWithFrom();
 
@@ -137,7 +137,7 @@ export function PetContainerPublicApi({ petData }: { petData: any }) {
 }
 
 export function PetContainerPublicApiLaying({ petData }: { petData: any }) {
-    if (!petData?.data) return <div>Loading data...</div>;
+    if (!petData?.data) return <Loader/>;
 
     return (
         <>

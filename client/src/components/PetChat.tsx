@@ -19,7 +19,7 @@ function PetChat() {
 
   const getData = async () => {
     const response = await resendApiPrivate({
-      apiUrl: `http://localhost:3000/chat/conversation/${id}`,
+      apiUrl: `${import.meta.env.VITE_SERVER_URL}/chat/conversation/${id}`,
       options: { method: "GET" },
       token: String(token),
       verifyToken: verifyToken
@@ -31,7 +31,7 @@ function PetChat() {
 
   const getMessages = async () => {
     const response = await resendApiPrivate({
-      apiUrl: `http://localhost:3000/chat/conversation/${id}/messages`
+      apiUrl: `${import.meta.env.VITE_SERVER_URL}/chat/conversation/${id}/messages`
       , options: { method: "GET" },
       token: String(token),
       verifyToken: verifyToken
