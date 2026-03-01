@@ -35,9 +35,9 @@ export async function loadUnread(setNotification: React.Dispatch<React.SetStateA
 
     const data = await resendApiPrivate({ apiUrl: `${import.meta.env.VITE_SERVER_URL}/notifications/unread`, options: { method: "GET" }, token: String(token), verifyToken: verifyToken });
 
-    if (!data) return
+    if (!data?.ok) return
 
-    const mapped: NotificationItem[] = data.map((n: any) => ({
+    const mapped: NotificationItem[] = data?.data?.map((n: any) => ({
 
         id: n.id,
         title: n.title,
@@ -58,16 +58,16 @@ export async function loadUnread(setNotification: React.Dispatch<React.SetStateA
 export async function setAsRead(token: string, verifyToken: () => Promise<void>, id: string, setNotification: React.Dispatch<React.SetStateAction<NotificationItem[]>>) {
     const data = await resendApiPrivate({ apiUrl: `${import.meta.env.VITE_SERVER_URL}/notifications/${id}/setAsRead`, options: { method: "PUT" }, token: String(token), verifyToken: verifyToken });
 
-    if (!data) return
+    if (!data?.ok) return
 
     setNotification((prev: any) => {
-        return prev.filter((n: any) => String(n.id) !== String(data.id));
+        return prev.filter((n: any) => String(n.id) !== String(data?.data?.id));
     });
 }
 
 export async function setAllAsRead(token: string, verifyToken: () => Promise<void>, setNotification: React.Dispatch<React.SetStateAction<NotificationItem[]>>) {
     const data = await resendApiPrivate({ apiUrl: `${import.meta.env.VITE_SERVER_URL}/notifications/setAllAsRead`, options: { method: "PUT" }, token: String(token), verifyToken: verifyToken });
 
-    if (!data) return
+    if (!data?.ok) return
     setNotification([])
 }

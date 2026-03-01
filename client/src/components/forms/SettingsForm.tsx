@@ -89,7 +89,7 @@ export default function SettingsForm() {
                 token: String(token), 
                 verifyToken: verifyToken})
             
-            if (!response) return
+            if (!response?.ok) return
         } else{
             alert("Insira algo primeiro")
         }

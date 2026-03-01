@@ -9,6 +9,21 @@ export const ConversationCreate = async (req: AuthRequest, res: Response) => {
     const { petId } = req.body
 
     try {
+        const getPetData = await prisma.pet.findUnique({
+            where: {
+                id: Number(petId)
+            },
+            select: {
+                petStatus: true,
+                userId: true,
+                name: true
+            }
+        })
+
+        if (getPetData?.petStatus == "PENDING" || getPetData?.petStatus == "ADOPTED") return res.status(409).json({message: "pet not available currently"})
+
+        if (adopterId == getPetData?.userId) return res.status(409).json({ message: "You cant adopt your own pet" })
+
         const getConversation = await prisma.conversation.findUnique({
             where: {
                 petId_adopterId: {
@@ -25,33 +40,10 @@ export const ConversationCreate = async (req: AuthRequest, res: Response) => {
             return res.status(200).json({ data: getConversation.id })
         }
 
-        const getPetStatus = await prisma.pet.findUnique({
-            where: {
-                id: Number(petId)
-            },
-            select: {
-                petStatus: true
-            }
-        })
-
-        if (getPetStatus?.petStatus == "PENDING" || getPetStatus?.petStatus == "ADOPTED") return res.status(409).json({message: "pet not available currently"})
-
-        const getOwnerId = await prisma.pet.findFirst({
-            where: {
-                id: petId
-            },
-            select: {
-                userId: true,
-                name: true
-            }
-        })
-
-        if (adopterId == getOwnerId?.userId) return res.status(409).json({ message: "You cant adopt your own pet" })
-
         const createConversation = await prisma.conversation.create({
             data: {
                 adopterId: Number(adopterId),
-                ownerId: Number(getOwnerId?.userId),
+                ownerId: Number(getPetData?.userId),
                 petId: Number(petId),
             }
         })
@@ -65,12 +57,12 @@ export const ConversationCreate = async (req: AuthRequest, res: Response) => {
             }
         })
 
-        const body = `${getAdopterName?.name} quer adotar ${getOwnerId?.name}`
+        const body = `${getAdopterName?.name} quer adotar ${getPetData?.name}`
         const link = `/Chat/${createConversation.id}`
 
-        const notification = await createNotification({ userId: Number(getOwnerId?.userId), type: "chat_created", title: "Novo pedido de adoção", body: body, link: link }, prisma)
+        const notification = await createNotification({ userId: Number(getPetData?.userId), type: "chat_created", title: "Novo pedido de adoção", body: body, link: link }, prisma)
 
-        io.to(`user:${getOwnerId?.userId}`).emit("notification:new", { notification: notification })
+        io.to(`user:${getPetData?.userId}`).emit("notification:new", { notification: notification })
 
         return res.status(201).json({ data: createConversation.id })
     } catch (e) {

@@ -133,7 +133,7 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
                 token: String(token), 
                 verifyToken: verifyToken})
 
-            if (!res) return
+            if (!res?.ok) alert("Alguma coisa deu errado")
             onClose();
         } catch (e) {
             console.log("Error submitting pet:", e);

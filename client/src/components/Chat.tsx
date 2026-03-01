@@ -25,8 +25,8 @@ function Chat() {
             verifyToken: verifyToken,
         });
 
-        if (!response) return;
-        setAllChatsData(response);
+        if (!response?.ok) return;
+        setAllChatsData(response?.data);
     };
 
     useEffect(() => {

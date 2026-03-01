@@ -53,11 +53,11 @@ function PetAdoptionSteps() {
       verifyToken: verifyToken
     })
 
-    if (!response) return
+    if (!response?.ok) return
 
     setAllProposes((prev: any) => ([
       ...prev,
-      response
+      response.data
     ]))
   }
 
@@ -80,9 +80,9 @@ function PetAdoptionSteps() {
       verifyToken: verifyToken
     })
 
-    if (!response) return
+    if (!response?.ok) return
     
-    setAllData(response)
+    setAllData(response?.data)
   }
 
   useEffect(() => {

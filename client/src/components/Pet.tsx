@@ -4,6 +4,7 @@ import type { PetData } from "../Interfaces/usefulPetInterface";
 import type { UserData } from "../Interfaces/userInterface";
 import PetProfile from "./reusable/PetProfile";
 import useRedirect from "./reusable/Redirect";
+import Loader from "./reusable/Loader";
 
 const getOwner = async (id: string) => {
     try {
@@ -86,6 +87,8 @@ function Pet() {
         owner: petOwner,
         traits: petTraits
     }
+
+    if (!allData.pet || !allData.traits || !allData.owner) return <Loader/>
 
     return (
         <>

@@ -15,7 +15,10 @@ export default async function resendApiPrivate({ apiUrl, options, token, verifyT
         
         if (response.ok) {
             const data = await response.json()
-            return data.data
+            return {
+                data: data.data,
+                ok: true
+            }
         }
         
         const newToken = await verifyToken()
@@ -26,10 +29,16 @@ export default async function resendApiPrivate({ apiUrl, options, token, verifyT
             
         if (newResponse.ok) {
             const data = await newResponse.json()
-            return data.data
+            return {
+                data: data.data,
+                ok: true
+            }
         }else if (!newResponse.ok){
             const data = await newResponse.json()
-            return data.message
+            return {
+                message: data.message,
+                ok: false,
+            }
         }
     } catch (e) {
         console.log(e)

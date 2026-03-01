@@ -35,8 +35,10 @@ export default function PetProfile({ data }: petProfile) {
         token: String(token), 
         verifyToken: verifyToken })
       
-      if (!response) return
-      chatNavigate(`/Chat/${response}`)
+      console.log("response here", response)
+
+      if (!response?.ok) return
+      chatNavigate(`/Chat/${response?.data}`)
     }
 
   const traitMap = Object.fromEntries(
@@ -75,7 +77,7 @@ export default function PetProfile({ data }: petProfile) {
         token: String(token), 
         verifyToken: verifyToken})
 
-      if (!heart) return 
+      if (!heart?.ok) return 
 
     } catch (e) {
       console.log(e)
@@ -91,7 +93,7 @@ export default function PetProfile({ data }: petProfile) {
         token: String(token), 
         verifyToken: verifyToken})
       
-      if (!views) return
+      if (!views?.ok) return
     } catch (e) {
       console.log(e)
     }

@@ -40,8 +40,8 @@ function FancyHeader({ user }: User) {
 
         const response = await userBannerImage(String(token), img, verifyToken)
 
-        if (response) {
-            setUserBanner(response)
+        if (response?.ok) {
+            setUserBanner(response?.data)
         }
 
         setLoadingUpload(false)
@@ -64,8 +64,8 @@ function FancyHeader({ user }: User) {
 
         const response = await userProfileImage(token, img, verifyToken)
 
-        if (response) {
-            setUserProfileImg(response)
+        if (response?.ok) {
+            setUserProfileImg(response?.data)
         }
 
         setLoadingUpload(false)

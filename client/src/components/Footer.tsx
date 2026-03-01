@@ -97,7 +97,7 @@ function Footer() {
         <div className="footer-last">
           <div>
             <span aria-hidden="true"><MdOutlineEmail/></span>
-            <a href="mailto:example@example.com">Rafael.Alves0_1@hotmail.com</a>
+            <a href="mailto:Rafael.Alves0_1@hotmail.com">Rafael.Alves0_1@hotmail.com</a>
           </div>
           <div>
             <span aria-hidden="true"><FaPhone/></span>

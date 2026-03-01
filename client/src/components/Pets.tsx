@@ -12,6 +12,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
 import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
+import Loader from "./reusable/Loader"
 
 function Pets() {
     const [PetData, setPetData] = useState<any>({})
@@ -54,7 +55,7 @@ function Pets() {
 
     }, [currentPage, lastPage])
 
-    if (!PetData?.data) return <div>loading data</div>
+    if (!PetData?.data) return <Loader/>
 
     const startPage = Math.max(currentPage - range, 1);
     const endPage = Math.min(currentPage + range, lastPage);

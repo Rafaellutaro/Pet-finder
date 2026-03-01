@@ -19,7 +19,9 @@ const getAllPetsById = () => {
             verifyToken: verifyToken
         })
 
-        setPets(response);
+        if (!response?.ok) return
+
+        setPets(response?.data);
         setLoading(false);
     };
 
@@ -84,7 +86,7 @@ export default function petContainer({ index }: petContainerProp) {
         }
     }, [index]);
 
-    if (loading) return <Loader/>;
+    if (loading) return <Loader />;
     if (!pets) return null;
 
     return (
@@ -109,7 +111,7 @@ export default function petContainer({ index }: petContainerProp) {
 }
 
 export function PetContainerPublicApi({ petData }: { petData: any }) {
-    if (!petData?.data) return <Loader/>
+    if (!petData?.data) return <Loader />
 
     const singlePet = useNavigateWithFrom();
 
@@ -135,7 +137,9 @@ export function PetContainerPublicApi({ petData }: { petData: any }) {
 }
 
 export function PetContainerPublicApiLaying({ petData }: { petData: any }) {
-    if (!petData?.data) return <Loader/>;
+    if (!petData?.data) return <Loader />;
+
+    const singlePet = useNavigateWithFrom();
 
     return (
         <>
@@ -144,6 +148,9 @@ export function PetContainerPublicApiLaying({ petData }: { petData: any }) {
                     key={item.id}
                     className="pet-card pet-card--horizontal"
                     style={{ "--bg-img": `url(${item.imgs[0]?.url})` } as React.CSSProperties}
+                    onClick={() => {
+                        singlePet(`/Pets/${item.id}`);
+                    }}
                 >
                     <div className="pet-card__image">
                         <img src={item.imgs[0]?.url} alt={item.name} />

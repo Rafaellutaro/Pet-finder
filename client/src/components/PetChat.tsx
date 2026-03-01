@@ -25,8 +25,8 @@ function PetChat() {
       verifyToken: verifyToken
     })
 
-    if (!response) return backRedirect()
-    setAlldata(response)
+    if (!response?.ok) return backRedirect()
+    setAlldata(response?.data)
   }
 
   const getMessages = async () => {
@@ -37,8 +37,8 @@ function PetChat() {
       verifyToken: verifyToken
     })
 
-    if (!response) return backRedirect()
-    return response
+    if (!response?.ok) return backRedirect()
+    return response?.data
   }
 
   useEffect(() => {

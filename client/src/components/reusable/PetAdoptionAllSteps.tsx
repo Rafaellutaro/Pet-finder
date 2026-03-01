@@ -83,31 +83,31 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id, setAll
         verifyToken: verifyToken
       })
 
-      if (!response) return
+      if (!response?.ok) return
 
-      if (response.setAsConfirmed.ownerConfirmedAt || response.setAsConfirmed.adopterConfirmedAt) {
+      if (response?.data?.setAsConfirmed.ownerConfirmedAt || response?.data?.setAsConfirmed.adopterConfirmedAt) {
         setAllData((prev: any) => ({
           ...prev,
           getInfo: {
             ...prev?.getInfo,
-            adopterConfirmedAt: response.setAsConfirmed.adopterConfirmedAt,
-            ownerConfirmedAt: response.setAsConfirmed.ownerConfirmedAt
+            adopterConfirmedAt: response?.data?.setAsConfirmed.adopterConfirmedAt,
+            ownerConfirmedAt: response?.data?.setAsConfirmed.ownerConfirmedAt
           }
         }))
       }
 
-      if (response.setAsConfirmed.ownerConfirmedAt && response.setAsConfirmed.adopterConfirmedAt) {
+      if (response?.data?.setAsConfirmed.ownerConfirmedAt && response?.data?.setAsConfirmed.adopterConfirmedAt) {
         setAllData((prev: any) => ({
           ...prev,
           getInfo: {
             ...prev?.getInfo,
-            step: response.setAdoptionStatus.step
+            step: response?.data?.setAdoptionStatus.step
           }
         }))
       }
 
       setIsButtonActive(false)
-      if (response.setAdoptionStatus == null) {
+      if (response?.data?.setAdoptionStatus == null) {
         // show notification to kjashdkahsd
       }
     } catch (e) {
@@ -420,10 +420,10 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
       verifyToken: verifyToken
     })
 
-    if (!response) return
+    if (!response?.ok) return
 
     setAllProposes(prev =>
-      prev.map(p => (p.id == response.id ? { ...p, ...response } : p))
+      prev.map(p => (p.id == response?.data?.id ? { ...p, ...response } : p))
     );
   }
 
@@ -435,20 +435,20 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
       verifyToken: verifyToken
     })
 
-    if (!response) return
+    if (!response?.ok) return
 
     if (allData?.getInfo.step == "MEETING") {
       setAllData((prev: any) => ({
         ...prev,
         getInfo: {
           ...prev?.getInfo,
-          step: response.nextStep.step
+          step: response?.data?.nextStep.step
         }
       }))
     }
 
     if (allData?.getInfo.step == "MEETING_CONFIRMED") {
-      setAddress(response.addressAndDate)
+      setAddress(response?.data?.addressAndDate)
       setIsRescheduleOpen(false)
     }
   }
@@ -461,9 +461,9 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
       verifyToken: verifyToken
     })
 
-    if (!response) return
+    if (!response?.ok) return
 
-    setAllProposes(response)
+    setAllProposes(response?.data)
   }
 
   useEffect(() => {
@@ -793,9 +793,9 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
       verifyToken: verifyToken
     }
     )
-    if (!response) return
+    if (!response?.ok) return
 
-    setAddress(response)
+    setAddress(response?.data)
   }
 
   const setAsConfirmed = async () => {
@@ -807,32 +807,32 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
     }
     )
 
-    if (!response) return
+    if (!response?.ok) return
 
     if (user?.id == allData?.maskedAdopterInfo?.id) {
       setUserConfirmed((prev: any) => ({
         ...prev,
-        adopterConfirmedAt: response.adopterConfirmedAt
+        adopterConfirmedAt: response?.data?.adopterConfirmedAt
       }))
     }
 
     if (user?.id == allData?.maskedOwnerInfo?.id) {
       setUserConfirmed((prev: any) => ({
         ...prev,
-        ownerConfirmedAt: response.ownerConfirmedAt
+        ownerConfirmedAt: response?.data?.ownerConfirmedAt
       }))
     }
 
-    if (response.step) {
+    if (response?.data?.step) {
       setAllData((prev: any) => ({
         ...prev,
         getInfo: {
           ...prev?.getInfo,
-          step: response.step,
+          step: response?.data?.step,
         },
         getPetInfo: {
           ...prev?.getPetInfo,
-          date: response.createAdoption.adoptedAt
+          date: response?.data?.createAdoption.adoptedAt
         }
       }))
     }
@@ -847,8 +847,8 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
     }
     )
 
-    if (!response) return
-    setUserConfirmed(response)
+    if (!response?.ok) return
+    setUserConfirmed(response?.data)
   }
 
   useEffect(() => {

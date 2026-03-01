@@ -44,9 +44,9 @@ export function WorkingChat({ token, verifyToken, alldata, user, setMessage, mes
         })
 
         setOpen(false)
-        if (!changeStatus) return
+        if (!changeStatus?.ok) return
 
-        nav(`/PetAdoption/${changeStatus?.createAdoptionProcess?.id}`)
+        nav(`/PetAdoption/${changeStatus?.data?.createAdoptionProcess?.id}`)
     }
 
     const handleAdoptionReject = async () => {
@@ -58,7 +58,7 @@ export function WorkingChat({ token, verifyToken, alldata, user, setMessage, mes
         })
 
         setOpenDecline(false)
-        if (!changeStatus) return
+        if (!changeStatus?.ok) return
 
         setAlldata((prev: any) => ({
             ...prev,
@@ -77,7 +77,7 @@ export function WorkingChat({ token, verifyToken, alldata, user, setMessage, mes
         })
 
         setOpen(false)
-        if (!response) return
+        if (!response?.ok) return
     }
 
     const petImg = alldata?.pet?.imgs[0]?.url
