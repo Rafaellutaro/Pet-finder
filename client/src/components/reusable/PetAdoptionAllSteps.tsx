@@ -474,7 +474,6 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
     if (!socket) return
 
     const handleNewPropose = ({ propose }: { propose: any }) => {
-      console.log(propose)
 
       if (propose) {
         setAllProposes((prev: any[]) => {
@@ -485,7 +484,6 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
     }
 
     const handleRejectPropose = ({ reject }: { reject: any }) => {
-      console.log(reject)
 
       setAllProposes(prev =>
         prev.map(p => (p.id == reject.id ? { ...p, ...reject } : p))
@@ -795,8 +793,6 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
       verifyToken: verifyToken
     }
     )
-
-    console.log(response)
     if (!response) return
 
     setAddress(response)
@@ -812,8 +808,6 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
     )
 
     if (!response) return
-
-    console.log("here", response)
 
     if (user?.id == allData?.maskedAdopterInfo?.id) {
       setUserConfirmed((prev: any) => ({
@@ -881,7 +875,6 @@ export function PetAdoptionStep3({ allData, setAllData, user, token, id, verifyT
     if (!socket) return
 
     const handleSetAsConfirmed = (final: any) => {
-      console.log("final here", final)
 
       if (final.adopterConfirmedAt) {
         setUserConfirmed((prev: any) => ({

@@ -124,8 +124,6 @@ export const UserProvider: React.FC = ({ children }: React.PropsWithChildren<{}>
         const handleNotification = ({ notification }: any) => {
             if (!notification || typeof notification !== "object") return;
 
-            console.log("new notification", notification);
-
             onSocketNotification(notification, setNotification)
         };
 

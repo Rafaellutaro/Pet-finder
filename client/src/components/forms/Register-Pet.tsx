@@ -59,7 +59,6 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
     const cep = watch("cep");
     useEffect(() => {
         cepSearch(setValue, String(cep));
-        console.log(watch())
     }, [cep]);
 
 

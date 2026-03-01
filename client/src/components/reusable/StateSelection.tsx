@@ -47,8 +47,6 @@ export function StateSelectNoApi({setSearchParams}: StateSelectNoApiProps) {
     const handleSelectChange = (type: string) => (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selected = JSON.parse(e.target.value);
 
-        console.log(selected)
-
         switch (type) {
             case "origin":
                 updateParams({uf: selected.uf}, setSearchParams);

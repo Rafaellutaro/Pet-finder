@@ -38,8 +38,6 @@ export async function isUserAllowedInAdoptionProcess(userId: number, prisma: any
         select: { id: true }
     })
 
-    console.log("is User Allowed?", isUserAllowed)
-
     return isUserAllowed
 }
 

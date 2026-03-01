@@ -101,7 +101,6 @@ export function emptyToNull(value: string) {
 }
 
 export function emptyToNullObject<T extends Record<string, any>>(values: T) {
-    console.log("aqui")
     return Object.fromEntries(
         Object.entries(values).map(([k, v]) => [
             k,

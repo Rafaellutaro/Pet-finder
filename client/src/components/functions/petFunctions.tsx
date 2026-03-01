@@ -43,8 +43,6 @@ export function getAllPetsPublic(region: string, type: string, breed: string, ag
 
         const data = await petApi.json()
 
-        console.log("main", data)
-
         if (data) {
             // const actualPetData = data.data.filter((i: { address: { state: {} }; }) => i.address?.state == region)
             setPetData(data)

@@ -77,7 +77,6 @@ export default function PetProfile({ data }: petProfile) {
 
       if (!heart) return 
 
-      console.log(heart)
     } catch (e) {
       console.log(e)
     }

@@ -48,7 +48,6 @@ function RegisterPage() {
 
   const onContinue = () => {
     setFormPart(i => i + 1);
-    console.log(watch())
   };
 
   const onSubmit = async (data: any) => {
@@ -78,7 +77,7 @@ function RegisterPage() {
       });
       if (res.ok) {
         const result = await res.json();
-        console.log("API result:", result);
+        if (!result) return
         LoginPage("/Login")
       }
     } catch (e) {

@@ -28,7 +28,7 @@ export default async function resendApiPrivate({ apiUrl, options, token, verifyT
             const data = await newResponse.json()
             return data.data
         }else if (!newResponse.ok){
-            const data = await response.json()
+            const data = await newResponse.json()
             return data.message
         }
     } catch (e) {

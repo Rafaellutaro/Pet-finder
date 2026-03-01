@@ -55,8 +55,6 @@ function PetAdoptionSteps() {
 
     if (!response) return
 
-    console.log(response)
-
     setAllProposes((prev: any) => ([
       ...prev,
       response
@@ -83,8 +81,7 @@ function PetAdoptionSteps() {
     })
 
     if (!response) return
-
-    console.log(response)
+    
     setAllData(response)
   }
 

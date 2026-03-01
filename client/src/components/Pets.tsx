@@ -38,8 +38,6 @@ function Pets() {
 
         setCurrentPage(pageFromUrl)
 
-        console.log("aqui", pageFromUrl)
-
         getAllPetsPublic(params.uf!, params.type!, undefined!, params.age!, params.limit, params.orderDirection, pageFromUrl, setPetData);
     }, [user, searchParams, lastPage]);
 

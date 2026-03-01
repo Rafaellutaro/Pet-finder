@@ -38,7 +38,6 @@ const getTraits = async (id: string) => {
             headers: { 'content-type': 'application/json' }
         });
         const result = await res.json();
-        console.log("result", result)
         return result.data;
     } catch (e) {
         console.log(e)
@@ -82,15 +81,11 @@ function Pet() {
         setData();
     }, [userId])
 
-    console.log("all data", singlePetData, petOwner, petTraits)
-
     const allData = {
         pet: singlePetData,
         owner: petOwner,
         traits: petTraits
     }
-
-    console.log(allData)
 
     return (
         <>
