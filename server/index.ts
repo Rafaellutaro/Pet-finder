@@ -21,7 +21,7 @@ const io = new Server(server, {
     origin: function (origin, callback) {
       if (!origin) return callback(null, true);
 
-      if (origin == "http://localhost:5173" || origin == process.env.CLIENT_URL || origin.endsWith(".vercel.app")) return callback(null, true);
+      if (origin == "http://localhost:5173" || origin == process.env.CLIENT_URL) return callback(null, true);
 
       callback(new Error("Not allowed by CORS"))
     },
@@ -38,7 +38,7 @@ app.use(cors({
   origin: function (origin, callback) {
       if (!origin) return callback(null, true);
 
-      if (origin == "http://localhost:5173" || origin == process.env.CLIENT_URL || origin.endsWith(".vercel.app")) return callback(null, true);
+      if (origin == "http://localhost:5173" || origin == process.env.CLIENT_URL) return callback(null, true);
 
       callback(new Error("Not allowed by CORS"))
     },
@@ -51,11 +51,7 @@ app.options(/.*/, cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
 
-    if (
-      origin == "http://localhost:5173" ||
-      origin == process.env.CLIENT_URL ||
-      origin.endsWith(".vercel.app")
-    ) return callback(null, true);
+    if ( origin == "http://localhost:5173" || origin == process.env.CLIENT_URL ) return callback(null, true);
 
     callback(new Error("Not allowed by CORS"));
   },
