@@ -16,7 +16,6 @@ dotenv.config();
 
 const app = express();
 const server = createServer(app);
-const port = 3000;
 const io = new Server(server, {
   cors: {
     origin: function (origin, callback) {
@@ -47,6 +46,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
+app.options("*", cors());
 
 app.get("/bob", (req, res) => {
   res.json({ message: "bob sponja" }).status(200);
@@ -59,7 +59,7 @@ app.use("/notifications", notificationRoute)
 app.use("/adoption", adoptionRouter)
 io.use(verifySocketJWT)
 
-server.listen(port)
+server.listen(process.env.PORT ? Number(process.env.PORT) : 3000)
 
 export const conversationPresence = new Map<number, Set<number>>();
 
