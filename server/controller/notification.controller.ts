@@ -1,6 +1,6 @@
 import type { Response } from "express";
-import prisma from '../client/PrismaClient.ts'
-import type { AuthRequest } from "../middleware/auth.middleware.ts";
+import prisma from '../client/PrismaClient.js'
+import type { AuthRequest } from "../middleware/auth.middleware.js";
 
 // get all notifications unread
 

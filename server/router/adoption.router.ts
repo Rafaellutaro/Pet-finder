@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import {verifyJWT} from '../middleware/auth.middleware.ts'
-import { getDataFromId, confirmAdoption, meetingProposalInitial, getAllProposesInitial, setProposeToAccepted, setProposeToReject, getSucessAddressInitial, setAsConfirmed, getConfirmations } from '../controller/adoption.controller.ts';
+import {verifyJWT} from '../middleware/auth.middleware.js'
+import { getDataFromId, confirmAdoption, meetingProposalInitial, getAllProposesInitial, setProposeToAccepted, setProposeToReject, getSucessAddressInitial, setAsConfirmed, getConfirmations } from '../controller/adoption.controller.js';
 
 const adoptionRouter = Router();
 

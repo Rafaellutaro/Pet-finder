@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { getAllUsers, insertUser, getUserById, updateUserById, deleteUserById, getUserByEmail, createToken, refreshToken, getUserByIdPublic, insertBanner, insertProfileImg } from '../controller/user.controller.ts';
-import {verifyJWT} from '../middleware/auth.middleware.ts'
+import { getAllUsers, insertUser, getUserById, updateUserById, deleteUserById, getUserByEmail, createToken, refreshToken, getUserByIdPublic, insertBanner, insertProfileImg } from '../controller/user.controller.js';
+import {verifyJWT} from '../middleware/auth.middleware.js'
 
 const userRoute = Router();
 

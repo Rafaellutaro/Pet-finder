@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { ConversationCreate, getAllDataFromRoomId, getMessages, sendMessage, progressToConfirmation , getAllChatsFromUser } from '../controller/chat.controller.ts';
-import {verifyJWT} from '../middleware/auth.middleware.ts'
+import { ConversationCreate, getAllDataFromRoomId, getMessages, sendMessage, progressToConfirmation , getAllChatsFromUser } from '../controller/chat.controller.js';
+import {verifyJWT} from '../middleware/auth.middleware.js'
 
 const chatRoute = Router();
 

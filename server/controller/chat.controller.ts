@@ -1,8 +1,8 @@
 import type { Response } from "express";
-import prisma from '../client/PrismaClient.ts'
-import type { AuthRequest } from "../middleware/auth.middleware.ts";
-import { createNotification, getUserName, verifyUserInConversation } from "../helper.ts"
-import { io, isUserInConversation } from "../index.ts";
+import prisma from '../client/PrismaClient.js'
+import type { AuthRequest } from "../middleware/auth.middleware.js";
+import { createNotification, getUserName, verifyUserInConversation } from "../helper.js"
+import { io, isUserInConversation } from "../index.js";
 
 export const ConversationCreate = async (req: AuthRequest, res: Response) => {
     const adopterId = req.user.userId

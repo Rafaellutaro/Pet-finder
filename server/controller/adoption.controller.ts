@@ -1,8 +1,8 @@
 import type { Response } from "express";
-import prisma from '../client/PrismaClient.ts'
-import type { AuthRequest } from "../middleware/auth.middleware.ts";
-import { io } from "../index.ts";
-import { createNotification, getUserName, isUserAllowedInAdoptionProcess, maskEmail, maskPhone, parseBRDateTime } from "../helper.ts";
+import prisma from '../client/PrismaClient.js'
+import type { AuthRequest } from "../middleware/auth.middleware.js";
+import { io } from "../index.js";
+import { createNotification, getUserName, isUserAllowedInAdoptionProcess, maskEmail, maskPhone, parseBRDateTime } from "../helper.js";
 
 export const getDataFromId = async (req: AuthRequest, res: Response) => {
     const userId = req.user.userId

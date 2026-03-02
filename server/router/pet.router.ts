@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { insertPet, getAllPetsById, getAllPets, getUniquePetById, getPetTraits, insertHeart, insertViews, updatePetStatus} from '../controller/pet.controller.ts';
-import {verifyJWT} from '../middleware/auth.middleware.ts'
+import { insertPet, getAllPetsById, getAllPets, getUniquePetById, getPetTraits, insertHeart, insertViews, updatePetStatus} from '../controller/pet.controller.js';
+import {verifyJWT} from '../middleware/auth.middleware.js'
 
 const userRoute = Router();
 
