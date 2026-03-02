@@ -64,7 +64,7 @@ function RegisterPage() {
       street: emptyToNull(data.street),
       neighborhood: emptyToNull(data.neighborhood),
       city: emptyToNull(data.city),
-      region: emptyToNull(data.region)
+      region: emptyToNull(data.region).toUpperCase() ?? null
     };
 
     const allUserData = { userData, addressData };

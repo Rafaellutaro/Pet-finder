@@ -22,7 +22,7 @@ function App() {
   useEffect(() => {
     const fetchRegion = async () => {
       const regionReturn = await getUserLanguage();
-      const regionName = statesOfBrazil.find(i => i.name === regionReturn);
+      const regionName = statesOfBrazil.find(i => i.name == regionReturn);
 
       if (regionName) {
         setApiRegion(regionName.uf);

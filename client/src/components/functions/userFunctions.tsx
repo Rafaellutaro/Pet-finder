@@ -1,7 +1,7 @@
 import { Controller, type Control } from "react-hook-form";
 import { PatternFormat } from 'react-number-format';
 
-export function cepSearch(setValue: any, cep: string) {
+export async function cepSearch(setValue: any, cep: string) {
     const cepDigits = (cep || "").replace(/\D/g, "");
 
     if (cepDigits.length < 8) {
@@ -10,16 +10,20 @@ export function cepSearch(setValue: any, cep: string) {
         setValue("city", undefined);
         setValue("region", undefined);
     } else if (cepDigits.length == 8) {
-        fetch(`https://viacep.com.br/ws/${cepDigits}/json/`)
-            .then((res) => res.json())
-            .then((data) => {
-                if (!data.erro) {
+        try {
+            const res = await fetch(`https://viacep.com.br/ws/${cepDigits}/json/`)
+            if (res.ok) {
+                const data = await res.json()
+                if (data) {
                     setValue("street", data.logradouro);
                     setValue("neighborhood", data.bairro);
                     setValue("city", data.localidade);
                     setValue("region", data.uf);
                 }
-            });
+            }
+        } catch (e) {
+            return alert("houve algum erro ao tentar preencher o endereço automaticamente")
+        }
     }
 }
 
@@ -112,28 +116,28 @@ export function emptyToNullObject<T extends Record<string, any>>(values: T) {
 }
 
 export function parseBRDateTime(dateStr: string, timeStr: string): Date | null {
-  const [dd, mm, yyyy] = dateStr.split("/").map(Number);
-  const [hh, min] = timeStr.split(":").map(Number);
+    const [dd, mm, yyyy] = dateStr.split("/").map(Number);
+    const [hh, min] = timeStr.split(":").map(Number);
 
-  if (yyyy < 1900 || yyyy > 2100) return null;
-  if (mm < 1 || mm > 12) return null;
-  if (hh < 0 || hh > 23) return null;
-  if (min < 0 || min > 59) return null;
+    if (yyyy < 1900 || yyyy > 2100) return null;
+    if (mm < 1 || mm > 12) return null;
+    if (hh < 0 || hh > 23) return null;
+    if (min < 0 || min > 59) return null;
 
-  const d = new Date(yyyy, mm - 1, dd, hh, min, 0, 0);
+    const d = new Date(yyyy, mm - 1, dd, hh, min, 0, 0);
 
-  if (
-    d.getFullYear() !== yyyy ||
-    d.getMonth() !== mm - 1 ||
-    d.getDate() !== dd
-  ) return null;
+    if (
+        d.getFullYear() !== yyyy ||
+        d.getMonth() !== mm - 1 ||
+        d.getDate() !== dd
+    ) return null;
 
-  return d;
+    return d;
 }
 
 export function isWithinNextDays(target: Date, days: number) {
-  const now = new Date();
-  const max = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
-  return target >= now && target <= max;
+    const now = new Date();
+    const max = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+    return target >= now && target <= max;
 }
 

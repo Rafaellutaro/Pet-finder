@@ -89,7 +89,7 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
                     street: formattedData.street,
                     neighborhood: formattedData.neighborhood,
                     city: formattedData.city,
-                    state: formattedData.region,
+                    state: formattedData.region.toUpperCase() ?? null,
                 };
             } else {
                 addressToUse = selectedAddress;

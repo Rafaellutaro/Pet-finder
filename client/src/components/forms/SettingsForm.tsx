@@ -59,10 +59,10 @@ export default function SettingsForm() {
     const onSubmit = async (formData: any) => {
         const newAddress = {
             cep: emptyToNull(formData.cep),
-            street: formData.street,
-            neighborhood: formData.neighborhood,
-            city: formData.city,
-            region: formData.region
+            street: emptyToNull(formData.street),
+            neighborhood: emptyToNull(formData.neighborhood),
+            city: emptyToNull(formData.city),
+            region: emptyToNull(formData.region).toUpperCase() ?? null
         };
 
         const personalData = {
@@ -186,11 +186,11 @@ export default function SettingsForm() {
                                 <div className="address-grid">
                                     <UserCepController control={control} />
 
-                                    <input placeholder="Rua" readOnly {...register("street", { setValueAs: (v) => v.trim() == "" ? undefined : v })} />
-                                    <input placeholder="Bairro" readOnly {...register("neighborhood", { setValueAs: (v) => v.trim() == "" ? undefined : v })} />
-                                    <input placeholder="Cidade" readOnly {...register("city", { setValueAs: (v) => v.trim() == "" ? undefined : v })} />
+                                    <input placeholder="Rua"  {...register("street", { setValueAs: (v) => v.trim() == "" ? undefined : v })} />
+                                    <input placeholder="Bairro"  {...register("neighborhood", { setValueAs: (v) => v.trim() == "" ? undefined : v })} />
+                                    <input placeholder="Cidade"  {...register("city", { setValueAs: (v) => v.trim() == "" ? undefined : v })} />
 
-                                    <input placeholder="Estado" readOnly className="full" {...register("region", { setValueAs: (v) => v.trim() == "" ? undefined : v })} />
+                                    <input placeholder="Estado" className="full" {...register("region", { setValueAs: (v) => v.trim() == "" ? undefined : v })} />
 
                                     {errors.cep && <p className="error">{errors.cep.message}</p>}
                                 </div>

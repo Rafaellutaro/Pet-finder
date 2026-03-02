@@ -67,7 +67,6 @@ function RegisterUserPart3({register, errors, handleSubmit, onSubmit, isSubmitti
                     id="street"
                     {...register("street")}
                     placeholder="Rua"
-                    readOnly
                   />
                 </div>
                 {errors.street && (
@@ -88,7 +87,6 @@ function RegisterUserPart3({register, errors, handleSubmit, onSubmit, isSubmitti
                     id="neighborhood"
                     {...register("neighborhood")}
                     placeholder="Bairro"
-                    readOnly
                   />
                 </div>
                 {errors.neighborhood && (
@@ -112,7 +110,6 @@ function RegisterUserPart3({register, errors, handleSubmit, onSubmit, isSubmitti
                     id="city"
                     {...register("city")}
                     placeholder="Cidade"
-                    readOnly
                   />
                 </div>
                 {errors.city && <p className="error">{String(errors.city.message)}</p>}
@@ -131,7 +128,6 @@ function RegisterUserPart3({register, errors, handleSubmit, onSubmit, isSubmitti
                     id="region"
                     {...register("region")}
                     placeholder="UF"
-                    readOnly
                   />
                 </div>
                 {errors.region && (

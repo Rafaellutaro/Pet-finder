@@ -209,10 +209,10 @@ export default function PetData({ register, errors, watch, handleSubmit, onConti
 
                             <UserCepController control={control} />
 
-                            <input placeholder="Rua" readOnly {...register("street")} />
-                            <input placeholder="Bairro" readOnly {...register("neighborhood")} />
-                            <input placeholder="Cidade" readOnly {...register("city")} />
-                            <input placeholder="Estado" readOnly {...register("region")} />
+                            <input placeholder="Rua"  {...register("street")} />
+                            <input placeholder="Bairro"  {...register("neighborhood")} />
+                            <input placeholder="Cidade"  {...register("city")} />
+                            <input placeholder="Estado"  {...register("region")} />
 
                             {errors.cep && <p className="error">{errors.cep.message}</p>}
                             {errors.street && <p className="error">{errors.street.message}</p>}
