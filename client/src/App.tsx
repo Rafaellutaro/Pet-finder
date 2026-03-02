@@ -11,30 +11,31 @@ import { getAllPetsPublic } from "./components/functions/petFunctions";
 import { statesOfBrazil } from "./Interfaces/usefulPetInterface"
 import { getUserLanguage } from "./components/functions/userFunctions";
 import inDevelopment from "./assets/imgs/inDevelopment.png"
+import noData from "./assets/imgs/noData.png"
 
 function App() {
   const [petData, setPetData] = useState<any>({});
   const [apiRegion, setApiRegion] = useState('');
   const singlePet = useNavigateWithFrom();
-  
 
-   useEffect(() => {
-        const fetchRegion = async () => {
-            const regionReturn = await getUserLanguage();
-            const regionName = statesOfBrazil.find(i => i.name === regionReturn);
-
-            if (regionName) {
-                setApiRegion(regionName.uf);
-            }
-        };
-        fetchRegion();
-    }, []);
 
   useEffect(() => {
-          if (apiRegion) {
-              getAllPetsPublic(apiRegion, undefined!, undefined!, undefined!, "10", undefined!, 1, setPetData);
-          }
-      }, [apiRegion]);
+    const fetchRegion = async () => {
+      const regionReturn = await getUserLanguage();
+      const regionName = statesOfBrazil.find(i => i.name === regionReturn);
+
+      if (regionName) {
+        setApiRegion(regionName.uf);
+      }
+    };
+    fetchRegion();
+  }, []);
+
+  useEffect(() => {
+    if (apiRegion) {
+      getAllPetsPublic(apiRegion, undefined!, undefined!, undefined!, "10", undefined!, 1, setPetData);
+    }
+  }, [apiRegion]);
 
   return (
     <>
@@ -70,7 +71,7 @@ function App() {
       <section className="dogs-grid">
         <h2>Pets Disponiveis Para Adoção Perto de Você</h2>
 
-        {petData && petData.data ? (
+        {petData && petData?.data?.length > 0 ? (
           <Swiper
             modules={[Navigation, Pagination, Scrollbar, A11y]}
             spaceBetween={16}
@@ -92,7 +93,9 @@ function App() {
             ))}
           </Swiper>
         ) : (
-          <div>Loading Pets...</div> // using the same idea i used in flutter, now i can understand it better, since i used mostly backend there and didnt grasp 100%.
+          <div className="no-data-box">
+            <img src={noData} className="no-data" alt="No data" />
+          </div> // using the same idea i used in flutter, now i can understand it better, since i used mostly backend there and didnt grasp 100%.
         )}                           {/* its easier than i thought it was '-' */}
       </section>
 

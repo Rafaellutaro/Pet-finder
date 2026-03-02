@@ -13,6 +13,7 @@ import { FaArrowRight } from "react-icons/fa";
 import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
 import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
 import Loader from "./reusable/Loader"
+import noData from "../assets/imgs/noData.png"
 
 function Pets() {
     const [PetData, setPetData] = useState<any>({})
@@ -55,7 +56,7 @@ function Pets() {
 
     }, [currentPage, lastPage])
 
-    if (!PetData?.data) return <Loader/>
+    if (!PetData?.data) return <Loader />
 
     const startPage = Math.max(currentPage - range, 1);
     const endPage = Math.min(currentPage + range, lastPage);
@@ -101,19 +102,22 @@ function Pets() {
 
                     {/* icons */}
                     <div className="icons">
-                        <TiThListOutline onClick={() => setCurrentGrid("laying")}/>
-                        <TiThLargeOutline onClick={() => setCurrentGrid("grid")}/>
+                        <TiThListOutline onClick={() => setCurrentGrid("laying")} />
+                        <TiThLargeOutline onClick={() => setCurrentGrid("grid")} />
                     </div>
                 </div>
 
-                    {/* fetch get api to all pets based on params */}
+                {/* fetch get api to all pets based on params */}
 
-                    {currentGrid == "grid" ?(
-                        <div className="pets-container-allpets">
-                        <PetContainerPublicApi petData={PetData} /> 
-                        </div>
-                    ) : currentGrid == "laying" ?(<PetContainerPublicApiLaying petData={PetData} />): <div>O que você fez?</div>}
-                
+                {currentGrid == "grid" && PetData?.data?.length > 0 ? (
+                    <div className="pets-container-allpets">
+                        <PetContainerPublicApi petData={PetData} />
+                    </div>
+                ) : currentGrid == "laying" && PetData?.data?.length > 0 ? (<PetContainerPublicApiLaying petData={PetData} />) :
+                    <div className="no-data-box">
+                        <img src={noData} className="no-data" alt="No data" />
+                    </div>}
+
 
                 {/* negocio chatinho em, mais dificil do que eu esperava */}
 

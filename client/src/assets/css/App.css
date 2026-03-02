@@ -397,6 +397,30 @@ section {
   color: var(--secondary);
 }
 
+.no-data-box {
+  width: 100%;
+  max-width: 520px;
+  margin: 18px auto 0;
+
+  padding: 0;                 /* remove padding */
+  background: transparent;     /* avoid extra constraints */
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.no-data {
+  display: block;
+  width: min(920px, 92%);
+  height: auto !important;        /* override any global height */
+  max-height: none !important;    /* prevent forced cropping */
+  object-fit: contain !important; /* override cover */
+}
+
 /* ----------------------------------------------------- */
 /* RESPONSIVITY                                           */
 /* ----------------------------------------------------- */

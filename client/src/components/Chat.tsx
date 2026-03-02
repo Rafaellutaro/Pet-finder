@@ -7,6 +7,7 @@ import type { chatInterface } from "../Interfaces/chatInterface";
 import bannerDFT from "../assets/imgs/bannerDFT.png";
 import { useNavigateWithFrom } from "./reusable/Redirect";
 import Loader from "./reusable/Loader";
+import noData from "../assets/imgs/noData.png"
 
 type ConversationFilter = "ALL" | "PENDING" | "ACCEPTED" | "DECLINED";
 
@@ -47,7 +48,7 @@ function Chat() {
         DECLINED: "rejected",
     };
 
-    if (!allChatsData) return <Loader/>
+    if (!allChatsData) return <Loader />
 
     const normalized = useMemo(() => {
         return allChatsData.map((c) => {
@@ -81,9 +82,9 @@ function Chat() {
         const q = search.trim().toLowerCase();
 
         const byState =
-            conversationState === "ALL"
+            conversationState == "ALL"
                 ? normalized
-                : normalized.filter((c) => c.rawStatus === conversationState);
+                : normalized.filter((c) => c.rawStatus == conversationState);
 
         if (!q) return byState;
 
@@ -147,52 +148,56 @@ function Chat() {
             </div>
 
             <div className="all-chats-list">
-                {filteredChats.map((c) => (
-                    <div key={c.conversationId} className="all-chats-container">
-                        <button
-                            type="button"
-                            className="all-chat-openBtn"
-                            onClick={() => nav(`/Chat/${c.conversationId}`)}
-                        >
-                            <div className="all-chat-petImg">
-                                <img src={c.petPhotos} alt="Foto do pet" />
-                            </div>
-
-                            <div className="all-chat-details">
-                                <div className="all-chat-topline">
-                                    <h2>{c.petName}</h2>
-                                    <span className={`all-chat-status ${c.statusClass}`}>{c.conversationState}</span>
+                {allChatsData ? (
+                    filteredChats.map((c) => (
+                        <div key={c.conversationId} className="all-chats-container">
+                            <button
+                                type="button"
+                                className="all-chat-openBtn"
+                                onClick={() => nav(`/Chat/${c.conversationId}`)}
+                            >
+                                <div className="all-chat-petImg">
+                                    <img src={c.petPhotos} alt="Foto do pet" />
                                 </div>
 
-                                <div className="all-chat-ownerline">
-                                    <img className="all-chat-ownerImg" src={c.userPhoto} alt="Foto do owner" />
-                                    <span className="all-chat-ownerName">{c.ownerName}</span>
+                                <div className="all-chat-details">
+                                    <div className="all-chat-topline">
+                                        <h2>{c.petName}</h2>
+                                        <span className={`all-chat-status ${c.statusClass}`}>{c.conversationState}</span>
+                                    </div>
+
+                                    <div className="all-chat-ownerline">
+                                        <img className="all-chat-ownerImg" src={c.userPhoto} alt="Foto do owner" />
+                                        <span className="all-chat-ownerName">{c.ownerName}</span>
+                                    </div>
+
+                                    <span className="all-chat-lastMessage">{`Ultima Mensagem Enviada: ${c.recentMessage}`}</span>
+                                </div>
+                            </button>
+
+                            <div className="all-chats-container-end">
+                                <div className="all-chat-metaRow">
+                                    <span className="all-chat-time">{`Mensagem Enviada às: ${c.recentMessageTime}`}</span>
                                 </div>
 
-                                <span className="all-chat-lastMessage">{`Ultima Mensagem Enviada: ${c.recentMessage}`}</span>
+                                {c.adoptionState && (
+                                    <button
+                                        type="button"
+                                        className="all-chat-confirm-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            nav(String(c.adoptionLink));
+                                        }}
+                                    >
+                                        Ir para confirmação
+                                    </button>
+                                )}
                             </div>
-                        </button>
-
-                        <div className="all-chats-container-end">
-                            <div className="all-chat-metaRow">
-                                <span className="all-chat-time">{`Mensagem Enviada às: ${c.recentMessageTime}`}</span>
-                            </div>
-
-                            {c.adoptionState && (
-                                <button
-                                    type="button"
-                                    className="all-chat-confirm-btn"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        nav(String(c.adoptionLink));
-                                    }}
-                                >
-                                    Ir para confirmação
-                                </button>
-                            )}
                         </div>
-                    </div>
-                ))}
+                    )
+                    )) : <div className="no-data-box">
+                    <img src={noData} className="no-data" alt="No data" />
+                </div>}
             </div>
         </section>
     );

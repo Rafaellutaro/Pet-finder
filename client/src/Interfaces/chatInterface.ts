@@ -62,6 +62,9 @@ export interface singleChatInterface {
         profileImg: string
     },
     userAdopter: {
+        id: number,
+        name: string,
+        lastName: string,
         profileImg: string,
     }
 }

@@ -134,7 +134,7 @@ export function WorkingChat({ token, verifyToken, alldata, user, setMessage, mes
                                     <div className="pet-chat__pet-name">
                                         {alldata?.pet?.name} <span className="pet-chat__pet-heart">❤️</span>
                                     </div>
-                                    <div className="pet-chat__pet-owner">{ownerFullName} • Online</div>
+                                    <div className="pet-chat__pet-owner">{ownerFullName}</div>
                                 </div>
                             </div>
 
@@ -241,7 +241,7 @@ export function WorkingChat({ token, verifyToken, alldata, user, setMessage, mes
                                 <input
                                     className="pet-chat__input"
                                     value={message}
-                                    placeholder={`Converse com ${alldata?.userOwner?.name} sobre o ${alldata?.pet?.name}`}
+                                    placeholder={user?.id == alldata?.adopterId ? `Converse com ${alldata?.userOwner?.name} sobre o ${alldata?.pet?.name}` : `Converse com ${alldata?.userAdopter?.name} sobre o ${alldata?.pet?.name}`}
                                     onChange={(e) => setMessage(e.target.value)}
                                 />
                             </div>

@@ -109,6 +109,9 @@ export const getAllDataFromRoomId = async (req: AuthRequest, res: Response) => {
                 },
                 userAdopter: {
                     select: {
+                        id: true,
+                        name: true,
+                        lastName: true,
                         profileImg: true
                     }
                 }
