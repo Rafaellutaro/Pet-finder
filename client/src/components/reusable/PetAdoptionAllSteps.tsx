@@ -4,7 +4,7 @@ import type { UserData } from "../../Interfaces/userInterface";
 import { useEffect, useState, type ReactNode } from "react";
 import resendApiPrivate from "./resendApi";
 import "../../assets/css/petAdoptionStep2.css"
-import "../../assets/css/petAdoptionStep3.css"
+import "../../assets/css/PetAdoptionStep3.css"
 import "../../assets/css/petAdoptionStep4.css"
 import { Controller, type Control, type FieldErrors, type UseFormHandleSubmit, type UseFormRegister, type UseFormSetValue, type UseFormWatch } from "react-hook-form";
 import type { PetAdoption2 } from "../../Interfaces/zodSchema";
