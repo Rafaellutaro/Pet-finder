@@ -1,8 +1,8 @@
-import prisma from '../client/PrismaClient.ts'
+import prisma from '../client/PrismaClient.js'
 import jwt from 'jsonwebtoken'
 import type { Response } from "express";
-import type { AuthRequest } from "../middleware/auth.middleware.ts";
-import { maskEmail, maskPhone } from '../helper.ts';
+import type { AuthRequest } from "../middleware/auth.middleware.js";
+import { maskEmail, maskPhone } from '../helper.js';
 import argon2 from "argon2";
 
 const userClient = prisma
@@ -131,12 +131,12 @@ export const createToken = async (req: any, res: any) => {
         { expiresIn: '7d' }
     );
 
-    console.log(refreshToken)
+    const isProd = process.env.NODE_ENV == "PRODUCTION"
 
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
+        secure: isProd,
+        sameSite: isProd ? "none" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000
     });
 

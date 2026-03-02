@@ -1,17 +1,17 @@
 import express from "express";
-import userRoute from "./router/user.router.ts"
+import userRoute from "./router/user.router.js"
 import cookieParser from 'cookie-parser'
 import cors from 'cors';
-import petRoute from "./router/pet.router.ts";
+import petRoute from "./router/pet.router.js";
 import * as dotenv from 'dotenv';
-import chatRoute from "./router/chat.router.ts";
-import notificationRoute from "./router/notification.router.ts";
+import chatRoute from "./router/chat.router.js";
+import notificationRoute from "./router/notification.router.js";
 import { Server } from "socket.io";
 import { createServer } from 'node:http';
-import { verifySocketJWT } from "./middleware/auth.middleware.ts";
-import type { AuthSocket } from "./middleware/auth.middleware.ts";
-import Prisma from "./client/PrismaClient.ts";
-import adoptionRouter from "./router/adoption.router.ts";
+import { verifySocketJWT } from "./middleware/auth.middleware.js";
+import type { AuthSocket } from "./middleware/auth.middleware.js";
+import Prisma from "./client/PrismaClient.js";
+import adoptionRouter from "./router/adoption.router.js";
 dotenv.config();
 
 const app = express();
@@ -19,7 +19,13 @@ const server = createServer(app);
 const port = 3000;
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL,
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (origin == "http://localhost:5173" || origin == process.env.CLIENT_URL || origin.endsWith(".vercel.app")) return callback(null, true);
+
+      callback(new Error("Not allowed by CORS"))
+    },
     methods: ["GET", "POST"],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -30,7 +36,13 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (origin == "http://localhost:5173" || origin == process.env.CLIENT_URL || origin.endsWith(".vercel.app")) return callback(null, true);
+
+      callback(new Error("Not allowed by CORS"))
+    },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
@@ -47,9 +59,7 @@ app.use("/notifications", notificationRoute)
 app.use("/adoption", adoptionRouter)
 io.use(verifySocketJWT)
 
-server.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-})
+server.listen(port)
 
 export const conversationPresence = new Map<number, Set<number>>();
 
