@@ -12,9 +12,10 @@ type RegisterEmailForm = {
     handleSubmit: UseFormHandleSubmit<userFormFields>;
     onContinue: () => void;
     isSubmitting: boolean;
+    handlegoogle: (e: any) => Promise<void>
 }
 
-function RegisterUserpart1({register, errors, handleSubmit, onContinue, isSubmitting}: RegisterEmailForm){
+function RegisterUserpart1({register, errors, handleSubmit, onContinue, isSubmitting, handlegoogle}: RegisterEmailForm){
     return (
     <section className="register-page">
       <div className="register-card">
@@ -64,7 +65,7 @@ function RegisterUserpart1({register, errors, handleSubmit, onContinue, isSubmit
             <button
               type="button"
               className="register-socialBtn"
-            //   onClick={handleGoogle} goole thing here later
+              onClick={(e) => handlegoogle(e)} 
             >
               <span className="google-icon" aria-hidden="true">
                 <FaGoogle/>

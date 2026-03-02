@@ -43,7 +43,7 @@ function RegisterPage() {
   const handleGoogle = async (e: any) => {
     e.preventDefault();
 
-    console.log("google aqui")
+    return alert("Em Desenvolvimento")
   }
 
   const onContinue = () => {
@@ -93,7 +93,7 @@ function RegisterPage() {
   return (
     <>
       {formPart == 1 && (
-        <RegisterUserpart1 register={register} errors={errors} handleSubmit={handleSubmit} onContinue={onContinue} isSubmitting={isSubmitting} />
+        <RegisterUserpart1 register={register} errors={errors} handleSubmit={handleSubmit} onContinue={onContinue} isSubmitting={isSubmitting} handlegoogle={handleGoogle}/>
       )}
 
       {formPart == 2 && (

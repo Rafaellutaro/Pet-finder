@@ -31,7 +31,7 @@ export function onSocketNotification(n: any, setNotification: React.Dispatch<Rea
 }
 
 export async function loadUnread(setNotification: React.Dispatch<React.SetStateAction<NotificationItem[]>>, token: string, verifyToken: () => Promise<void>) {
-    let icon: any
+    let icon: any = null
 
     const data = await resendApiPrivate({ apiUrl: `${import.meta.env.VITE_SERVER_URL}/notifications/unread`, options: { method: "GET" }, token: String(token), verifyToken: verifyToken });
 

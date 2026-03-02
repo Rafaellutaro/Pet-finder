@@ -4,11 +4,12 @@ import '../assets/css/settings.css';
 import SettingsForm from './forms/SettingsForm';
 import Loader from './reusable/Loader';
 import bannerDFT from "../assets/imgs/bannerDFT.png"
+import inDev from "../assets/imgs/inDevelopment.png"
 
 function Settings() {
     const { user } = useUser();
     if (!user) return <Loader/>
-    const [activeTab, setActiveTab] = useState("settings");
+    const [activeTab, setActiveTab] = useState("update");
     const [userProfileImg, setUserProfileImg] = useState(user.profileImg)
 
     const complete_name = `${user!.name} ${user!.lastName}`
@@ -29,15 +30,15 @@ function Settings() {
 
                     <div className="profile-info">
                         <div className="profile-tags">
-                            <span className="tag blue">paçoca</span>
-                            <span className="tag green">Member</span>
+                            <span className="tag blue">Usuário</span>
+                            {/* <span className="tag green">Member</span> */}
                         </div>
 
                         <h2 className="profile-name">{complete_name}</h2>
                     </div>
                 </div>
 
-                {/* <button className="edit-btn">✎ Edit</button> */}
+                <button className="edit-btn">✎ Edit</button>
             </div>
 
             {/* Tabs */}
@@ -50,16 +51,16 @@ function Settings() {
                 </button>
 
                 <button
-                    className={`tab ${activeTab == "profile" ? "active" : ""}`}
-                    onClick={() => setActiveTab("profile")}
+                    className={`tab ${activeTab == "update" ? "active" : ""}`}
+                    onClick={() => setActiveTab("update")}
                 >
-                    Profile Details
+                    Atualizar Dados
                 </button>
             </div>
 
             <>
-                {/* {activeTab == "settings" && <Settings />} */}
-                {activeTab == "profile" && <SettingsForm />}
+                {activeTab == "settings" && <img src={inDev} className='inDevPhoto' />}
+                {activeTab == "update" && <SettingsForm />}
             </>
         </div>
     );

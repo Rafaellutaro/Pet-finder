@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { SettingsSchema as schema } from "../../Interfaces/zodSchema"
 import { emptyToNull } from "../functions/userFunctions";
 import resendApiPrivate from "../reusable/resendApi";
+import Loader from "../reusable/Loader";
 
 export default function SettingsForm() {
     const { user, token, verifyToken } = useUser();
@@ -29,6 +30,7 @@ export default function SettingsForm() {
         watch,
         setValue,
         control,
+        reset,
         formState: { errors, isSubmitting }
     } = useForm<FormFields>({
         resolver: zodResolver(schema),
@@ -47,7 +49,7 @@ export default function SettingsForm() {
         setSelectedAddress(allAddress[0])
     }, [user])
 
-    if (!user || !token) return <div>Loading Data...</div>;
+    if (!user || !token) return <Loader/>;
 
     const complete_name = `${user.name} ${user.lastName}`;
 
@@ -65,6 +67,7 @@ export default function SettingsForm() {
 
         const personalData = {
             email: emptyToNull(formData.email),
+            currentPassword: emptyToNull(formData.password),
             newPassword: emptyToNull(formData.newPassword),
             phone: emptyToNull(formData.phone)
         };
@@ -90,6 +93,8 @@ export default function SettingsForm() {
                 verifyToken: verifyToken})
             
             if (!response?.ok) return
+
+            reset();
         } else{
             alert("Insira algo primeiro")
         }
