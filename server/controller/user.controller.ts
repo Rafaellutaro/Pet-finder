@@ -234,7 +234,7 @@ export const updateUserById = async (req: any, res: any) => {
     const newAddress = payload.newAddress
     const userId = req.user.userId
 
-    const updatePersonalData = { ...personalData };
+    let updatePersonalData = { ...personalData };
     const updateNewAddressData = { ...newAddress };
 
     if (updatePersonalData.newPassword) {
@@ -249,17 +249,34 @@ export const updateUserById = async (req: any, res: any) => {
 
     console.log("data updated", updatePersonalData, updateNewAddressData)
 
-    if (
-        Object.keys(updatePersonalData).length === 0 &&
-        Object.keys(updateNewAddressData).length === 0
-    ) {
-        res.status(400).json({ error: "No data to update" });
-    }
+    if (Object.keys(updatePersonalData).length == 0 && Object.keys(updateNewAddressData).length == 0) return res.status(400).json({ message: "No data to update" });
 
     try {
         const response: any = {};
 
         if (Object.keys(updatePersonalData).length > 0) {
+            if (updatePersonalData.password) {
+                const verifyPassword = await userClient.user.findUnique({
+                    where: {id: userId},
+                    select: {
+                        password: true
+                    }
+                })
+
+                const valid = await argon2.verify(String(verifyPassword?.password), String(updatePersonalData.currentPassword));
+
+                if (!valid) return res.status(400).json({message: "password do not match"})
+
+                const hashedPassword = await argon2.hash(updatePersonalData?.password)
+
+                updatePersonalData = {
+                    ...updatePersonalData,
+                    password: hashedPassword,
+                };
+
+                delete updatePersonalData.currentPassword
+            }
+
             response.personal = await userClient.user.update({
                 where: { id: userId },
                 data: updatePersonalData

@@ -52,8 +52,8 @@ app.options(/.*/, cors({
     if (!origin) return callback(null, true);
 
     if (
-      origin === "http://localhost:5173" ||
-      origin === process.env.CLIENT_URL ||
+      origin == "http://localhost:5173" ||
+      origin == process.env.CLIENT_URL ||
       origin.endsWith(".vercel.app")
     ) return callback(null, true);
 
