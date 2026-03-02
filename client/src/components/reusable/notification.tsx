@@ -4,10 +4,6 @@ import { BsChatSquareText } from "react-icons/bs";
 import resendApiPrivate from "./resendApi";
 
 export function onSocketNotification(n: any, setNotification: React.Dispatch<React.SetStateAction<NotificationItem[]>>) {
-    let icon
-
-    { n.type == "chat_created" ? icon = <IoChatboxOutline /> : <BsChatSquareText /> }
-
     const date = new Date(n.createdAt).toLocaleTimeString("pt-BR", {
         hour: "2-digit",
         minute: "2-digit"
@@ -18,7 +14,7 @@ export function onSocketNotification(n: any, setNotification: React.Dispatch<Rea
         title: n.title,
         body: n.body,
         date: date,
-        icon: icon,
+        icon: n.type == "chat_created" ? <IoChatboxOutline /> : <BsChatSquareText /> ,
         isRead: n.isRead,
         link: n.link,
         type: n.type,
@@ -31,8 +27,6 @@ export function onSocketNotification(n: any, setNotification: React.Dispatch<Rea
 }
 
 export async function loadUnread(setNotification: React.Dispatch<React.SetStateAction<NotificationItem[]>>, token: string, verifyToken: () => Promise<void>) {
-    let icon: any = null
-
     const data = await resendApiPrivate({ apiUrl: `${import.meta.env.VITE_SERVER_URL}/notifications/unread`, options: { method: "GET" }, token: String(token), verifyToken: verifyToken });
 
     if (!data?.ok) return
@@ -46,7 +40,7 @@ export async function loadUnread(setNotification: React.Dispatch<React.SetStateA
             hour: "2-digit",
             minute: "2-digit"
         }),
-        icon: n.type == "chat_created" ? icon = <IoChatboxOutline /> : <BsChatSquareText /> ,
+        icon: n.type == "chat_created" ? <IoChatboxOutline /> : <BsChatSquareText /> ,
         isRead: n.isRead,
         link: n.link,
         type: n.type,
