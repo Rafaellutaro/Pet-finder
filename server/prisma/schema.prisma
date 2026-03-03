@@ -335,3 +335,18 @@ model PetsAdopted {
   @@unique([petId])
   @@index([adopterId])
 }
+
+model EmailVerificationCode {
+  id         Int      @id @default(autoincrement())
+
+  email      String
+  codeHash   String   
+  expiresAt  DateTime
+  usedAt     DateTime?
+
+  attempts   Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([email])
+  @@index([expiresAt])
+}

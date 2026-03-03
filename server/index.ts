@@ -1,9 +1,10 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
 import express from "express";
 import userRoute from "./router/user.router.js"
 import cookieParser from 'cookie-parser'
 import cors from 'cors';
 import petRoute from "./router/pet.router.js";
-import * as dotenv from 'dotenv';
 import chatRoute from "./router/chat.router.js";
 import notificationRoute from "./router/notification.router.js";
 import { Server } from "socket.io";
@@ -12,7 +13,6 @@ import { verifySocketJWT } from "./middleware/auth.middleware.js";
 import type { AuthSocket } from "./middleware/auth.middleware.js";
 import Prisma from "./client/PrismaClient.js";
 import adoptionRouter from "./router/adoption.router.js";
-dotenv.config();
 
 const app = express();
 const server = createServer(app);

@@ -18,13 +18,17 @@ export const RegisterSchemaPart1 = z.object({
 }).loose()
 
 export const RegisterSchemaPart2 = z.object({
+    code: z.string().min(4, "minimo de 4 characteres")
+})
+
+export const RegisterSchemaPart3 = z.object({
     name: z.string().min(3, "minimo de 3 characteres"),
     lastName: z.string().min(3, "minimo de 3 characteres").max(29, "maximo de 29 characteres"),
     password: z.string().min(6, "muito curta"),
     phone: z.string().min(15, "numero invalido").max(15).optional(),
 }).loose()
 
-export const RegisterSchemaPart3 = z.object({
+export const RegisterSchemaPart4 = z.object({
     cep: z.string().min(9, "cep invalido").max(9).optional(),
     street: z.string().optional(),
     neighborhood: z.string().optional(),
@@ -32,7 +36,7 @@ export const RegisterSchemaPart3 = z.object({
     region: z.string().optional()
 }).loose()
 
-const userFullSchema = RegisterSchemaPart1.extend(RegisterSchemaPart2.shape).extend(RegisterSchemaPart3.shape)
+const userFullSchema = RegisterSchemaPart1.extend(RegisterSchemaPart2.shape).extend(RegisterSchemaPart3.shape).extend(RegisterSchemaPart4.shape)
 
 export type userFormFields = z.infer<typeof userFullSchema>
 

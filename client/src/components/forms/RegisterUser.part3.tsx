@@ -18,22 +18,6 @@ type RegisterPersonalDataForm = {
 function RegisterUserPart3({register, errors, handleSubmit, onSubmit, isSubmitting, formPart, control}: RegisterPersonalDataForm){
 
     return (
-    <section className="register-page">
-      <div className="register-card">
-        {/* LEFT SIDE (image) */}
-        <div className="register-left" aria-hidden="true">
-          <img className="register-image" src={registerImage} alt="" />
-          <div className="register-imageOverlay" />
-        </div>
-
-        {/* RIGHT SIDE (form) */}
-        <div className="register-right">
-          <div className="register-header">
-            <h1 className="register-title">Criar conta</h1>
-            <p className="register-subtitle">Endereço (opcional)</p>
-            <div className="register-step">Passo {formPart} de 4</div>
-          </div>
-
           <form className="register-form" onSubmit={handleSubmit(onSubmit)}>
             {/* Row 1: CEP (full width) */}
             <div className="register-row">
@@ -140,9 +124,6 @@ function RegisterUserPart3({register, errors, handleSubmit, onSubmit, isSubmitti
               {isSubmitting ? "Concluindo..." : "Concluir"}
             </button>
           </form>
-        </div>
-      </div>
-    </section>
   );
 }
 

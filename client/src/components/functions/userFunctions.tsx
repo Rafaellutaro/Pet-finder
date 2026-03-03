@@ -44,6 +44,34 @@ type ControllerType = {
     control: Control<any>
 }
 
+export function UserCodeController({ control }: ControllerType) {
+    return (
+        <Controller
+            name="code"
+            control={control}
+            render={({ field }) => (
+                <PatternFormat
+                    id="code"
+                    inputMode="numeric"
+                    className="codeInput-inline"
+                    placeholder="000000"
+                    format="######"
+                    mask="_"
+                    value={field.value || undefined}
+                    onValueChange={(vals) => {
+                        if (!vals.value) {
+                            field.onChange(undefined)
+                            return
+                        }
+
+                        field.onChange(vals.value)
+                    }}
+                />
+            )}
+        />
+    )
+}
+
 export function UserCepController({ control }: ControllerType) {
     return (
         <Controller

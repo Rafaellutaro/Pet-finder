@@ -19,113 +19,93 @@ type RegisterPersonalDataForm = {
 
 function RegisterUserPart2({ register, errors, handleSubmit, onContinue, isSubmitting, formPart, control }: RegisterPersonalDataForm) {
   return (
-    <section className="register-page">
-      <div className="register-card">
-        {/* LEFT SIDE (image) */}
-        <div className="register-left" aria-hidden="true">
-          <img className="register-image" src={registerImage} alt="" />
-          <div className="register-imageOverlay" />
+    <form className="register-form" onSubmit={handleSubmit(onContinue)}>
+      <div className="register-row">
+        <div className="register-field half">
+          <label className="register-label" htmlFor="name">
+            Nome
+          </label>
+
+          <div className="register-input-wrap">
+            <span className="register-input-icon" aria-hidden="true">
+              <FaRegUser />
+            </span>
+            <input
+              id="name"
+              {...register("name", { required: true })}
+              placeholder="Seu nome"
+            />
+          </div>
+          {errors.name && (
+            <p className="error">{String(errors.name.message)}</p>
+          )}
         </div>
 
-        {/* RIGHT SIDE (form) */}
-        <div className="register-right">
-          <div className="register-header">
-            <h1 className="register-title">Criar conta</h1>
-            <p className="register-subtitle">Digite seus dados pessoais</p>
-            <div className="register-step">Passo {formPart} de 4</div>
+        <div className="register-field half">
+          <label className="register-label" htmlFor="lastName">
+            Sobrenome
+          </label>
+
+          <div className="register-input-wrap">
+            <span className="register-input-icon" aria-hidden="true">
+              <FaRegUser />
+            </span>
+            <input
+              id="lastName"
+              {...register("lastName", { required: true })}
+              placeholder="Seu sobrenome"
+            />
           </div>
-
-          <form className="register-form" onSubmit={handleSubmit(onContinue)}>
-            {/* Row 1: Name | Last name */}
-            <div className="register-row">
-              <div className="register-field half">
-                <label className="register-label" htmlFor="name">
-                  Nome
-                </label>
-
-                <div className="register-input-wrap">
-                  <span className="register-input-icon" aria-hidden="true">
-                    <FaRegUser />
-                  </span>
-                  <input
-                    id="name"
-                    {...register("name", { required: true })}
-                    placeholder="Seu nome"
-                  />
-                </div>
-                {errors.name && (
-                  <p className="error">{String(errors.name.message)}</p>
-                )}
-              </div>
-
-              <div className="register-field half">
-                <label className="register-label" htmlFor="lastName">
-                  Sobrenome
-                </label>
-
-                <div className="register-input-wrap">
-                  <span className="register-input-icon" aria-hidden="true">
-                    <FaRegUser />
-                  </span>
-                  <input
-                    id="lastName"
-                    {...register("lastName", { required: true })}
-                    placeholder="Seu sobrenome"
-                  />
-                </div>
-                {errors.lastName && (
-                  <p className="error">{String(errors.lastName.message)}</p>
-                )}
-              </div>
-            </div>
-
-            {/* Row 2: Password | Phone */}
-            <div className="register-row">
-              <div className="register-field half">
-                <label className="register-label" htmlFor="password">
-                  Senha
-                </label>
-
-                <div className="register-input-wrap">
-                  <span className="register-input-icon" aria-hidden="true">
-                    <CiLock />
-                  </span>
-                  <input
-                    id="password"
-                    type="password"
-                    {...register("password", { required: true })}
-                    placeholder="Crie uma senha"
-                  />
-                </div>
-                {errors.password && (
-                  <p className="error">{String(errors.password.message)}</p>
-                )}
-              </div>
-
-              <div className="register-field half">
-                <label className="register-label" htmlFor="phone">
-                  Telefone - Opcional
-                </label>
-
-                <div className="register-input-wrap">
-                  <span className="register-input-icon" aria-hidden="true">
-                    <LuSmartphone />
-                  </span>
-                  <UserPhoneController control={control}/>
-                </div>
-                {errors.phone && (
-                  <p className="error">{String(errors.phone.message)}</p>
-                )}
-              </div>
-            </div>
-
-            <button className="registerBtn" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Avançando..." : "Avançar"}
-            </button>
-          </form>
+          {errors.lastName && (
+            <p className="error">{String(errors.lastName.message)}</p>
+          )}
         </div>
       </div>
-    </section>
+
+      {/* Row 2: Password | Phone */}
+      <div className="register-row">
+        <div className="register-field half">
+          <label className="register-label" htmlFor="password">
+            Senha
+          </label>
+
+          <div className="register-input-wrap">
+            <span className="register-input-icon" aria-hidden="true">
+              <CiLock />
+            </span>
+            <input
+              id="password"
+              type="password"
+              {...register("password", { required: true })}
+              placeholder="Crie uma senha"
+            />
+          </div>
+          {errors.password && (
+            <p className="error">{String(errors.password.message)}</p>
+          )}
+        </div>
+
+        <div className="register-field half">
+          <label className="register-label" htmlFor="phone">
+            Telefone - Opcional
+          </label>
+
+          <div className="register-input-wrap">
+            <span className="register-input-icon" aria-hidden="true">
+              <LuSmartphone />
+            </span>
+            <UserPhoneController control={control} />
+          </div>
+          {errors.phone && (
+            <p className="error">{String(errors.phone.message)}</p>
+          )}
+        </div>
+      </div>
+
+      <button className="registerBtn" type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "Avançando..." : "Avançar"}
+      </button>
+    </form>
   );
 }
 

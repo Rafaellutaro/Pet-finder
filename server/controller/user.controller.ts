@@ -2,8 +2,9 @@ import prisma from '../client/PrismaClient.js'
 import jwt from 'jsonwebtoken'
 import type { Response } from "express";
 import type { AuthRequest } from "../middleware/auth.middleware.js";
-import { maskEmail, maskPhone } from '../helper.js';
+import { generateVerificationCode, htmlGenerate, maskEmail, maskPhone, sendEmail } from '../helper.js';
 import argon2 from "argon2";
+import { Resend } from 'resend';
 
 const userClient = prisma
 
@@ -257,7 +258,7 @@ export const updateUserById = async (req: any, res: any) => {
         if (Object.keys(updatePersonalData).length > 0) {
             if (updatePersonalData.password) {
                 const verifyPassword = await userClient.user.findUnique({
-                    where: {id: userId},
+                    where: { id: userId },
                     select: {
                         password: true
                     }
@@ -265,7 +266,7 @@ export const updateUserById = async (req: any, res: any) => {
 
                 const valid = await argon2.verify(String(verifyPassword?.password), String(updatePersonalData.currentPassword));
 
-                if (!valid) return res.status(400).json({message: "password do not match"})
+                if (!valid) return res.status(400).json({ message: "password do not match" })
 
                 const hashedPassword = await argon2.hash(updatePersonalData?.password)
 
@@ -383,5 +384,60 @@ export const insertProfileImg = async (req: AuthRequest, res: Response) => {
 
     } catch (e) {
         console.log(e)
+    }
+}
+
+export const createEmailCode = async (req: AuthRequest, res: Response) => {
+    const email = req.body.email
+    try {
+        const code = generateVerificationCode();
+
+        if (!code) return
+
+        const hashedCode = await argon2.hash(code);
+
+        const createCode = await prisma.emailVerificationCode.create({
+            data: {
+                email: email,
+                codeHash: hashedCode,
+                expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+            }
+        })
+
+        if (!createCode) return res.status(400).json({ message: "unable to store code" })
+        
+        const html = htmlGenerate(code)
+
+        await sendEmail(email, "Seu Código de Verificação", html)
+
+        return res.status(200).json({data: createCode})
+    } catch (e) {
+        return res.status(500).json({ message: "unable to create code" })
+    }
+}
+
+export const verifyEmailCode = async (req: AuthRequest, res: Response) => {
+    const {email, code} = req.body
+    try {
+        const getCodeData = await prisma.emailVerificationCode.findFirst({
+            where: {email: email},
+            orderBy: {createdAt: "desc"},
+            select: {
+                codeHash: true,
+                expiresAt: true
+            }
+            
+        })
+
+        if (!getCodeData) return res.status(400).json({message: "unable to find code"})
+
+        const verifyCode = await argon2.verify(String(getCodeData?.codeHash), code);
+
+        if (!verifyCode) return res.status(403).json({ message: "unable to verify code" })
+        
+
+        return res.status(200).json({data: verifyCode})
+    } catch (e) {
+        return res.status(500).json({ message: "unable to create code" })
     }
 }

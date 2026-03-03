@@ -17,26 +17,6 @@ type RegisterEmailForm = {
 
 function RegisterUserpart1({register, errors, handleSubmit, onContinue, isSubmitting, handlegoogle}: RegisterEmailForm){
     return (
-    <section className="register-page">
-      <div className="register-card">
-        {/* LEFT SIDE (image) */}
-        <div className="register-left" aria-hidden="true">
-          <img className="register-image" src={registerImage} alt="" />
-          {/* you can remove the overlay if you prefer the image brighter */}
-          <div className="register-imageOverlay" />
-        </div>
-
-        {/* RIGHT SIDE (form) */}
-        <div className="register-right">
-          <div className="register-header">
-            <h1 className="register-title">Criar conta</h1>
-            <p className="register-subtitle">
-              Digite seu e-mail para receber um código de confirmação.
-            </p>
-
-            <div className="register-step">Passo 1 de 4</div>
-          </div>
-
           <form className="register-form" onSubmit={handleSubmit(onContinue)}>
             <div className="register-field">
               <label className="register-label" htmlFor="email">
@@ -94,9 +74,6 @@ function RegisterUserpart1({register, errors, handleSubmit, onContinue, isSubmit
               </p>
             </div>
           </form>
-        </div>
-      </div>
-    </section>
   );
 }
 
