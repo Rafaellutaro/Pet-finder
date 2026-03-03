@@ -1,5 +1,4 @@
 import type { Control, FieldErrors, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
-import registerImage from "../../assets/imgs/catDog.png"
 import type { userFormFields } from "../../Interfaces/zodSchema";
 import "../../assets/css/RegisterPagePart2.css"
 import { FaRegUser } from "react-icons/fa";
@@ -14,10 +13,9 @@ type RegisterPersonalDataForm = {
   control: Control<userFormFields>
   onContinue: () => void;
   isSubmitting: boolean;
-  formPart: number;
 }
 
-function RegisterUserPart2({ register, errors, handleSubmit, onContinue, isSubmitting, formPart, control }: RegisterPersonalDataForm) {
+function RegisterUserPart2({ register, errors, handleSubmit, onContinue, isSubmitting, control }: RegisterPersonalDataForm) {
   return (
     <form className="register-form" onSubmit={handleSubmit(onContinue)}>
       <div className="register-row">

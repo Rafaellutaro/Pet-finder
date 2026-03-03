@@ -193,7 +193,6 @@ function RegisterPage() {
               handleSubmit={handleSubmit} 
               onContinue={onContinue} 
               isSubmitting={isSubmitting} 
-              formPart={formPart} 
               control={control} />
             )}
 
@@ -204,7 +203,6 @@ function RegisterPage() {
               handleSubmit={handleSubmit} 
               onSubmit={onSubmit} 
               isSubmitting={isSubmitting} 
-              formPart={formPart} 
               control={control} />
             )}
 

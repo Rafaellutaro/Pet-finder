@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 import "../../assets/css/RegisterPagePart1.css"
-import registerImage from "../../assets/imgs/catDog.png"
 import type { FieldErrors, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
 import type { userFormFields } from "../../Interfaces/zodSchema";
 import { MdOutlineEmail } from "react-icons/md";
