@@ -389,7 +389,15 @@ export const insertProfileImg = async (req: AuthRequest, res: Response) => {
 
 export const createEmailCode = async (req: AuthRequest, res: Response) => {
     const email = req.body.email
+    const now = new Date()
     try {
+        await prisma.emailVerificationCode.deleteMany({
+            where: {
+                email,
+                expiresAt: { lt: now },
+            },
+        });
+
         const code = generateVerificationCode();
 
         if (!code) return
@@ -405,38 +413,61 @@ export const createEmailCode = async (req: AuthRequest, res: Response) => {
         })
 
         if (!createCode) return res.status(400).json({ message: "unable to store code" })
-        
-        const html = htmlGenerate(code)
 
-        await sendEmail(email, "Seu Código de Verificação", html)
+        // const html = htmlGenerate(code)
+        // await sendEmail(email, "Seu Código de Verificação", html)
 
-        return res.status(200).json({data: createCode})
+        return res.status(200).json({ data: createCode, code })
     } catch (e) {
         return res.status(500).json({ message: "unable to create code" })
     }
 }
 
 export const verifyEmailCode = async (req: AuthRequest, res: Response) => {
-    const {email, code} = req.body
+    const { email, code } = req.body
+    const now = new Date()
+
     try {
         const getCodeData = await prisma.emailVerificationCode.findFirst({
-            where: {email: email},
-            orderBy: {createdAt: "desc"},
+            where: { email, expiresAt: { gt: now } },
+            orderBy: { createdAt: "desc" },
             select: {
                 codeHash: true,
-                expiresAt: true
+                attempts: true,
+                id: true
             }
-            
-        })
+        });
 
-        if (!getCodeData) return res.status(400).json({message: "unable to find code"})
+        if (!getCodeData) {
+            await prisma.emailVerificationCode.deleteMany({
+                where: { email },
+            });
+
+            return res.status(410).json({ message: "code expired, request a new one" });
+        }
 
         const verifyCode = await argon2.verify(String(getCodeData?.codeHash), code);
 
-        if (!verifyCode) return res.status(403).json({ message: "unable to verify code" })
-        
+        if (!verifyCode) {
+            const updatedAttemp = await prisma.emailVerificationCode.update({
+                where: { id: getCodeData.id },
+                data: { attempts: { increment: 1 } },
+            });
 
-        return res.status(200).json({data: verifyCode})
+            if (updatedAttemp.attempts >= 5) {
+                await prisma.emailVerificationCode.delete({
+                    where: { id: getCodeData.id },
+                });
+            }
+
+            return res.status(403).json({ message: "invalid code" });
+        }
+
+        await prisma.emailVerificationCode.deleteMany({
+            where: { email: email },
+        })
+
+        return res.status(200).json({ data: verifyCode })
     } catch (e) {
         return res.status(500).json({ message: "unable to create code" })
     }

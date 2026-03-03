@@ -14,6 +14,7 @@ import catDog from "../assets/imgs/catDog.png"
 
 function RegisterPage() {
   const [formPart, setFormPart] = useState(1)
+  const [demoCode, setDemoCode] = useState("")
   const LoginPage = useNavigateWithFrom()
 
   // const { setUser, setToken, setLoggedIn } = useUser();
@@ -70,7 +71,7 @@ function RegisterPage() {
 
         const data = await res.json();
 
-        console.log(data)
+        setDemoCode(data.code)
       } catch (e) {
         console.log(e)
       }
@@ -97,7 +98,7 @@ function RegisterPage() {
           body: JSON.stringify(payload)
         })
 
-      if (!res.ok) return
+      if (!res.ok) return alert("Você excedeu o número máximo de tentativas. Por segurança, o código foi invalidado. Gere um novo código para continuar.")
 
       const data = await res.json()
       
@@ -183,7 +184,7 @@ function RegisterPage() {
               getValues={getValues} 
               verifyCode={verifyCode}
               control={control}
-              setFormPart={setFormPart}
+              demoCode={demoCode}
               />
             )}
 

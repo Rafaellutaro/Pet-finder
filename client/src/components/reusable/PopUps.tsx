@@ -8,12 +8,12 @@ type WarningModalProps = {
   details: string;
   cancelText?: string;
   acceptText?: string;
-  onCancel:() => void;
   onClose: () => void;
+  onCancel: () => void;
   onAccept: () => void;
 };
 
-export function WarningPopUp({open, title, details, cancelText, acceptText, onAccept, onCancel, onClose}: WarningModalProps){
+export function WarningPopUp({ open, title, details, cancelText, acceptText, onAccept, onCancel, onClose }: WarningModalProps) {
   // ESC to close
   useEffect(() => {
     if (!open) return;
@@ -40,7 +40,7 @@ export function WarningPopUp({open, title, details, cancelText, acceptText, onAc
 
   if (!open) return null;
 
- return (
+  return (
     <div className="warning-overlay">
       <section
         className="warning-main-body"
@@ -50,7 +50,7 @@ export function WarningPopUp({open, title, details, cancelText, acceptText, onAc
       >
         <div className="warning-header">
           <span className="warning-icon" aria-hidden="true">
-            <IoWarningOutline className="warning-triangle"/>
+            <IoWarningOutline className="warning-triangle" />
           </span>
 
           <button
@@ -78,6 +78,50 @@ export function WarningPopUp({open, title, details, cancelText, acceptText, onAc
           </button>
         </div>
       </section>
+    </div>
+  );
+}
+
+export type InfoModalProps = {
+  open: boolean;
+  title: string;
+  details: string;
+  onClose: () => void;
+};
+
+export function InfoPopUp({ open, title, details, onClose }: InfoModalProps) {
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key == "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return (
+    <div className="infoModal__backdrop" onClick={onClose} role="presentation">
+      <div
+        className="infoModal__card"
+        onClick={stop}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+      >
+        <button className="infoModal__close" onClick={onClose} aria-label="Close">
+          ×
+        </button>
+
+        <div className="infoModal__iconWrap" aria-hidden="true">
+          <div className="infoModal__icon">i</div>
+        </div>
+
+        <h3 className="infoModal__title">{title}</h3>
+        <p className="infoModal__details">{details}</p>
+      </div>
     </div>
   );
 }
