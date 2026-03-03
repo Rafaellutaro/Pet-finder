@@ -183,6 +183,7 @@ function RegisterPage() {
               getValues={getValues} 
               verifyCode={verifyCode}
               control={control}
+              setFormPart={setFormPart}
               />
             )}
 

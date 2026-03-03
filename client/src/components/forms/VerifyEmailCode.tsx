@@ -10,9 +10,10 @@ type verifyEmailType = {
     handleSubmit: UseFormHandleSubmit<userFormFields>,
     verifyCode: () => void
     control: Control<userFormFields>
+    setFormPart: React.Dispatch<React.SetStateAction<number>>
 }
 
-function VerifyEmailCode({ getValues, watch, handleSubmit, verifyCode, control }: verifyEmailType) {
+function VerifyEmailCode({ getValues, watch, handleSubmit, verifyCode, control, setFormPart }: verifyEmailType) {
     const email = getValues("email")
     const code = watch("code") || ""
 
@@ -50,6 +51,13 @@ function VerifyEmailCode({ getValues, watch, handleSubmit, verifyCode, control }
                 <button type="button"
                     disabled={code.length < 6}
                 >Reenviar código
+                </button>
+            </div>
+
+            <div className="codeFooter-inline">
+                <span>codigo em demo, clique em avançar para skipar</span>
+                <button type="button" onClick={() => setFormPart(i => i + 1)}>
+                    Avançar
                 </button>
             </div>
         </form>
