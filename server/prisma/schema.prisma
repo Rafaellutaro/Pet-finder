@@ -284,7 +284,7 @@ model MeetingProposal {
   adoptionProcessId Int
   createdById       Int
 
-  meetingAt DateTime
+  meetingAt DateTime @db.Timestamptz(0)
   addressId Int?
 
   round Int @default(1) 

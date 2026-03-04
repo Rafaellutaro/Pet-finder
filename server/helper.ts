@@ -72,24 +72,25 @@ export function maskPhone(phone: string) {
 }
 
 export function parseBRDateTime(dateStr: string, timeStr: string): Date | null {
-    const [dd, mm, yyyy] = dateStr.split("/").map(Number);
-    const [hh, min] = timeStr.split(":").map(Number);
+  const [dd, mm, yyyy] = dateStr.split("/").map(Number);
+  const [hh, min] = timeStr.split(":").map(Number);
 
-    if (!dd || !mm || !yyyy || !hh || min == undefined) return null;
-    if (yyyy < 1900 || yyyy > 2100) return null;
-    if (mm < 1 || mm > 12) return null;
-    if (hh < 0 || hh > 23) return null;
-    if (min < 0 || min > 59) return null;
+  if (!dd || !mm || !yyyy || hh == null || min == null) return null;
+  if (yyyy < 1900 || yyyy > 2100) return null;
+  if (mm < 1 || mm > 12) return null;
+  if (dd < 1 || dd > 31) return null;
+  if (hh < 0 || hh > 23) return null;
+  if (min < 0 || min > 59) return null;
 
-    const d = new Date(yyyy, mm - 1, dd, hh, min, 0, 0);
+  const d = new Date(Date.UTC(yyyy, mm - 1, dd, hh + 3, min, 0, 0));
 
-    if (
-        d.getFullYear() !== yyyy ||
-        d.getMonth() !== mm - 1 ||
-        d.getDate() !== dd
-    ) return null;
+  if (
+    d.getUTCFullYear() !== yyyy ||
+    d.getUTCMonth() !== mm - 1 ||
+    d.getUTCDate() !== dd
+  ) return null;
 
-    return d;
+  return d;
 }
 
 export async function sendEmail(to: string, subject: string, html: string) {
