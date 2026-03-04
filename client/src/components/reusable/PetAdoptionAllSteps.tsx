@@ -423,7 +423,7 @@ export function PetAdoptionStep2({ allData, setAllData, user, token, verifyToken
     if (!response?.ok) return
 
     setAllProposes(prev =>
-      prev.map(p => (p.id == response?.data?.id ? { ...p, ...response } : p))
+      prev.map(p => (p.id == response?.data?.id ? { ...p, ...response.data } : p))
     );
   }
 
