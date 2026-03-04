@@ -20,6 +20,7 @@ import FooterLayout from './components/Router-layout/Footer-Layout.tsx'
 import PetChat from './components/PetChat.tsx'
 import Chat from './components/Chat.tsx'
 import PetAdoptionSteps from './components/PetAdoptionSteps.tsx'
+import { Analytics } from "@vercel/analytics/react"
 
 // i realised i did the nesting route wrong when including layout, now it seens correct
 const router = createBrowserRouter([
@@ -88,6 +89,7 @@ createRoot(document.getElementById('root')!).render(
     {/* @ts-ignore */}
     <UserProvider>
       <RouterProvider router={router} />
+      <Analytics/>
     </UserProvider>
   </StrictMode>,
 )
