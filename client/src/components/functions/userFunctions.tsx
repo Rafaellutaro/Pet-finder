@@ -127,7 +127,7 @@ export function UserPhoneController({ control }: ControllerType) {
     )
 }
 
-export function emptyToNull(value: string) {
+export function emptyToNull(value: string | undefined) {
     value == "" ? null : value;
     return value;
 }

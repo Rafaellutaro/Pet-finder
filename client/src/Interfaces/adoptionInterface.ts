@@ -16,10 +16,12 @@ export interface adoptionInterface {
         date: string
     },
     maskedAdopterInfo: {
-        addresses: {
-            state: string,
-            city: string
-        },
+        addresses: [
+            {
+                state: string,
+                city: string
+            }
+        ],
         id: number,
         email: string,
         name: string,
@@ -28,10 +30,12 @@ export interface adoptionInterface {
         profileImg: string
     },
     maskedOwnerInfo: {
-        addresses: {
-            state: string,
-            city: string
-        },
+        addresses: [
+            {
+                state: string,
+                city: string
+            }
+        ],
         id: number,
         email: string,
         name: string,

@@ -62,7 +62,7 @@ export default function SettingsForm() {
             street: emptyToNull(formData.street),
             neighborhood: emptyToNull(formData.neighborhood),
             city: emptyToNull(formData.city),
-            region: emptyToNull(formData.region).toUpperCase() ?? null
+            region: emptyToNull(formData.region)?.toUpperCase() ?? null
         };
 
         const personalData = {

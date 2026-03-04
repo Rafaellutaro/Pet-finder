@@ -48,14 +48,25 @@ model User {
   adoptedRecord PetsAdopted[]
 }
 
+enum AddressType {
+  MAIN
+  SECONDARY
+  MEETINGPROPOSE
+  OTHER
+}
+
 model Address {
-  id           Int    @id @default(autoincrement())
+  id           Int         @id @default(autoincrement())
   userId       Int
   cep          String
   street       String
   neighborhood String
   city         String
   state        String
+  type         AddressType @default(OTHER)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 
   User             User              @relation(fields: [userId], references: [id])
   meetingProposals MeetingProposal[]
@@ -69,6 +80,9 @@ model petAddress {
   neighborhood String
   city         String
   state        String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 
   Pet Pet @relation(fields: [petId], references: [id])
 }
@@ -254,8 +268,8 @@ model AdoptionProcess {
   adopterId      Int
   ownerId        Int
 
-  meetingRound Int @default(1)
-  step AdoptionStep @default(CONFIRMATION)
+  meetingRound Int          @default(1)
+  step         AdoptionStep @default(CONFIRMATION)
 
   adopterConfirmedAt DateTime?
   ownerConfirmedAt   DateTime?
@@ -263,8 +277,8 @@ model AdoptionProcess {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  conversation     Conversation      @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  meetingProposals MeetingProposal[]
+  conversation        Conversation         @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  meetingProposals    MeetingProposal[]
   meetingConfirmation MeetingConfirmation?
 }
 
@@ -287,7 +301,7 @@ model MeetingProposal {
   meetingAt DateTime @db.Timestamptz(0)
   addressId Int?
 
-  round Int @default(1) 
+  round  Int                   @default(1)
   type   MeetingProposalType   @default(INITIAL)
   status MeetingProposalStatus @default(PENDING)
 
@@ -308,7 +322,7 @@ model MeetingProposal {
 }
 
 model MeetingConfirmation {
-  id               Int @id @default(autoincrement())
+  id                Int @id @default(autoincrement())
   adoptionProcessId Int @unique
 
   adopterConfirmedAt DateTime?
@@ -337,15 +351,15 @@ model PetsAdopted {
 }
 
 model EmailVerificationCode {
-  id         Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  email      String
-  codeHash   String   
-  expiresAt  DateTime
-  usedAt     DateTime?
+  email     String
+  codeHash  String
+  expiresAt DateTime
+  usedAt    DateTime?
 
-  attempts   Int      @default(0)
-  createdAt  DateTime @default(now())
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
 
   @@index([email])
   @@index([expiresAt])

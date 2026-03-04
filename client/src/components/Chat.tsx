@@ -7,34 +7,17 @@ import type { chatInterface } from "../Interfaces/chatInterface";
 import bannerDFT from "../assets/imgs/bannerDFT.png";
 import { useNavigateWithFrom } from "./reusable/Redirect";
 import Loader from "./reusable/Loader";
-import noData from "../assets/imgs/noData.png"
+import noData from "../assets/imgs/noData.png";
 
 type ConversationFilter = "ALL" | "PENDING" | "ACCEPTED" | "DECLINED";
 
 function Chat() {
     const { token, verifyToken } = useUser();
     const [allChatsData, setAllChatsData] = useState<chatInterface[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
     const [conversationState, setConversationState] = useState<ConversationFilter>("ALL");
     const [search, setSearch] = useState("");
     const nav = useNavigateWithFrom();
-
-    const getAllChats = async () => {
-        const response = await resendApiPrivate({
-            apiUrl: `${import.meta.env.VITE_SERVER_URL}/chat/allConversation`,
-            options: { method: "GET" },
-            token: String(token),
-            verifyToken: verifyToken,
-        });
-
-        if (!response?.ok) return;
-        setAllChatsData(response?.data);
-    };
-
-    useEffect(() => {
-        if (!token) return;
-        getAllChats();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [token]);
 
     const languageMap: Record<string, string> = {
         PENDING: "Pendente",
@@ -48,7 +31,28 @@ function Chat() {
         DECLINED: "rejected",
     };
 
-    if (!allChatsData) return <Loader />
+    const getAllChats = async () => {
+        setIsLoading(true);
+
+        const response = await resendApiPrivate({
+            apiUrl: `${import.meta.env.VITE_SERVER_URL}/chat/allConversation`,
+            options: { method: "GET" },
+            token: String(token),
+            verifyToken,
+        });
+
+        if (!response?.ok) return;
+
+        setAllChatsData(response.data ?? [])
+
+        setIsLoading(false);
+    };
+
+    useEffect(() => {
+        if (!token) return;
+
+        getAllChats();
+    }, [token]);
 
     const normalized = useMemo(() => {
         return allChatsData.map((c) => {
@@ -56,8 +60,8 @@ function Chat() {
             const sentMessageTime = c.lastMessage?.createdAt;
 
             const rawStatus = c.conversationStatus;
-            const label = languageMap[rawStatus] ? languageMap[rawStatus] : rawStatus;
-            const statusClass = statusClassMap[rawStatus] ? statusClassMap[rawStatus] : "pending";
+            const label = languageMap[rawStatus] ?? rawStatus;
+            const statusClass = statusClassMap[rawStatus] ?? "pending";
 
             return {
                 conversationId: c.id,
@@ -66,14 +70,14 @@ function Chat() {
                 rawStatus,
                 statusClass,
                 ownerName: `${c.userOwner.name} ${c.userOwner.lastName}`,
-                recentMessage: content ? content : " Nenhuma",
+                recentMessage: content ? content : "Nenhuma",
                 recentMessageTime: sentMessageTime
                     ? new Date(sentMessageTime).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
                     : "Não há data",
                 petPhotos: c.pet?.imgs?.[0]?.url,
                 userPhoto: c.userOwner.profileImg ? c.userOwner.profileImg : bannerDFT,
                 adoptionLink: c.adoptionProcess?.id ? `/PetAdoption/${c.adoptionProcess?.id}` : null,
-                adoptionState: c.adoptionProcess?.step ? c.adoptionProcess?.step : null,
+                adoptionState: c.adoptionProcess?.step ?? null,
             };
         });
     }, [allChatsData]);
@@ -96,6 +100,8 @@ function Chat() {
             );
         });
     }, [normalized, conversationState, search]);
+
+    if (isLoading) return <Loader />;
 
     return (
         <section className="Chats-Main-Container">
@@ -148,7 +154,7 @@ function Chat() {
             </div>
 
             <div className="all-chats-list">
-                {allChatsData ? (
+                {filteredChats.length > 0 ? (
                     filteredChats.map((c) => (
                         <div key={c.conversationId} className="all-chats-container">
                             <button
@@ -194,10 +200,12 @@ function Chat() {
                                 )}
                             </div>
                         </div>
-                    )
-                    )) : <div className="no-data-box">
-                    <img src={noData} className="no-data" alt="No data" />
-                </div>}
+                    ))
+                ) : (
+                    <div className="no-data-box">
+                        <img src={noData} className="no-data" alt="No data" />
+                    </div>
+                )}
             </div>
         </section>
     );

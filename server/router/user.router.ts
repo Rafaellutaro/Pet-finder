@@ -9,7 +9,7 @@ userRoute.post("/insert", insertUser); // public
 userRoute.get("/getIdPublic", getUserByIdPublic); // public
 userRoute.get("/getId", verifyJWT,getUserById); // private
 userRoute.put("/updateById", verifyJWT, updateUserById); // private
-userRoute.delete("/deleteId", deleteUserById); // private, not used for now
+// userRoute.delete("/deleteId", deleteUserById); // private, not used for now
 userRoute.post("/getEmail", getUserByEmail); // public
 userRoute.post("/createToken", createToken); // public
 userRoute.post("/refreshToken", refreshToken); // not necessary to include verifyJWT

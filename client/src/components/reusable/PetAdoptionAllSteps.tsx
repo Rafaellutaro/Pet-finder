@@ -153,7 +153,8 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id, setAll
   }, [socket])
 
 
-
+  console.log(ownerInfo)
+  console.log(adopterInfo)
   return (
     <main className="pet-adoption-container">
       <section className="pet-adoption-card">
@@ -238,7 +239,7 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id, setAll
               </div>
               <div className="pet-adoption-kv">
                 <span className="pet-adoption-muted">Localização</span>
-                <strong className="pet-adoption-strong">{adopterInfo?.addresses.city && adopterInfo?.addresses.state ? `${adopterInfo?.addresses?.state} ${adopterInfo?.addresses?.city}` : "Nenhum Endereço Cadastrado"}</strong>
+                <strong className="pet-adoption-strong">{adopterInfo?.addresses[0]?.city && adopterInfo?.addresses[0]?.state ? `${adopterInfo?.addresses[0]?.state} ${adopterInfo?.addresses[0]?.city}` : "Nenhum Endereço Cadastrado"}</strong>
               </div>
             </div>
           </div>
@@ -278,7 +279,7 @@ export function PetAdoptionStep1({ allData, user, token, verifyToken, id, setAll
               </div>
               <div className="pet-adoption-kv">
                 <span className="pet-adoption-muted">Localização</span>
-                <strong className="pet-adoption-strong">{ownerInfo?.addresses.city && ownerInfo?.addresses.state ? `${ownerInfo?.addresses?.state} ${ownerInfo?.addresses?.city}` : "Nenhum Endereço Cadastrado"}</strong>
+                <strong className="pet-adoption-strong">{ownerInfo?.addresses[0]?.city && ownerInfo?.addresses[0]?.state ? `${ownerInfo?.addresses[0]?.state} ${ownerInfo?.addresses[0]?.city}` : "Nenhum Endereço Cadastrado"}</strong>
               </div>
             </div>
           </div>

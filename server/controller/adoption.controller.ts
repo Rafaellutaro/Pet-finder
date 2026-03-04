@@ -37,6 +37,7 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
                     phone: true,
                     profileImg: true,
                     addresses: {
+                        where: {type: "MAIN"},
                         select: { state: true, city: true }
                     },
                 }
@@ -52,6 +53,7 @@ export const getDataFromId = async (req: AuthRequest, res: Response) => {
                     phone: true,
                     profileImg: true,
                     addresses: {
+                        where: {type: "MAIN"},
                         select: { state: true, city: true }
                     }
                 }
@@ -232,7 +234,8 @@ export const meetingProposalInitial = async (req: AuthRequest, res: Response) =>
                     street: payload.address.street,
                     city: payload.address.city,
                     state: payload.address.state,
-                    neighborhood: payload.address.neighborhood
+                    neighborhood: payload.address.neighborhood,
+                    type: "MEETINGPROPOSE"
                 }
             })
 

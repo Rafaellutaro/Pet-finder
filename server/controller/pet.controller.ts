@@ -199,7 +199,7 @@ export const insertPet = async (req: AuthRequest, res: Response) => {
                 street: petAddress.street,
                 neighborhood: petAddress.neighborhood,
                 city: petAddress.city,
-                state: petAddress.state
+                state: petAddress.state,
             }
         })
 

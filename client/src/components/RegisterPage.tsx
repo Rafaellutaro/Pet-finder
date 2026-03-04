@@ -115,16 +115,16 @@ function RegisterPage() {
       name: data.name,
       lastName: data.lastName,
       email: data.email,
-      phone: emptyToNull(String(data.phone)),
+      phone: emptyToNull(data.phone),
       password: data.password
     };
 
     const addressData = {
-      cep: emptyToNull(String(data.cep)),
-      street: emptyToNull(String(data.street)),
-      neighborhood: emptyToNull(String(data.neighborhood)),
-      city: emptyToNull(String(data.city)),
-      region: emptyToNull(String(data.region)).toUpperCase() ?? null
+      cep: emptyToNull(data.cep),
+      street: emptyToNull(data.street),
+      neighborhood: emptyToNull(data.neighborhood),
+      city: emptyToNull(data.city),
+      region: emptyToNull(data.region)?.toUpperCase() ?? null
     };
 
     const allUserData = { userData, addressData };

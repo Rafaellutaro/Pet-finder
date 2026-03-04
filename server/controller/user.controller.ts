@@ -73,7 +73,10 @@ export const getUserById = async (req: any, res: any) => {
                 id: user.userId
             },
             include: {
-                addresses: true
+                addresses: {
+                    distinct: ["cep"],
+                    orderBy: {createdAt: "desc"}
+                },
             }
         });
 
@@ -209,7 +212,8 @@ export const insertUser = async (req: AuthRequest, res: Response) => {
                     neighborhood: addressData.neighborhood,
                     city: addressData.city,
                     state: addressData.region,
-                    userId: response.createUser.id
+                    userId: response.createUser.id,
+                    type: "MAIN"
                 }
             });
         }
