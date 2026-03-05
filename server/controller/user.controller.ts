@@ -450,7 +450,7 @@ export const verifyEmailCode = async (req: AuthRequest, res: Response) => {
             return res.status(410).json({ message: "code expired, request a new one" });
         }
 
-        const verifyCode = await argon2.verify(String(getCodeData?.codeHash), code);
+        const verifyCode = await argon2.verify(String(getCodeData?.codeHash), String(code));
 
         if (!verifyCode) {
             const updatedAttemp = await prisma.emailVerificationCode.update({
@@ -474,5 +474,30 @@ export const verifyEmailCode = async (req: AuthRequest, res: Response) => {
         return res.status(200).json({ data: verifyCode })
     } catch (e) {
         return res.status(500).json({ message: "unable to create code" })
+    }
+}
+
+export const updatePassword = async(req: AuthRequest, res: Response) => {
+    const {pass, email} = req.body
+
+    try {
+        const hashedPassword = await argon2.hash(pass);
+
+        const newPassword = await prisma.user.update({
+            where: {
+                email: email
+            },
+            data: {
+                password: hashedPassword
+            }
+        })
+
+
+        if (!newPassword) return res.status(400).json({message: "somethign went wrong", status: 400})
+        
+
+        res.status(200).json({data: true, status: 200});
+    } catch (e) {
+        return res.status(500).json({ message: "unable to update password", status: 500})
     }
 }

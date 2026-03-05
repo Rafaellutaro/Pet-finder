@@ -153,3 +153,12 @@ export const petAdoption2Saved = z.object({
 const adoptionStep2FullSchema = PetAdoptionStep2Schema.safeExtend(petAdoption2Saved.shape)
 
 export type PetAdoption2 = z.infer<typeof adoptionStep2FullSchema>
+
+export const newPasswordLogin = z.object({
+    password: z.string().min(6, "minimo de 6 characteres"),
+    newPassword: z.string().min(6, "minimo de 6 characteres"),
+})
+
+const userPassChange = RegisterSchemaPart1.extend(RegisterSchemaPart2.shape).extend(newPasswordLogin.shape)
+
+export type passChangeLogin = z.infer<typeof userPassChange>

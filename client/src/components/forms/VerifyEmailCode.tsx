@@ -1,33 +1,35 @@
-import type { Control, UseFormGetValues, UseFormHandleSubmit, UseFormWatch } from "react-hook-form";
+import type { Control, FieldValues, Path, UseFormGetValues, UseFormHandleSubmit, UseFormWatch } from "react-hook-form";
 import "../../assets/css/verifyCode.css"
-import type { userFormFields } from "../../Interfaces/zodSchema";
 import { UserCodeController } from "../functions/userFunctions";
 import { IoShieldOutline } from "react-icons/io5";
 import { useState } from "react";
 import { InfoPopUp } from "../reusable/PopUps";
 
-type verifyEmailType = {
-    getValues: UseFormGetValues<userFormFields>,
-    watch: UseFormWatch<userFormFields>
-    handleSubmit: UseFormHandleSubmit<userFormFields>,
+type verifyEmailType<T extends FieldValues> = {
+    getValues: UseFormGetValues<T>;
+    watch: UseFormWatch<T>;
+    handleSubmit: UseFormHandleSubmit<T>;
+    control: Control<T>;
     verifyCode: () => void
-    control: Control<userFormFields>
     demoCode: string
+    modal: "email" | "none" | "newPass" | "validation"
 }
 
-function VerifyEmailCode({ getValues, watch, handleSubmit, verifyCode, control, demoCode }: verifyEmailType) {
+export function VerifyEmailCode<T extends FieldValues>({ getValues, watch, handleSubmit, verifyCode, control, demoCode, modal}: verifyEmailType<T>) {
     const [open, setOpen] = useState(false)
 
-    const email = getValues("email")
-    const code = watch("code") || ""
+    const email = getValues("email" as Path<T>)
+    const code = String(watch("code" as Path<T>) || "")
 
-    return (
+    if (modal == "none") return
+    else if (modal == "validation"){
+        return (
         <>
-            <InfoPopUp 
-            open={open} 
-            title="Envio de email desativado" 
-            details="O envio automático de emails requer um domínio verificado. Como esta é uma versão de demonstração sem domínio configurado, o código de verificação é exibido diretamente na tela para permitir a continuidade do cadastro." 
-            onClose={() => setOpen(false)}/>
+            <InfoPopUp
+                open={open}
+                title="Envio de email desativado"
+                details="O envio automático de emails requer um domínio verificado. Como esta é uma versão de demonstração sem domínio configurado, o código de verificação é exibido diretamente na tela para permitir a continuidade do cadastro."
+                onClose={() => setOpen(false)} />
 
             <form className="codeCard-inline" onSubmit={handleSubmit(verifyCode)}>
                 <div className="codeIconWrap-inline">
@@ -86,6 +88,7 @@ function VerifyEmailCode({ getValues, watch, handleSubmit, verifyCode, control, 
 
         </>
     );
+    }
 }
 
 export default VerifyEmailCode

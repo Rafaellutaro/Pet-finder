@@ -1,0 +1,593 @@
+/* Reset Password Popup - passChange */
+
+/* Fullscreen backdrop (THIS is what makes it a popup) */
+.passChange-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: grid;
+  place-items: center;
+
+  padding: 18px;
+
+  /* darken + blur background */
+  background: rgba(17, 24, 39, 0.52);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Modal card */
+.passChange-card {
+  width: min(520px, 100%);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  box-shadow: var(--shadow-2);
+  padding: 28px 22px 22px;
+  position: relative;
+  overflow: hidden;
+
+  /* ensure it sits above everything */
+  z-index: 10000;
+
+  /* pop animation */
+  transform: translateY(10px) scale(0.985);
+  opacity: 0;
+  animation: passChange-popIn 180ms ease-out forwards;
+
+  /* focus ring base */
+  outline: none;
+}
+
+@keyframes passChange-popIn {
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Soft warm glow like your screenshot */
+.passChange-card::before {
+  content: "";
+  position: absolute;
+  inset: -2px -2px auto -2px;
+  height: 120px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 123, 84, 0.16),
+    rgba(255, 123, 84, 0)
+  );
+  pointer-events: none;
+}
+
+.passChange-card:focus-visible {
+  box-shadow: 0 0 0 4px var(--focus), var(--shadow-2);
+}
+
+/* Close X button (top-right) */
+.passChange-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.7);
+
+  display: grid;
+  place-items: center;
+
+  cursor: pointer;
+  transition: transform 120ms ease, background 160ms ease, border-color 160ms ease;
+  z-index: 2;
+}
+
+.passChange-closeIcon {
+  font-size: 20px;
+  color: var(--text);
+  opacity: 0.85;
+}
+
+.passChange-close:hover {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.passChange-close:active {
+  transform: translateY(1px);
+}
+
+.passChange-close:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--focus);
+}
+
+/* Icon circle */
+.passChange-iconWrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  margin: 2px auto 14px;
+  background: rgba(255, 176, 138, 0.22);
+  border: 1px solid var(--border-2);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 1;
+}
+
+.passChange-icon {
+  font-size: 24px;
+  color: var(--primary);
+}
+
+/* Title + subtitle */
+.passChange-title {
+  margin: 0;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  position: relative;
+  z-index: 1;
+  color: var(--text);
+}
+
+.passChange-subtitle {
+  margin: 10px auto 18px;
+  text-align: center;
+  max-width: 44ch;
+  color: var(--text-muted);
+  font-size: 14.5px;
+  line-height: 1.45;
+  position: relative;
+  z-index: 1;
+}
+
+/* Form */
+.passChange-form {
+  display: grid;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.passChange-label {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--field-label);
+  margin-top: 2px;
+}
+
+.passChange-input {
+  width: 100%;
+  height: 46px;
+  border-radius: 14px;
+  border: 1px solid var(--field-border);
+  background: var(--surface-2);
+  padding: 0 14px;
+  font-size: 14.5px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.passChange-input::placeholder {
+  color: rgba(107, 114, 128, 0.85);
+}
+
+.passChange-input:hover {
+  border-color: var(--field-hover-border);
+}
+
+.passChange-input:focus {
+  border-color: rgba(255, 123, 84, 0.55);
+  box-shadow: 0 0 0 4px var(--focus);
+  background: #fff;
+}
+
+/* Buttons */
+.passChange-btnPrimary {
+  height: 48px;
+  border: none;
+  border-radius: 14px;
+  background: var(--primary-grad);
+  color: var(--white);
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 12px 26px rgba(255, 123, 84, 0.26);
+  transition: transform 120ms ease, filter 160ms ease, box-shadow 160ms ease;
+  margin-top: 6px;
+}
+
+.passChange-btnPrimary:hover {
+  filter: brightness(1.02);
+  box-shadow: 0 14px 30px rgba(255, 123, 84, 0.30);
+}
+
+.passChange-btnPrimary:active {
+  transform: translateY(1px);
+}
+
+.passChange-btnPrimary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--focus), 0 14px 30px rgba(255, 123, 84, 0.30);
+}
+
+.passChange-btnGhost {
+  height: 46px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--text);
+  font-weight: 900;
+  cursor: pointer;
+  transition: background 160ms ease, transform 120ms ease, border-color 160ms ease;
+}
+
+.passChange-btnGhost:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.passChange-btnGhost:active {
+  transform: translateY(1px);
+}
+
+.passChange-btnGhost:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--focus);
+}
+
+/* Mobile */
+@media (max-width: 420px) {
+  .passChange-card {
+    padding: 24px 18px 18px;
+    border-radius: 20px;
+  }
+
+  .passChange-title {
+    font-size: 22px;
+  }
+
+  .passChange-subtitle {
+    font-size: 14px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .passChange-card {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* NEW PASS POPUP CONTAINER  */
+
+/* New Password Popup - newPass */
+
+/* Backdrop */
+.newPass-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: grid;
+  place-items: center;
+
+  padding: 18px;
+
+  background: rgba(17, 24, 39, 0.52);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Card */
+.newPass-card {
+  width: min(540px, 100%);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: var(--shadow-2);
+  padding: 28px 22px 22px;
+  position: relative;
+  overflow: hidden;
+
+  transform: translateY(10px) scale(0.985);
+  opacity: 0;
+  animation: newPass-popIn 180ms ease-out forwards;
+
+  outline: none;
+}
+
+@keyframes newPass-popIn {
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.newPass-card::before {
+  content: "";
+  position: absolute;
+  inset: -2px -2px auto -2px;
+  height: 120px;
+  background: linear-gradient(180deg, rgba(255, 123, 84, 0.16), rgba(255, 123, 84, 0));
+  pointer-events: none;
+}
+
+.newPass-card:focus-visible {
+  box-shadow: 0 0 0 4px var(--focus), var(--shadow-2);
+}
+
+/* Close */
+.newPass-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.7);
+
+  display: grid;
+  place-items: center;
+
+  cursor: pointer;
+  transition: transform 120ms ease, background 160ms ease, border-color 160ms ease;
+  z-index: 2;
+}
+
+.newPass-closeX {
+  font-size: 22px;
+  line-height: 1;
+  color: var(--text);
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.newPass-close:hover {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.newPass-close:active {
+  transform: translateY(1px);
+}
+
+.newPass-close:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--focus);
+}
+
+/* Icon */
+.newPass-iconWrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  margin: 2px auto 14px;
+  background: rgba(255, 176, 138, 0.22);
+  border: 1px solid var(--border-2);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 1;
+}
+
+.newPass-icon {
+  color: var(--primary);
+  font-size: 28px;
+}
+
+/* Text */
+.newPass-title {
+  margin: 0;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  position: relative;
+  z-index: 1;
+}
+
+.newPass-subtitle {
+  margin: 10px auto 18px;
+  text-align: center;
+  max-width: 46ch;
+  color: var(--text-muted);
+  font-size: 14.5px;
+  line-height: 1.45;
+  position: relative;
+  z-index: 1;
+}
+
+.newPass-email {
+  color: var(--primary);
+  font-weight: 900;
+}
+
+/* Form */
+.newPass-form {
+  display: grid;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.newPass-label {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--field-label);
+  margin-top: 4px;
+}
+
+.newPass-field {
+  position: relative;
+}
+
+.newPass-input {
+  width: 100%;
+  height: 46px;
+  border-radius: 14px;
+  border: 1px solid var(--field-border);
+  background: var(--surface-2);
+  padding: 0 44px 0 14px; /* space for eye */
+  font-size: 14.5px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.newPass-input::placeholder {
+  color: rgba(107, 114, 128, 0.85);
+}
+
+.newPass-input:hover {
+  border-color: var(--field-hover-border);
+}
+
+.newPass-input:focus {
+  border-color: rgba(255, 123, 84, 0.55);
+  box-shadow: 0 0 0 4px var(--focus);
+  background: #fff;
+}
+
+/* Eye button */
+.newPass-eyeBtn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.55);
+
+  display: grid;
+  place-items: center;
+
+  cursor: pointer;
+  transition: background 160ms ease, transform 120ms ease, border-color 160ms ease;
+}
+
+.newPass-eyeBtn:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.newPass-eyeBtn:active {
+  transform: translateY(-50%) translateY(1px);
+}
+
+.newPass-eyeBtn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--focus);
+}
+
+.newPass-eye {
+  color: var(--text-muted);
+}
+
+/* Buttons */
+.newPass-btnPrimary {
+  height: 48px;
+  border: none;
+  border-radius: 14px;
+  background: var(--primary-grad);
+  color: var(--white);
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 12px 26px rgba(255, 123, 84, 0.26);
+  transition: transform 120ms ease, filter 160ms ease, box-shadow 160ms ease;
+  margin-top: 8px;
+}
+
+.newPass-btnPrimary:hover {
+  filter: brightness(1.02);
+  box-shadow: 0 14px 30px rgba(255, 123, 84, 0.30);
+}
+
+.newPass-btnPrimary:active {
+  transform: translateY(1px);
+}
+
+.newPass-btnPrimary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--focus), 0 14px 30px rgba(255, 123, 84, 0.30);
+}
+
+.newPass-btnPrimary:disabled {
+  cursor: not-allowed;
+  background: rgba(0, 0, 0, 0.14);
+  color: rgba(17, 24, 39, 0.55);
+  box-shadow: none;
+  filter: none;
+}
+
+/* Ghost */
+.newPass-btnGhost {
+  height: 46px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.03);
+  color: var(--text);
+  font-weight: 900;
+  cursor: pointer;
+  transition: background 160ms ease, transform 120ms ease, border-color 160ms ease;
+}
+
+.newPass-btnGhost:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.newPass-btnGhost:active {
+  transform: translateY(1px);
+}
+
+.newPass-btnGhost:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--focus);
+}
+
+/* Mobile */
+@media (max-width: 420px) {
+  .newPass-card {
+    padding: 24px 18px 18px;
+    border-radius: 20px;
+  }
+
+  .newPass-title {
+    font-size: 21px;
+  }
+
+  .newPass-subtitle {
+    font-size: 14px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .newPass-card {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

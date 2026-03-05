@@ -1,0 +1,113 @@
+.authModal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: grid;
+  place-items: center;
+
+  padding: 18px;
+
+  background: rgba(17, 24, 39, 0.52);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.authModal-card {
+  position: relative;
+
+  width: auto;
+  max-width: 100%;
+  background: transparent;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: visible;
+
+  animation: authModal-popIn 180ms ease-out forwards;
+  transform: translateY(10px) scale(0.985);
+  opacity: 0;
+}
+
+.authModal-close {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.92);
+
+  display: grid;
+  place-items: center;
+
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--text);
+
+  z-index: 20;
+
+  transition: background 160ms ease, transform 120ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.authModal-close:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.authModal-close:active {
+  transform: translateY(1px);
+}
+
+.authModal-close:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--focus);
+}
+
+@keyframes authModal-popIn {
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .authModal-backdrop {
+    padding: 14px;
+  }
+
+  .authModal-close {
+    top: -8px;
+    right: -8px;
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 420px) {
+  .authModal-backdrop {
+    padding: 10px;
+  }
+
+  .authModal-card {
+    max-width: calc(100vw - 20px);
+  }
+
+  .authModal-close {
+    top: -6px;
+    right: -6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .authModal-card {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+}

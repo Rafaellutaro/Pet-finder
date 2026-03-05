@@ -98,7 +98,7 @@ function RegisterPage() {
           body: JSON.stringify(payload)
         })
 
-      if (!res.ok) return alert("Você excedeu o número máximo de tentativas. Por segurança, o código foi invalidado. Gere um novo código para continuar.")
+      if (!res.ok) return alert("Código Invalido")
 
       const data = await res.json()
       
@@ -178,13 +178,14 @@ function RegisterPage() {
             )}
 
             {formPart == 2 && (
-              <VerifyEmailCode 
+              <VerifyEmailCode<userFormFields> 
               watch={watch}
               handleSubmit={handleSubmit} 
               getValues={getValues} 
               verifyCode={verifyCode}
               control={control}
               demoCode={demoCode}
+              modal={"validation"}
               />
             )}
 
