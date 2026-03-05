@@ -167,7 +167,7 @@ function LoginPage() {
         apiUrl: `${import.meta.env.VITE_SERVER_URL}/users/newPassword`, 
         options: {method: "PATCH", body: JSON.stringify(payload)}, 
         token: String(token), 
-        verifyToken: verifyCode})
+        verifyToken: verifyToken})
       
       if (!response?.ok) return
 

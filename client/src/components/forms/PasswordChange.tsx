@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import "../../assets/css/changePass.css";
 import { MdOutlineEmail, MdClose } from "react-icons/md";
 import { CiLock } from "react-icons/ci";
-import { IoEyeOutline } from "react-icons/io5";
+// import { IoEyeOutline } from "react-icons/io5";
 import type { passChangeLogin } from "../../Interfaces/zodSchema";
 import type { UseFormGetValues, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
 
