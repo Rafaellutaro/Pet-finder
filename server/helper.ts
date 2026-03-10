@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { resend } from "./client/Resend.js"
+import jwt from 'jsonwebtoken'
 
 type notification = {
     userId: number,
@@ -7,6 +8,33 @@ type notification = {
     title: string,
     body: string,
     link: string
+}
+
+export function createJwtCookie(userId: number, res: any){
+  console.log("COCKIE CREATED FOR USER ", userId)
+
+  const accessToken = jwt.sign(
+          { userId: userId },
+          process.env.ACCESS_TOKEN_SECRET as string,
+          { expiresIn: '15m' }
+      );
+  
+      const refreshToken = jwt.sign(
+          { userId: userId },
+          process.env.REFRESH_TOKEN_SECRET as string,
+          { expiresIn: '7d' }
+      );
+  
+      const isProd = process.env.NODE_ENV == "PRODUCTION"
+  
+      res.cookie('refreshToken', refreshToken, {
+          httpOnly: true,
+          secure: isProd,
+          sameSite: isProd ? "none" : "lax",
+          maxAge: 7 * 24 * 60 * 60 * 1000
+      });
+
+      return res.status(200).json({data: accessToken, status: 200})
 }
 
 export async function createNotification({ userId, type, title, body, link }: notification, prisma: any) {

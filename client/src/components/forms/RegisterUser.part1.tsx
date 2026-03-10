@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { FaGoogle } from "react-icons/fa";
+// import { FaGoogle } from "react-icons/fa";
 import "../../assets/css/RegisterPagePart1.css"
 import type { FieldErrors, UseFormHandleSubmit, UseFormRegister } from "react-hook-form";
 import type { userFormFields } from "../../Interfaces/zodSchema";
 import { MdOutlineEmail } from "react-icons/md";
+import GoogleLoginPage from "../reusable/GoogleLogin";
 
 type RegisterEmailForm = {
     register: UseFormRegister<userFormFields>;
@@ -11,10 +12,13 @@ type RegisterEmailForm = {
     handleSubmit: UseFormHandleSubmit<userFormFields>;
     onContinue: () => void;
     isSubmitting: boolean;
-    handlegoogle: (e: any) => Promise<void>
+    token: string; 
+    verifyToken: () => Promise<void>;
+    nav: (path: string) => void;
+    setToken: (token: string | null) => void;
 }
 
-function RegisterUserpart1({register, errors, handleSubmit, onContinue, isSubmitting, handlegoogle}: RegisterEmailForm){
+function RegisterUserpart1({register, errors, handleSubmit, onContinue, isSubmitting, token, verifyToken, nav, setToken}: RegisterEmailForm){
     return (
           <form className="register-form" onSubmit={handleSubmit(onContinue)}>
             <div className="register-field">
@@ -41,7 +45,7 @@ function RegisterUserpart1({register, errors, handleSubmit, onContinue, isSubmit
               <span />
             </div>
 
-            <button
+            {/* <button
               type="button"
               className="register-socialBtn"
               onClick={(e) => handlegoogle(e)} 
@@ -50,7 +54,8 @@ function RegisterUserpart1({register, errors, handleSubmit, onContinue, isSubmit
                 <FaGoogle/>
               </span>
               Continuar com Google
-            </button>
+            </button> */}
+            <GoogleLoginPage token={token} verifyToken={verifyToken} nav={nav} setToken={setToken}/>
 
             <div className="register-footer">
               <p className="register-loginText">

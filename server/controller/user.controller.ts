@@ -2,9 +2,10 @@ import prisma from '../client/PrismaClient.js'
 import jwt from 'jsonwebtoken'
 import type { Response } from "express";
 import type { AuthRequest } from "../middleware/auth.middleware.js";
-import { generateVerificationCode, htmlGenerate, maskEmail, maskPhone, sendEmail } from '../helper.js';
+import { createJwtCookie, generateVerificationCode, htmlGenerate, maskEmail, maskPhone, sendEmail } from '../helper.js';
 import argon2 from "argon2";
 import { Resend } from 'resend';
+import googleClient from '../client/GoogleClient.js';
 
 const userClient = prisma
 
@@ -75,7 +76,7 @@ export const getUserById = async (req: any, res: any) => {
             include: {
                 addresses: {
                     distinct: ["cep"],
-                    orderBy: {createdAt: "desc"}
+                    orderBy: { createdAt: "desc" }
                 },
             }
         });
@@ -123,28 +124,7 @@ export const createToken = async (req: any, res: any) => {
 
     console.log('userid', data.id)
 
-    const accessToken = jwt.sign(
-        { userId: data.id },
-        process.env.ACCESS_TOKEN_SECRET as string,
-        { expiresIn: '15m' }
-    );
-
-    const refreshToken = jwt.sign(
-        { userId: data.id },
-        process.env.REFRESH_TOKEN_SECRET as string,
-        { expiresIn: '7d' }
-    );
-
-    const isProd = process.env.NODE_ENV == "PRODUCTION"
-
-    res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: isProd ? "none" : "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000
-    });
-
-    res.json({ accessToken });
+    createJwtCookie(data.id, res)
 }
 
 //get user by email
@@ -165,7 +145,7 @@ export const getUserByEmail = async (req: any, res: any) => {
 
         if (!UserById) return res.status(400).json({ message: "Invalid Credentials" })
 
-        const valid = await argon2.verify(UserById.password, userLogin.password);
+        const valid = await argon2.verify(String(UserById.password), String(userLogin.password));
 
         if (!valid) {
             return res.status(400).json({ message: "Invalid credentials" });
@@ -477,8 +457,8 @@ export const verifyEmailCode = async (req: AuthRequest, res: Response) => {
     }
 }
 
-export const updatePassword = async(req: AuthRequest, res: Response) => {
-    const {pass, email} = req.body
+export const updatePassword = async (req: AuthRequest, res: Response) => {
+    const { pass, email } = req.body
 
     try {
         const hashedPassword = await argon2.hash(pass);
@@ -493,11 +473,84 @@ export const updatePassword = async(req: AuthRequest, res: Response) => {
         })
 
 
-        if (!newPassword) return res.status(400).json({message: "somethign went wrong", status: 400})
-        
+        if (!newPassword) return res.status(400).json({ message: "somethign went wrong", status: 400 })
 
-        res.status(200).json({data: true, status: 200});
+
+        res.status(200).json({ data: true, status: 200 });
     } catch (e) {
-        return res.status(500).json({ message: "unable to update password", status: 500})
+        return res.status(500).json({ message: "unable to update password", status: 500 })
+    }
+}
+
+export const googleLogin = async (req: AuthRequest, res: Response) => {
+    const credential = String(req.body.credential)
+
+    try {
+        if (!credential) {
+            return res.status(400).json({ message: "Google credential not provided", status: 400 });
+        }
+
+        const ticket = await googleClient.verifyIdToken({
+            idToken: credential,
+            audience: process.env.GOOGLE_CLIENT_ID as string,
+        });
+
+        const payload = ticket.getPayload();
+
+        console.log("PAYLOAD", payload)
+
+        if (!payload || !payload.sub || !payload.email) {
+            return res.status(401).json({ message: "Invalid Google token", status: 401 });
+        }
+
+        const findGoogleUser = await prisma.user.findUnique({
+            where: { googleId: payload.sub },
+            select: {
+                id: true
+            }
+        })
+
+        console.log("FINDUSER", findGoogleUser)
+
+        if (findGoogleUser) {
+            return createJwtCookie(findGoogleUser.id, res)
+        } else if (!findGoogleUser) {
+            const findGoogleUserEmail = await prisma.user.findUnique({
+                where: { email: payload.email },
+                select: {
+                    id: true
+                }
+            })
+
+            console.log("FINDUSEREMAIL", findGoogleUserEmail)
+
+            if (findGoogleUserEmail) {
+                const updatedGoogleUser = await prisma.user.update({
+                    where: { email: payload.email },
+                    data: {
+                        googleId: payload.sub,
+                        profileImg: payload.picture
+                    }
+                })
+
+                return createJwtCookie(updatedGoogleUser.id, res)
+            }else if (!findGoogleUserEmail){
+                const createGoogleUser = await prisma.user.create({
+                    data: {
+                        name: String(payload.given_name),
+                        lastName: String(payload.family_name),
+                        email: payload.email,
+                        profileImg: payload.picture,
+                        googleId: payload.sub
+                    }
+                })
+
+                console.log("CREATEGOOGLEUSER", createGoogleUser)
+
+                return createJwtCookie(createGoogleUser.id, res)
+            }
+        }
+    } catch (e) {
+        console.log(e)
     }
 }

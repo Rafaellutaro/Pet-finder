@@ -20,7 +20,8 @@ model User {
   lastName String
   email    String  @unique
   phone    String? @unique
-  password String
+  password String?
+  googleId String? @unique
 
   profileImg String?
   bannerImg  String?

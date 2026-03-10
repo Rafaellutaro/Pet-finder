@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../assets/css/Login.css"
 import { useUser } from '../Interfaces/GlobalUser';
-import { FaGoogle } from "react-icons/fa";
+// import { FaGoogle } from "react-icons/fa";
 // import { FaFacebook } from "react-icons/fa6";
 // import { FaGithub } from "react-icons/fa";
 import loginImage from "../assets/imgs/catLogin.png"
@@ -16,6 +16,7 @@ import { newPasswordLogin, RegisterSchemaPart1, RegisterSchemaPart2, type passCh
 import "../assets/css/authWrapper.css"
 import { zodResolver } from "@hookform/resolvers/zod";
 import resendApiPrivate from "./reusable/resendApi";
+import GoogleLoginPage from "./reusable/GoogleLogin";
 
 
 function LoginPage() {
@@ -79,7 +80,7 @@ function LoginPage() {
         const tokenRes = await createToken.json();
 
         setUser(data.data);
-        setToken(tokenRes.accessToken);
+        setToken(tokenRes.data);
         setLoggedIn(true);
 
         profileNavigate("/Profile");
@@ -90,7 +91,7 @@ function LoginPage() {
   }
 
 
-  const loginWithGoogle = () => console.log("Google login");
+  // const loginWithGoogle = () => console.log("Google login");
   // const loginWithFacebook = () => console.log("Facebook login");
   // const loginWithGitHub = () => console.log("Github login");
 
@@ -293,7 +294,7 @@ function LoginPage() {
                 <span>OU</span>
               </div>
 
-              <div className="social-row">
+              {/* <div className="social-row">
                 <button
                   type="button"
                   className="socialBtn"
@@ -304,7 +305,9 @@ function LoginPage() {
                   </span>
                   Continuar com Google
                 </button>
-              </div>
+              </div> */}
+
+              <GoogleLoginPage token={String(token)} verifyToken={verifyToken} nav={profileNavigate} setToken={setToken}/>
 
               <p className="login-register-row">
                 Não tem uma conta?

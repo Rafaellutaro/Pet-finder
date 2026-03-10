@@ -1,0 +1,6 @@
+.google-btn-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center; /* centers button */
+  align-items: center;
+}

@@ -11,10 +11,12 @@ import { useNavigateWithFrom } from "./reusable/Redirect";
 import { emptyToNull } from "./functions/userFunctions";
 import VerifyEmailCode from "./forms/VerifyEmailCode";
 import catDog from "../assets/imgs/catDog.png"
+import { useUser } from "../Interfaces/GlobalUser";
 
 function RegisterPage() {
   const [formPart, setFormPart] = useState(1)
   const [demoCode, setDemoCode] = useState("")
+  const { token, verifyToken, setToken } = useUser()
   const LoginPage = useNavigateWithFrom()
 
   // const { setUser, setToken, setLoggedIn } = useUser();
@@ -47,11 +49,11 @@ function RegisterPage() {
   //   console.log("eu aqui")
   // }
 
-  const handleGoogle = async (e: any) => {
-    e.preventDefault();
+  // const handleGoogle = async (e: any) => {
+  //   e.preventDefault();
 
-    return alert("Em Desenvolvimento")
-  }
+  //   return alert("Em Desenvolvimento")
+  // }
 
   const onContinue = async () => {
     if (formPart == 1){
@@ -173,8 +175,12 @@ function RegisterPage() {
               errors={errors} 
               handleSubmit={handleSubmit} 
               onContinue={onContinue} 
-              isSubmitting={isSubmitting} 
-              handlegoogle={handleGoogle} />
+              isSubmitting={isSubmitting}
+              nav={LoginPage}
+              token={String(token)}
+              verifyToken={verifyToken}
+              setToken={setToken}
+              />
             )}
 
             {formPart == 2 && (

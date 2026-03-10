@@ -21,6 +21,7 @@ import PetChat from './components/PetChat.tsx'
 import Chat from './components/Chat.tsx'
 import PetAdoptionSteps from './components/PetAdoptionSteps.tsx'
 import { Analytics } from "@vercel/analytics/react"
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 // i realised i did the nesting route wrong when including layout, now it seens correct
 const router = createBrowserRouter([
@@ -54,18 +55,18 @@ const router = createBrowserRouter([
         children: [
           { path: "Profile", element: <Profile /> },
           { path: "Settings", element: <Settings /> },
-          {path: "PetAdoption/:id", element: <PetAdoptionSteps/>},
-          { 
-            path: "Chat", 
-            element: <Outlet/>,
+          { path: "PetAdoption/:id", element: <PetAdoptionSteps /> },
+          {
+            path: "Chat",
+            element: <Outlet />,
             children: [
               {
                 index: true,
-                element: <Chat/>
+                element: <Chat />
               },
               {
                 path: ":id",
-                element: <PetChat/>
+                element: <PetChat />
               }
             ]
           },
@@ -88,8 +89,10 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     {/* @ts-ignore */}
     <UserProvider>
-      <RouterProvider router={router} />
-      <Analytics/>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <RouterProvider router={router} />
+        <Analytics />
+      </GoogleOAuthProvider>
     </UserProvider>
   </StrictMode>,
 )
