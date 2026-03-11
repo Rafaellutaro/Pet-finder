@@ -554,3 +554,16 @@ export const googleLogin = async (req: AuthRequest, res: Response) => {
         console.log(e)
     }
 }
+
+export const logout = (req: AuthRequest, res: Response) => {
+
+const isProd = process.env.NODE_ENV == "PRODUCTION"
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+  });
+
+  return res.status(200).json({data: "Logout successful", status: 200});
+};

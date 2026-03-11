@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllUsers, insertUser, getUserById, updateUserById, updatePassword, deleteUserById, getUserByEmail, createToken, refreshToken, getUserByIdPublic, insertBanner, insertProfileImg, createEmailCode, verifyEmailCode, googleLogin } from '../controller/user.controller.js';
+import { getAllUsers, insertUser, getUserById, updateUserById, updatePassword, deleteUserById, getUserByEmail, createToken, refreshToken, getUserByIdPublic, insertBanner, insertProfileImg, createEmailCode, verifyEmailCode, googleLogin, logout } from '../controller/user.controller.js';
 import {verifyJWT} from '../middleware/auth.middleware.js'
 
 const userRoute = Router();
@@ -18,6 +18,7 @@ userRoute.post("/profileImg", verifyJWT, insertProfileImg);
 userRoute.post("/createEmailCode", createEmailCode); 
 userRoute.post("/verifyEmailCode", verifyEmailCode);
 userRoute.patch("/newPassword", updatePassword);     
-userRoute.post("/googleLogin", googleLogin); 
+userRoute.post("/googleLogin", googleLogin);
+userRoute.post("/logOff", verifyJWT, logout);  
 
 export default userRoute;

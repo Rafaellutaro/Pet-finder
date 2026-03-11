@@ -32,8 +32,6 @@ function GoogleLoginPage({ token, verifyToken, nav, setToken }: googleLoginType)
           apiCall(token, verifyToken, credentialResponse, nav, setToken)
         }}
         onError={() => console.log("Login Failed")}
-        size="large"
-        width="100%"
       />
     </div>
   )
