@@ -9,6 +9,7 @@ import { IoIosAttach } from "react-icons/io";
 import { CiImageOn } from "react-icons/ci";
 import { BsEmojiSmile, BsSend } from "react-icons/bs";
 import { useNavigateWithFrom } from "./Redirect";
+import { toast } from "react-toastify";
 
 type ChatMessage = {
     id: string | number;
@@ -69,15 +70,32 @@ export function WorkingChat({ token, verifyToken, alldata, user, setMessage, mes
     const sendMessage = async () => {
         if (!message.trim()) return;
 
-        const response = await resendApiPrivate({
+        await toast.promise(resendApiPrivate({
             apiUrl: `${import.meta.env.VITE_SERVER_URL}/chat/conversation/${id}/messages`
             , options: { method: "POST", body: JSON.stringify({ message }) },
             token: String(token),
             verifyToken: verifyToken
+        }).then((response) => {
+            if (!response?.ok){
+                throw new Error("Erro ao tentar enviar mensagem")
+            }
+        }), {
+            pending: {
+                    render() {
+                        return "Enviando mensagem...";
+                    },
+                },
+                success: {
+                    render() {
+                        return "Mensagem enviada com sucesso!";
+                    },
+                },
+                error: {
+                    render() {
+                        return "Erro ao tentar enviar mensagem";
+                    },
+                },
         })
-
-        setOpen(false)
-        if (!response?.ok) return
     }
 
     const petImg = alldata?.pet?.imgs[0]?.url

@@ -37,7 +37,7 @@ export const ConversationCreate = async (req: AuthRequest, res: Response) => {
         })
 
         if (getConversation) {
-            return res.status(200).json({ data: getConversation.id })
+            return res.status(200).json({ data: getConversation.id, message: "Chat resumido com sucesso" })
         }
 
         const createConversation = await prisma.conversation.create({
@@ -64,7 +64,7 @@ export const ConversationCreate = async (req: AuthRequest, res: Response) => {
 
         io.to(`user:${getPetData?.userId}`).emit("notification:new", { notification: notification })
 
-        return res.status(201).json({ data: createConversation.id })
+        return res.status(201).json({ data: createConversation.id, message: "Chat criado com sucesso" })
     } catch (e) {
         console.log(e)
         return res.status(500).json({ message: "unable to create conversation" })

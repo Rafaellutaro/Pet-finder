@@ -85,7 +85,7 @@ body {
   overflow-x: hidden;
 }
 
-section {
+.hero, .dogs-grid, .accessories, .breeds, .blog {
   position: relative;
   padding: 80px 10%;
 }

@@ -8,6 +8,7 @@ import bannerDFT from "../assets/imgs/bannerDFT.png";
 import { useNavigateWithFrom } from "./reusable/Redirect";
 import Loader from "./reusable/Loader";
 import noData from "../assets/imgs/noData.png";
+import {toast} from 'react-toastify'
 
 type ConversationFilter = "ALL" | "PENDING" | "ACCEPTED" | "DECLINED";
 
@@ -41,7 +42,7 @@ function Chat() {
             verifyToken,
         });
 
-        if (!response?.ok) return;
+        if (!response?.ok) return toast.error("Erro ao tentar encontrar chats");
 
         setAllChatsData(response.data ?? [])
 

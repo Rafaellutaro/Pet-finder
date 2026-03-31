@@ -538,7 +538,7 @@ export const googleLogin = async (req: AuthRequest, res: Response) => {
                 const createGoogleUser = await prisma.user.create({
                     data: {
                         name: String(payload.given_name),
-                        lastName: String(payload.family_name),
+                        lastName: String(payload.family_name ? payload.family_name : null),
                         email: payload.email,
                         profileImg: payload.picture,
                         googleId: payload.sub

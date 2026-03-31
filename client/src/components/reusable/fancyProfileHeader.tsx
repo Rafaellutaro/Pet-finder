@@ -38,13 +38,7 @@ function FancyHeader({ user }: User) {
             url: imageUrl
         }
 
-        const response = await userBannerImage(String(token), img, verifyToken)
-
-        if (response?.ok) {
-            setUserBanner(response?.data)
-        }
-
-        setLoadingUpload(false)
+        await userBannerImage(String(token), img, verifyToken, setUserBanner, setLoadingUpload)
     };
 
     const handleProfileImgChange = async (e: any) => {
@@ -62,14 +56,7 @@ function FancyHeader({ user }: User) {
             url: imageUrl
         }
 
-        const response = await userProfileImage(token, img, verifyToken)
-
-        if (response?.ok) {
-            setUserProfileImg(response?.data)
-        }
-
-        setLoadingUpload(false)
-
+        await userProfileImage(token, img, verifyToken, setUserProfileImg, setLoadingUpload)
     };
 
     return (

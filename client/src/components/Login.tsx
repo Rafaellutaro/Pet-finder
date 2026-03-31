@@ -17,6 +17,7 @@ import "../assets/css/authWrapper.css"
 import { zodResolver } from "@hookform/resolvers/zod";
 import resendApiPrivate from "./reusable/resendApi";
 import GoogleLoginPage from "./reusable/GoogleLogin";
+import { toast } from "react-toastify";
 
 
 function LoginPage() {
@@ -87,6 +88,7 @@ function LoginPage() {
       }
     } catch (e) {
       console.log(e)
+      toast.error("Erro ao fazer login")
     }
   }
 
@@ -113,7 +115,7 @@ function LoginPage() {
         body: JSON.stringify(payload)
       })
 
-      if (!res.ok) return alert("Código Invalido")
+      if (!res.ok) return toast.error("Código Invalido")
 
       const data = await res.json()
 
@@ -138,7 +140,7 @@ function LoginPage() {
         body: JSON.stringify(email)
       })
 
-      if (!res.ok) return
+      if (!res.ok) return toast.error("Erro ao tentar criar o código")
 
       const data = await res.json();
 
@@ -154,7 +156,7 @@ function LoginPage() {
     const confirmPassword = getValues("newPassword")
 
     if (password != confirmPassword) return
-    
+
     const email = getValues("email")
 
     const payload = {
@@ -163,17 +165,37 @@ function LoginPage() {
     }
 
     try {
+      await toast.promise(resendApiPrivate({
+        apiUrl: `${import.meta.env.VITE_SERVER_URL}/users/newPassword`,
+        options: { method: "PATCH", body: JSON.stringify(payload) },
+        token: String(token),
+        verifyToken: verifyToken
+      }).then((response) => {
+        if (!response?.ok) {
+          throw new Error("Erro ao tentar trocar senha");
+        }
 
-      const response = await resendApiPrivate({
-        apiUrl: `${import.meta.env.VITE_SERVER_URL}/users/newPassword`, 
-        options: {method: "PATCH", body: JSON.stringify(payload)}, 
-        token: String(token), 
-        verifyToken: verifyToken})
-      
-      if (!response?.ok) return
-
-      setModal("none")
-      reset();
+        setModal("none")
+        reset();
+      }),
+        {
+          pending: {
+            render() {
+              return "Tentantdo trocar a senha...";
+            },
+          },
+          success: {
+            render() {
+              return "Senha trocada com sucesso!";
+            },
+          },
+          error: {
+            render() {
+              return "Erro ao tentar trocar senha";
+            },
+          },
+        }
+      )
     } catch (e) {
       console.log(e)
     }
@@ -186,13 +208,13 @@ function LoginPage() {
     <>
       {modal == "email" && (
         <PasswordChange
-        modal={modal}
-        onClose={() => setModal("none")}
-        onSubmit={submitPassChange}
-        handleSubmit={handleSubmit}
-        register={register}
-        getValues={getValues}
-      />
+          modal={modal}
+          onClose={() => setModal("none")}
+          onSubmit={submitPassChange}
+          handleSubmit={handleSubmit}
+          register={register}
+          getValues={getValues}
+        />
       )}
 
       {modal == "validation" && (
@@ -224,13 +246,13 @@ function LoginPage() {
 
       {modal == "newPass" && (
         <NewPassword
-        modal={modal}
-        onClose={() => setModal("none")}
-        onSubmit={submitNewPass}
-        handleSubmit={handleSubmit}
-        register={register}
-        getValues={getValues}
-      />
+          modal={modal}
+          onClose={() => setModal("none")}
+          onSubmit={submitNewPass}
+          handleSubmit={handleSubmit}
+          register={register}
+          getValues={getValues}
+        />
       )}
 
       <section className="login-page">
@@ -307,7 +329,7 @@ function LoginPage() {
                 </button>
               </div> */}
 
-              <GoogleLoginPage token={String(token)} verifyToken={verifyToken} nav={profileNavigate} setToken={setToken}/>
+              <GoogleLoginPage token={String(token)} verifyToken={verifyToken} nav={profileNavigate} setToken={setToken} />
 
               <p className="login-register-row">
                 Não tem uma conta?

@@ -8,6 +8,7 @@ import { SettingsSchema as schema } from "../../Interfaces/zodSchema"
 import { emptyToNull } from "../functions/userFunctions";
 import resendApiPrivate from "../reusable/resendApi";
 import Loader from "../reusable/Loader";
+import { toast } from "react-toastify";
 
 export default function SettingsForm() {
     const { user, token, verifyToken } = useUser();
@@ -49,7 +50,7 @@ export default function SettingsForm() {
         setSelectedAddress(allAddress[0])
     }, [user])
 
-    if (!user || !token) return <Loader/>;
+    if (!user || !token) return <Loader />;
 
     const complete_name = `${user.name} ${user.lastName}`;
 
@@ -86,17 +87,35 @@ export default function SettingsForm() {
                 : { personal: cleanedPersonal };
 
         if (hasValues(payload.personal) || hasValues(payload.newAddress) || hasValues(payload.address)) {
-            const response = await resendApiPrivate({
-                apiUrl: `${import.meta.env.VITE_SERVER_URL}/users/updateById`, 
-                options: {method: "PUT", body: JSON.stringify(payload)}, 
-                token: String(token), 
-                verifyToken: verifyToken})
-            
-            if (!response?.ok) return
-
-            reset();
-        } else{
-            alert("Insira algo primeiro")
+            await toast.promise(resendApiPrivate({
+                apiUrl: `${import.meta.env.VITE_SERVER_URL}/users/updateById`,
+                options: { method: "PUT", body: JSON.stringify(payload) },
+                token: String(token),
+                verifyToken: verifyToken
+            }).then((response) => {
+                if (!response?.ok) {
+                    throw new Error("Erro ao tentar atualizar dados")
+                }
+                reset();
+            }), {
+                pending: {
+                    render() {
+                        return "Atualizando dados...";
+                    },
+                },
+                success: {
+                    render() {
+                        return "Dados atualizados com sucesso!";
+                    },
+                },
+                error: {
+                    render() {
+                        return "Erro ao tentar atualizar dados";
+                    },
+                },
+            })
+        } else {
+            toast("Insira algo primeiro")
         }
     };
 

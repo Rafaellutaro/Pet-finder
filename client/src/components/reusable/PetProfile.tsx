@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import type { UserData } from "../../Interfaces/userInterface";
 import { useNavigateWithFrom } from "./Redirect";
 import resendApiPrivate from "./resendApi";
+import { toast } from "react-toastify";
 
 type petProfile = {
   data: {
@@ -30,16 +31,41 @@ export default function PetProfile({ data }: petProfile) {
   let petGender
 
   const getConversationId = async () => {
-      const response = await resendApiPrivate({ apiUrl: `${import.meta.env.VITE_SERVER_URL}/chat/conversationCreate`, 
-        options: { method: "POST", body: JSON.stringify({petId: petData?.id}) }, 
-        token: String(token), 
-        verifyToken: verifyToken })
-      
-      console.log("response here", response)
-
-      if (!response?.ok) return
-      chatNavigate(`/Chat/${response?.data}`)
+    try {
+      await toast.promise(resendApiPrivate({
+        apiUrl: `${import.meta.env.VITE_SERVER_URL}/chat/conversationCreate`,
+        options: { method: "POST", body: JSON.stringify({ petId: petData?.id }) },
+        token: String(token),
+        verifyToken: verifyToken
+      }).then((response) => {
+        if (!response?.ok) {
+          throw new Error("Erro ao tentar criar chat");
+        }
+        chatNavigate(`/Chat/${response?.data}`)
+        return response
+      }),
+        {
+          pending: {
+            render() {
+              return "Tentando resumir ou criar chat...";
+            },
+          },
+          success: {
+            render({data}) {
+              return `${data?.message}`;
+            },
+          },
+          error: {
+            render() {
+              return "Erro ao tentar criar ou resumir chat";
+            },
+          },
+        }
+      )
+    } catch (e) {
+      console.log(e)
     }
+  }
 
   const traitMap = Object.fromEntries(
     data.traits.map((t: any) => [t.Trait.key, t.value])
@@ -72,12 +98,13 @@ export default function PetProfile({ data }: petProfile) {
   const incrementHeart = async () => {
     try {
       const heart = await resendApiPrivate({
-        apiUrl: `${import.meta.env.VITE_SERVER_URL}/pets/${petData?.id}/heart`, 
-        options: {method: "POST"}, 
-        token: String(token), 
-        verifyToken: verifyToken})
+        apiUrl: `${import.meta.env.VITE_SERVER_URL}/pets/${petData?.id}/heart`,
+        options: { method: "POST" },
+        token: String(token),
+        verifyToken: verifyToken
+      })
 
-      if (!heart?.ok) return 
+      if (!heart?.ok) return toast.error("Você já deu um coração a esse pet")
 
     } catch (e) {
       console.log(e)
@@ -88,11 +115,12 @@ export default function PetProfile({ data }: petProfile) {
   const incrementViews = async () => {
     try {
       const views = await resendApiPrivate({
-        apiUrl: `${import.meta.env.VITE_SERVER_URL}/pets/${petData?.id}/view`, 
-        options: {method: "POST"}, 
-        token: String(token), 
-        verifyToken: verifyToken})
-      
+        apiUrl: `${import.meta.env.VITE_SERVER_URL}/pets/${petData?.id}/view`,
+        options: { method: "POST" },
+        token: String(token),
+        verifyToken: verifyToken
+      })
+
       if (!views?.ok) return
     } catch (e) {
       console.log(e)

@@ -7,6 +7,7 @@ import bannerDFT from "../assets/imgs/bannerDFT.png"
 import inDev from "../assets/imgs/inDevelopment.png"
 import { WarningPopUp } from './reusable/PopUps';
 import resendApiPrivate from './reusable/resendApi';
+import { toast } from 'react-toastify';
 
 function Settings() {
     const { user, token, verifyToken, setToken } = useUser();
@@ -28,7 +29,7 @@ function Settings() {
                 verifyToken,
             });
 
-            if (!response?.ok) return
+            if (!response?.ok) return toast.error("Erro ao tentar deslogar")
 
             setToken(null)
         } catch (e) {

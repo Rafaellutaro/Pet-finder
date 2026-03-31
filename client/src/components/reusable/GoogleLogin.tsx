@@ -1,6 +1,7 @@
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 import "../../assets/css/googleWrapper.css"
 import resendApiPrivate from './resendApi';
+import { toast } from 'react-toastify';
 
 const apiCall = async (token: string, verifyToken: () => Promise<void>, credential: CredentialResponse, nav: (path: string) => void, setToken: (token: string | null) => void) => {
     const response = await resendApiPrivate({
@@ -10,7 +11,7 @@ const apiCall = async (token: string, verifyToken: () => Promise<void>, credenti
         verifyToken: verifyToken
     })
 
-    if (!response?.ok) return
+    if (!response?.ok) return toast.error("Erro ao tentar logar pelo google")
 
     setToken(response?.data)
     nav("/Profile")
@@ -28,7 +29,6 @@ function GoogleLoginPage({ token, verifyToken, nav, setToken }: googleLoginType)
     <div className="google-btn-wrapper">
       <GoogleLogin
         onSuccess={credentialResponse => {
-          console.log("credentials", credentialResponse)
           apiCall(token, verifyToken, credentialResponse, nav, setToken)
         }}
         onError={() => console.log("Login Failed")}

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import type { PetData } from "../../Interfaces/usefulPetInterface";
 import resendApiPrivate from "../reusable/resendApi";
 import Loader from "../reusable/Loader";
+import {toast} from 'react-toastify'
 
 const getAllPetsById = () => {
     const { token, verifyToken } = useUser();
@@ -19,7 +20,7 @@ const getAllPetsById = () => {
             verifyToken: verifyToken
         })
 
-        if (!response?.ok) return
+        if (!response?.ok) return toast.error("Alguma coisa deu errado, tente novamente")
 
         setPets(response?.data);
         setLoading(false);

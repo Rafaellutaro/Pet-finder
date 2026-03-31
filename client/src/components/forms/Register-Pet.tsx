@@ -11,6 +11,7 @@ import PetFavorite from "./PetFavorite";
 import SupabaseUpload from "../reusable/SupabaseUpload";
 import { emptyToNullObject } from "../functions/userFunctions";
 import resendApiPrivate from "../reusable/resendApi";
+import { toast } from "react-toastify";
 
 type RegisterPetProp = {
     onClose: () => void;
@@ -18,7 +19,7 @@ type RegisterPetProp = {
     formPart: number;
 }
 
-export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPetProp) {
+export default function RegisterPet({ onClose, formPart, setFormPart }: RegisterPetProp) {
     //meu deus se eu soubesse o quanto mais de boa é usar o react-hook-form em vez de usar o reducer e criar o proprio form antes velho, que porcaria.
     // tive que alterar todos os forms, mas pelo menos agora eu consigo emplementar a validação de dados com o zod que parece muito melhor do que eu fazer sozinho.
     // por que eu não pesquisei antes meu deus, aff.
@@ -38,7 +39,7 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
     // If you need to do something → useEffect
     const resolver = useMemo(() => {
         if (formPart == 1 && allAddress.length <= 0) return zodResolver(PetSchemaPart1Edited);
-        if (formPart == 1 ) return zodResolver(PetSchemaPart1);
+        if (formPart == 1) return zodResolver(PetSchemaPart1);
         if (formPart == 2) return zodResolver(PetSchemaPart2);
         return zodResolver(PetSchemaPart3);
     }, [formPart, allAddress.length]);
@@ -78,7 +79,7 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
             const file = formattedData.image[0];
             const fileName = `${Date.now()}_${file.name}`;
 
-            const imageUrl = await SupabaseUpload({fileName: fileName, file: file, bucketName: "pets"});
+            const imageUrl = await SupabaseUpload({ fileName: fileName, file: file, bucketName: "pets" });
 
             // Build address payload
             let addressToUse = null;
@@ -95,7 +96,7 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
                 addressToUse = selectedAddress;
             }
 
-            if (!addressToUse.cep || !addressToUse.street || !addressToUse.neighborhood || !addressToUse.city || !addressToUse.state){
+            if (!addressToUse.cep || !addressToUse.street || !addressToUse.neighborhood || !addressToUse.city || !addressToUse.state) {
                 addressToUse = allAddress[0]
             }
 
@@ -127,14 +128,33 @@ export default function RegisterPet({onClose, formPart, setFormPart}: RegisterPe
                 address: addressToUse
             };
 
-            const res = await resendApiPrivate({
-                apiUrl: `${import.meta.env.VITE_SERVER_URL}/pets/insert`, 
-                options: {method: "POST", body: JSON.stringify(payload)}, 
-                token: String(token), 
-                verifyToken: verifyToken})
-
-            if (!res?.ok) alert("Alguma coisa deu errado")
-            onClose();
+            await toast.promise(resendApiPrivate({
+                apiUrl: `${import.meta.env.VITE_SERVER_URL}/pets/insert`,
+                options: { method: "POST", body: JSON.stringify(payload) },
+                token: String(token),
+                verifyToken: verifyToken
+            }).then((res) => {
+                if (!res?.ok) {
+                    throw new Error("Alguma coisa deu errado")
+                }
+                onClose()
+            }), {
+                pending: {
+                    render() {
+                        return "Registrando pet...";
+                    },
+                },
+                success: {
+                    render() {
+                        return "Pet registrado com sucesso!";
+                    },
+                },
+                error: {
+                    render() {
+                        return "Alguma coisa deu errado";
+                    },
+                },
+            })
         } catch (e) {
             console.log("Error submitting pet:", e);
         }

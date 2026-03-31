@@ -12,6 +12,7 @@ import { emptyToNull } from "./functions/userFunctions";
 import VerifyEmailCode from "./forms/VerifyEmailCode";
 import catDog from "../assets/imgs/catDog.png"
 import { useUser } from "../Interfaces/GlobalUser";
+import { toast } from "react-toastify";
 
 function RegisterPage() {
   const [formPart, setFormPart] = useState(1)
@@ -56,7 +57,7 @@ function RegisterPage() {
   // }
 
   const onContinue = async () => {
-    if (formPart == 1){
+    if (formPart == 1) {
       const email = {
         email: getValues("email")
       }
@@ -64,12 +65,12 @@ function RegisterPage() {
         const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/users/createEmailCode`, {
           method: "POST",
           headers: {
-                    'content-type': 'application/json',
-                },
+            'content-type': 'application/json',
+          },
           body: JSON.stringify(email)
         })
 
-        if (!res.ok) return
+        if (!res.ok) return toast.error("Erro ao criar código")
 
         const data = await res.json();
 
@@ -93,18 +94,18 @@ function RegisterPage() {
 
     try {
       const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/users/verifyEmailCode`, {
-          method: "POST",
-          headers: {
-                    'content-type': 'application/json',
-                },
-          body: JSON.stringify(payload)
-        })
+        method: "POST",
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      })
 
-      if (!res.ok) return alert("Código Invalido")
+      if (!res.ok) return toast.error("Código Invalido")
 
       const data = await res.json()
-      
-      if (data.data == true){
+
+      if (data.data == true) {
         setFormPart(i => i + 1);
       }
     } catch (e) {
@@ -132,16 +133,33 @@ function RegisterPage() {
     const allUserData = { userData, addressData };
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/users/insert`, {
+      await toast.promise(fetch(`${import.meta.env.VITE_SERVER_URL}/users/insert`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(allUserData)
-      });
-      if (res.ok) {
-        const result = await res.json();
-        if (!result) return
+      }).then((res) => {
+        if (!res.ok) {
+          throw new Error("Erro ao tentar se registrar")
+        }
         LoginPage("/Login")
-      }
+      }), {
+        pending: {
+          render() {
+            return "Tentando registrar usuario...";
+          },
+        },
+        success: {
+          render() {
+            return "Registro bem sucedido!";
+          },
+        },
+        error: {
+          render() {
+            return "Erro ao tentar registrar usuario";
+          },
+        },
+      })
+
     } catch (e) {
       console.error(e);
     }
@@ -170,49 +188,49 @@ function RegisterPage() {
             </div>
 
             {formPart == 1 && (
-              <RegisterUserpart1 
-              register={register} 
-              errors={errors} 
-              handleSubmit={handleSubmit} 
-              onContinue={onContinue} 
-              isSubmitting={isSubmitting}
-              nav={LoginPage}
-              token={String(token)}
-              verifyToken={verifyToken}
-              setToken={setToken}
+              <RegisterUserpart1
+                register={register}
+                errors={errors}
+                handleSubmit={handleSubmit}
+                onContinue={onContinue}
+                isSubmitting={isSubmitting}
+                nav={LoginPage}
+                token={String(token)}
+                verifyToken={verifyToken}
+                setToken={setToken}
               />
             )}
 
             {formPart == 2 && (
-              <VerifyEmailCode<userFormFields> 
-              watch={watch}
-              handleSubmit={handleSubmit} 
-              getValues={getValues} 
-              verifyCode={verifyCode}
-              control={control}
-              demoCode={demoCode}
-              modal={"validation"}
+              <VerifyEmailCode<userFormFields>
+                watch={watch}
+                handleSubmit={handleSubmit}
+                getValues={getValues}
+                verifyCode={verifyCode}
+                control={control}
+                demoCode={demoCode}
+                modal={"validation"}
               />
             )}
 
             {formPart == 3 && (
-              <RegisterUserPart2 
-              register={register} 
-              errors={errors} 
-              handleSubmit={handleSubmit} 
-              onContinue={onContinue} 
-              isSubmitting={isSubmitting} 
-              control={control} />
+              <RegisterUserPart2
+                register={register}
+                errors={errors}
+                handleSubmit={handleSubmit}
+                onContinue={onContinue}
+                isSubmitting={isSubmitting}
+                control={control} />
             )}
 
             {formPart == 4 && (
-              <RegisterUserPart3 
-              register={register} 
-              errors={errors} 
-              handleSubmit={handleSubmit} 
-              onSubmit={onSubmit} 
-              isSubmitting={isSubmitting} 
-              control={control} />
+              <RegisterUserPart3
+                register={register}
+                errors={errors}
+                handleSubmit={handleSubmit}
+                onSubmit={onSubmit}
+                isSubmitting={isSubmitting}
+                control={control} />
             )}
 
           </div>
