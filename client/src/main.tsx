@@ -22,7 +22,7 @@ import Chat from './components/Chat.tsx'
 import PetAdoptionSteps from './components/PetAdoptionSteps.tsx'
 import { Analytics } from "@vercel/analytics/react"
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import Toastify from './components/reusable/toastify.tsx'
+import Toastify from './components/reusable/Toastify.tsx' // stupid t
 
 // i realised i did the nesting route wrong when including layout, now it seens correct
 const router = createBrowserRouter([
