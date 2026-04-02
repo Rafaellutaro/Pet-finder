@@ -104,7 +104,7 @@ export default function PetProfile({ data }: petProfile) {
         verifyToken: verifyToken
       })
 
-      if (!heart?.ok) return toast.error("Você já deu um coração a esse pet")
+      if (!heart?.ok) return toast.error(`${heart?.message}`)
 
     } catch (e) {
       console.log(e)

@@ -34,7 +34,7 @@ export function createJwtCookie(userId: number, res: any){
           maxAge: 7 * 24 * 60 * 60 * 1000
       });
 
-      return res.status(200).json({data: accessToken, status: 200})
+      return accessToken;
 }
 
 export async function createNotification({ userId, type, title, body, link }: notification, prisma: any) {

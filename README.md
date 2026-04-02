@@ -1,6 +1,6 @@
-#!IMPORTANT
+#IMPORTANT
 
-make those too here available after buying a domain
+##make those too here available after buying a domain
 
 const html = htmlGenerate(code)
 await sendEmail(email, "Seu Código de Verificação", html)

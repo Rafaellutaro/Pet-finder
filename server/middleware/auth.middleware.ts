@@ -11,7 +11,7 @@ export const verifyJWT = (req: AuthRequest, res: Response, next: NextFunction) =
   const tokenSecret = process.env.ACCESS_TOKEN_SECRET
 
   if (!authHeader) {
-    return res.status(401).json({ message: "Unauthorized: No token" });
+    return res.status(401).json({ message: "Não autorizado" });
   }
 
   const token = authHeader.split(" ")[1];
@@ -22,7 +22,7 @@ export const verifyJWT = (req: AuthRequest, res: Response, next: NextFunction) =
     req.user = decoded;
     next(); 
   } catch (err) {
-    return res.status(403).json({ message: "Forbidden: Invalid token" });
+    return res.status(403).json({ message: "Faça login antes de tentar essa ação" });
   }
 };
 

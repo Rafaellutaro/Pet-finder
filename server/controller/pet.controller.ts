@@ -249,6 +249,8 @@ export const insertHeart = async (req: AuthRequest, res: Response) => {
             }
         })
 
+        if (!heart) return res.status(409).json({message: "Você já deu um coração há este pet"})
+
         const incrementHeart = await prisma.pet.update({
             where: {
                 id: Number(id),
@@ -263,7 +265,7 @@ export const insertHeart = async (req: AuthRequest, res: Response) => {
             incrementHeart
         })
     } catch (e) {
-        return res.status(409).json({message: "Already hearted"})
+        console.log(e)
     }
 }
 

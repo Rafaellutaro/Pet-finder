@@ -58,37 +58,47 @@ function LoginPage() {
     try {
       // maybe try to fit those two endPoints in only 1, would be cleaner.
 
-      const sendRes = await fetch(`${import.meta.env.VITE_SERVER_URL}/users/getEmail`, {
+      // finally i made them in one endPoint, now it looks cleaner and has the pop up, nice :)
+
+      await toast.promise(fetch(`${import.meta.env.VITE_SERVER_URL}/users/getEmail&createToken`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'content-type': 'application/json',
         },
         body: JSON.stringify(loginDetails)
-      })
-      const data = await sendRes.json();
+      }).then(async (res) => {
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data?.message)
+        }
 
-      // creating a global variable for the user data
-      if (sendRes.ok) {
-        const createToken = await fetch(`${import.meta.env.VITE_SERVER_URL}/users/createToken`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'content-type': 'application/json',
-          },
-          body: JSON.stringify(data.data)
-        })
-
-        const tokenRes = await createToken.json();
+        const data = await res.json();
 
         setUser(data.data);
-        setToken(tokenRes.data);
+        setToken(data.accessToken);
         setLoggedIn(true);
 
         profileNavigate("/Profile");
-      }
+      }), {
+        pending: {
+          render() {
+            return "Verificando Dados...";
+          },
+        },
+        success: {
+          render() {
+            return "Login bem sucedido!";
+          },
+        },
+        error: {
+          render({data}) {
+            return `${data}`;
+          },
+        },
+      })
     } catch (e) {
       console.log(e)
-      toast.error("Erro ao fazer login")
     }
   }
 

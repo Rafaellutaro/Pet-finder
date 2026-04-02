@@ -124,12 +124,13 @@ export const createToken = async (req: any, res: any) => {
 
     console.log('userid', data.id)
 
-    createJwtCookie(data.id, res)
+    const accessToken = createJwtCookie(data.id, res)
+    return res.status(200).json({data: accessToken, status: 200})
 }
 
 //get user by email
 
-export const getUserByEmail = async (req: any, res: any) => {
+export const getUserByEmailAndLogin = async (req: any, res: any) => {
 
     const userLogin = req.body;
 
@@ -143,16 +144,21 @@ export const getUserByEmail = async (req: any, res: any) => {
             }
         });
 
-        if (!UserById) return res.status(400).json({ message: "Invalid Credentials" })
+        if (!UserById) return res.status(400).json({ message: "Usuario não existe" })
 
         const valid = await argon2.verify(String(UserById.password), String(userLogin.password));
 
         if (!valid) {
-            return res.status(400).json({ message: "Invalid credentials" });
+            return res.status(400).json({ message: "Senha Invalida" });
         }
 
-        res.status(200).json({ data: UserById });
+        const accessToken = createJwtCookie(UserById.id, res)
 
+        console.log("ACCESStOKEN AND USER DATA", accessToken, UserById)
+
+        if (!accessToken) return res.status(400).json({ message: "Invalid User" });
+
+        return res.status(200).json({ data: UserById, accessToken: accessToken });
     } catch (e) {
         console.log(e);
     }
@@ -513,7 +519,8 @@ export const googleLogin = async (req: AuthRequest, res: Response) => {
         console.log("FINDUSER", findGoogleUser)
 
         if (findGoogleUser) {
-            return createJwtCookie(findGoogleUser.id, res)
+            const accessToken = createJwtCookie(findGoogleUser.id, res)
+            return res.status(200).json({data: accessToken, status: 200})
         } else if (!findGoogleUser) {
             const findGoogleUserEmail = await prisma.user.findUnique({
                 where: { email: payload.email },
@@ -533,7 +540,8 @@ export const googleLogin = async (req: AuthRequest, res: Response) => {
                     }
                 })
 
-                return createJwtCookie(updatedGoogleUser.id, res)
+                const accessToken = createJwtCookie(updatedGoogleUser.id, res)
+                return res.status(200).json({data: accessToken, status: 200})
             }else if (!findGoogleUserEmail){
                 const createGoogleUser = await prisma.user.create({
                     data: {
@@ -547,7 +555,8 @@ export const googleLogin = async (req: AuthRequest, res: Response) => {
 
                 console.log("CREATEGOOGLEUSER", createGoogleUser)
 
-                return createJwtCookie(createGoogleUser.id, res)
+                const accessToken = createJwtCookie(createGoogleUser.id, res)
+                return res.status(200).json({data: accessToken, status: 200})
             }
         }
     } catch (e) {
